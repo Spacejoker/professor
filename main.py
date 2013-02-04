@@ -2,28 +2,41 @@ import random
 import pygame
 
 
-	  
+class Constants():
+	WINDOW_WIDTH = 450
+	WINDOW_HEIGHT = 600
+	STICKER_SIZE = 30
 #Provide a mapping from notation to code
 Turns = ['D', 'B', 'L', 'U', 'R', 'F']
-class Face:
+class Face: #enum
 	D = 0
 	B = 1
 	L = 2
 	U = 3
 	R = 4
 	F = 5
+	
+class Face_Data():
+	def __init__(self, position, color):
+		self.position = position
+		self.color = color
 
+faces = [Face_Data((150,0), (40,40,40)), Face_Data((150, 150), (0, 255, 0)), Face_Data((0, 300), (255, 0, 255)), Face_Data((150, 300), (255, 255, 0)), Face_Data((300, 300), (255,0,0)), Face_Data((150, 450), (0,0, 255))]
+
+colors = []
 #Helper methods for conversion etc
 class Helper():
 	@staticmethod
 	def to_int(y, x):
-		return y*5 + x;
+		return y*5 + x
 	@staticmethod
 	def get_x(id):
 		return id % 5
+		
 	@staticmethod
 	def get_y(id):
-		return id/5;
+		return id/5
+	
 		
 class Chain_Generator():
 	@staticmethod
@@ -108,13 +121,14 @@ class Scrambler():
 #Main application loop
 def loop():
 	pygame.init() 
-	window = pygame.display.set_mode((640, 480)) 
+	window = pygame.display.set_mode((Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT)) 
 	c = Cube()
 	
-	for side in c.state:
-		for id, sticker in enumerate(side):
-			pass
-	pygame.draw.rect(window, (255,0,0), (20,20,30,30), 0)
+	for side in range(0, len(c.state)):
+		for id, sticker in enumerate(c.state[side]):
+			f = faces[side]
+			size = Constants.STICKER_SIZE
+			pygame.draw.rect(window, f.color, (f.position[0] + Helper.get_x(id)*size,f.position[1] + Helper.get_y(id)*size,size-1,size-1), 0)
 	
 	pygame.display.flip() 
 
@@ -123,9 +137,8 @@ def loop():
 		for event in pygame.event.get(): 
 			if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
 				running = False
-	
 	pygame.quit()
-			  
+
 if __name__ == '__main__':
 
 	
