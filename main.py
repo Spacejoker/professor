@@ -61,19 +61,37 @@ class Chain_Generator():
 			return itertools.chain(Chain_Generator.get_chain(command[:-1]),Chain_Generator.get_chain(command[:-1]),Chain_Generator.get_chain(command[:-1]))
 			
 		if command == 'R': 
-			return Chain_Generator.R_chain()
-			#print ret
-		if command == 'r': 
+			ret = Chain_Generator.R_chain()
+		elif command == 'r': 
 			ret = Chain_Generator.r_chain()
-		if command == 'F': 
+		elif command == 'F': 
 			ret = Chain_Generator.F_chain()
-		if command == 'f': 
+		elif command == 'f': 
 			ret = Chain_Generator.f_chain()
-		if command == 'L': 
+		elif command == 'L': 
 			ret = Chain_Generator.L_chain()
-		if command == 'l': 
+		elif command == 'l': 
 			ret = Chain_Generator.l_chain()
-			
+		elif command == 'b':
+			ret = Chain_Generator.b_chain()
+		elif command == 'B':
+			ret = Chain_Generator.B_chain()
+		return ret
+
+	@staticmethod
+	def B_chain():
+		ret = []
+		for pos in range(0, 5):
+			ret.append([(Face.U, pos), (Face.L, pos), (Face.D, 24-pos), (Face.R, pos)]);
+		for r in Chain_Generator.rot_face(Face.B):
+			ret.append(r)
+		return ret
+
+	@staticmethod
+	def b_chain():
+		ret = []
+		for pos in range(5, 10):
+			ret.append([(Face.U, pos), (Face.L, pos), (Face.D, 24-pos), (Face.R, pos)]);
 		return ret
 
 	@staticmethod
@@ -82,7 +100,7 @@ class Chain_Generator():
 		for pos in range(15, 20):
 			ret.append([(Face.U, pos), (Face.R, pos), (Face.D, 24-pos), (Face.L, pos)]);
 		return ret
-			
+
 	@staticmethod
 	def F_chain():
 		ret = []
@@ -99,7 +117,6 @@ class Chain_Generator():
 		for r in Chain_Generator.rot_face(Face.L):
 			ret.append(r)
 		return ret
-	
 	@staticmethod
 	def l_chain():
 		ret = []
