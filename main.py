@@ -1,6 +1,9 @@
+import os
 import random
 import pygame
-
+import time
+import itertools
+from pygame.locals import *
 
 class Constants():
 	WINDOW_WIDTH = 450
@@ -21,7 +24,7 @@ class Face_Data():
 		self.position = position
 		self.color = color
 
-faces = [Face_Data((150,0), (40,40,40)), Face_Data((150, 150), (0, 255, 0)), Face_Data((0, 300), (255, 0, 255)), Face_Data((150, 300), (255, 255, 0)), Face_Data((300, 300), (255,0,0)), Face_Data((150, 450), (0,0, 255))]
+faces = [Face_Data((150,0), (40,40,40)), Face_Data((150, 150), (0, 255, 0)), Face_Data((0, 300), (255, 150, 0)), Face_Data((150, 300), (255, 255, 0)), Face_Data((300, 300), (255,0,0)), Face_Data((150, 450), (0,0, 255))]
 
 colors = []
 #Helper methods for conversion etc
@@ -45,25 +48,44 @@ class Chain_Generator():
 		for i in range(0, 4):
 			yield([(face, Helper.to_int(0, i)), (face, Helper.to_int(i, 4)), (face, Helper.to_int(4, 4-i)), (face, Helper.to_int(4-i, 0))])
 		
-		for i in range(0, 2):
+		#chains for the inner cicrle
+		for i in range(1, 3):
 			yield([(face, Helper.to_int(1, i)), (face, Helper.to_int(i, 3)), (face, Helper.to_int(3, 4-i)), (face, Helper.to_int(4-i, 1))])
 
 	@staticmethod
 	def get_chain(command):
+		print command
+		
 		return {
 			'R' : Chain_Generator.R_chain(),
 			'r' : Chain_Generator.r_chain(),
-			'F' : Chain_Generator.F_chain()
+			'F' : Chain_Generator.F_chain(),
+			'f' : Chain_Generator.f_chain(),
+			'L' : Chain_Generator.L_chain(),
+			'l' : Chain_Generator.l_chain(),
+			'Rw' : itertools.chain(get_chain('r'),get_chain('R'))
 			}.get(command, [])
 
 	@staticmethod
+	def f_chain():
+		for pos in range(15, 20):
+			yield([(Face.U, pos), (Face.R, pos), (Face.D, 24-pos), (Face.L, pos)]);
+	
+			
+	@staticmethod
 	def F_chain():
-
 		for pos in range(20, 25):
 			yield([(Face.U, pos), (Face.R, pos), (Face.D, 24-pos), (Face.L, pos)]);
 		for r in Chain_Generator.rot_face(Face.F):
 			yield(r)
-			
+	@staticmethod	
+	def L_chain():
+		ret = []
+		for pos in range(0, 5*5, 5):
+			yield([(Face.U, pos), (Face.F, pos), (Face.D, pos), (Face.B, pos)]);
+		for r in Chain_Generator.rot_face(Face.L):
+			yield(r)
+	
 	@staticmethod
 	def l_chain():
 		ret = []
@@ -82,6 +104,7 @@ class Chain_Generator():
 			yield([(Face.U, pos), (Face.B, pos), (Face.D, pos), (Face.F, pos)]);
 		for r in Chain_Generator.rot_face(Face.R):
 			yield(r)
+	
 		
 class Cube():
 	def __init__(self):
@@ -92,12 +115,16 @@ class Cube():
 			for x in range(0,25):
 				sticker.append(i)
 			self.state.append(sticker)
-	
-	def rot(self, rotation):
-		print "todo, rotate!"
 		
-	def apply_chain(chain):
-		pass
+	def apply_chain(self, chain):
+		for c in chain:
+			c.reverse()
+			tmp = self.state[c[0][0]][c[0][1]]
+			
+			for i in range(0, len(c)-1):
+				self.state[c[i][0]][c[i][1]] = self.state[c[i+1][0]][c[i+1][1]]
+				
+			self.state[c[len(c)-1][0]][c[len(c)-1][1]] = tmp
 
 class Scrambler():
 	@staticmethod	
@@ -117,26 +144,41 @@ class Scrambler():
 		f = open('scramble.txt', 'w')
 		f.write(scramble)
 		f.close()
-
+class Graphics():
+	
+	def __init__(self):
+		self.window = pygame.display.set_mode((Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT)) 
+	
+	def draw_cube(self, cube):
+		for side in range(0, len(cube.state)):
+			for id, sticker in enumerate(cube.state[side]):
+				f = faces[side]
+				color = faces[sticker]
+				size = Constants.STICKER_SIZE
+				pygame.draw.rect(self.window, color.color, (f.position[0] + Helper.get_x(id)*size,f.position[1] + Helper.get_y(id)*size,size-1,size-1), 0)	
+				
+		pygame.display.flip() 
 #Main application loop
 def loop():
 	pygame.init() 
-	window = pygame.display.set_mode((Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT)) 
+	
 	c = Cube()
+	g = Graphics()
 	
-	for side in range(0, len(c.state)):
-		for id, sticker in enumerate(c.state[side]):
-			f = faces[side]
-			size = Constants.STICKER_SIZE
-			pygame.draw.rect(window, f.color, (f.position[0] + Helper.get_x(id)*size,f.position[1] + Helper.get_y(id)*size,size-1,size-1), 0)
-	
-	pygame.display.flip() 
-
 	running = True
 	while running: 
-		for event in pygame.event.get(): 
+		#c.apply_chain(Chain_Generator.get_chain('R'))
+		g.draw_cube(c)
+		keymap = {}
+		event = pygame.event.wait()
+		if event.type == pygame.KEYDOWN:
+			keymap[event.scancode] = event.unicode
+			
+			c.apply_chain(Chain_Generator.get_chain(event.unicode)) #handles dvorak
+			
 			if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
 				running = False
+		
 	pygame.quit()
 
 if __name__ == '__main__':
