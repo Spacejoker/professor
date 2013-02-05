@@ -61,16 +61,16 @@ class Chain_Generator():
 			return itertools.chain(Chain_Generator.get_chain(command[:-1]),Chain_Generator.get_chain(command[:-1]),Chain_Generator.get_chain(command[:-1]))
 			
 		if command == 'R': 
-			return Chain_Generator.R_chain(),
+			return Chain_Generator.R_chain()
 			#print ret
 		if command == 'r': 
-			ret = Chain_Generator.r_chain(),
+			ret = Chain_Generator.r_chain()
 		if command == 'F': 
-			ret = Chain_Generator.F_chain(),
+			ret = Chain_Generator.F_chain()
 		if command == 'f': 
-			ret = Chain_Generator.f_chain(),
+			ret = Chain_Generator.f_chain()
 		if command == 'L': 
-			ret = Chain_Generator.L_chain(),
+			ret = Chain_Generator.L_chain()
 		if command == 'l': 
 			ret = Chain_Generator.l_chain()
 			
@@ -125,7 +125,7 @@ class Chain_Generator():
 			ret.append(r)
 			print "ret: ", ret
 		return ret
-		
+
 class Cube():
 	def __init__(self):
 		
@@ -138,17 +138,14 @@ class Cube():
 		
 	def apply_chain(self, chain):
 		
-		for item in chain:
-			print "item: ", item
-			for c in item:
-				print "c: ", c
-				c.reverse()
-				tmp = self.state[c[0][0]][c[0][1]]
+		for c in chain:
+			c.reverse()
+			tmp = self.state[c[0][0]][c[0][1]]
+			
+			for i in range(0, len(c)-1):
+				self.state[c[i][0]][c[i][1]] = self.state[c[i+1][0]][c[i+1][1]]
 				
-				for i in range(0, len(c)-1):
-					self.state[c[i][0]][c[i][1]] = self.state[c[i+1][0]][c[i+1][1]]
-					
-				self.state[c[len(c)-1][0]][c[len(c)-1][1]] = tmp
+			self.state[c[len(c)-1][0]][c[len(c)-1][1]] = tmp
 
 class Scrambler():
 	@staticmethod	
@@ -168,6 +165,7 @@ class Scrambler():
 		f = open('scramble.txt', 'w')
 		f.write(scramble)
 		f.close()
+
 class Graphics():
 	
 	def __init__(self):
