@@ -80,6 +80,29 @@ class Chain_Generator():
 			ret = Chain_Generator.u_chain()
 		elif command == 'U':
 			ret = Chain_Generator.U_chain()
+		elif command == 'd':
+			ret = Chain_Generator.d_chain()
+		elif command == 'D':
+			ret = Chain_Generator.D_chain()
+		return ret
+
+	@staticmethod
+	def d_chain():
+		ret = []
+		for pos in range(15,20):
+			ret.append([(Face.F, pos), (Face.R, (19-pos)*5 + 3), (Face.B,24-pos), (Face.L, (pos-15)*5 + 1)])
+			print "d: ", ret[:-1]
+		return ret
+
+
+	@staticmethod
+	def D_chain():
+		ret = []
+		for pos in range(20,25):
+			ret.append([(Face.F, pos), (Face.R, (24 - pos)*5 + 4), (Face.B,24-pos), (Face.L, (pos - 20)*5)])
+			print "D: ", ret[:-1]
+		for r in Chain_Generator.rot_face(Face.D):
+			ret.append(r)
 		return ret
 
 	@staticmethod
