@@ -1,0 +1,4 @@
+Hantera all notation (Rw')
+Hantera kub-rotationer (x, y')
+Sätt upp några stora random-test där scramblade kuber jämförs mot känt state
+Börja fundera på hur block-building ska gå till, centers och edges!
