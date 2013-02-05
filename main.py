@@ -45,66 +45,86 @@ class Chain_Generator():
 	@staticmethod
 	def rot_face(face):
 		#chains for the outmost sticker circle
+		ret = []
 		for i in range(0, 4):
-			yield([(face, Helper.to_int(0, i)), (face, Helper.to_int(i, 4)), (face, Helper.to_int(4, 4-i)), (face, Helper.to_int(4-i, 0))])
+			ret.append([(face, Helper.to_int(0, i)), (face, Helper.to_int(i, 4)), (face, Helper.to_int(4, 4-i)), (face, Helper.to_int(4-i, 0))])
 		
 		#chains for the inner cicrle
 		for i in range(1, 3):
-			yield([(face, Helper.to_int(1, i)), (face, Helper.to_int(i, 3)), (face, Helper.to_int(3, 4-i)), (face, Helper.to_int(4-i, 1))])
+			ret.append([(face, Helper.to_int(1, i)), (face, Helper.to_int(i, 3)), (face, Helper.to_int(3, 4-i)), (face, Helper.to_int(4-i, 1))])
+		return ret
 
 	@staticmethod
 	def get_chain(command):
-		print command
-		
-		return {
-			'R' : Chain_Generator.R_chain(),
-			'r' : Chain_Generator.r_chain(),
-			'F' : Chain_Generator.F_chain(),
-			'f' : Chain_Generator.f_chain(),
-			'L' : Chain_Generator.L_chain(),
-			'l' : Chain_Generator.l_chain(),
-			'Rw' : itertools.chain(get_chain('r'),get_chain('R'))
-			}.get(command, [])
+		ret = []
+		if( command[-1:] == '\''):
+			return itertools.chain(Chain_Generator.get_chain(command[:-1]),Chain_Generator.get_chain(command[:-1]),Chain_Generator.get_chain(command[:-1]))
+			
+		if command == 'R': 
+			return Chain_Generator.R_chain(),
+			#print ret
+		if command == 'r': 
+			ret = Chain_Generator.r_chain(),
+		if command == 'F': 
+			ret = Chain_Generator.F_chain(),
+		if command == 'f': 
+			ret = Chain_Generator.f_chain(),
+		if command == 'L': 
+			ret = Chain_Generator.L_chain(),
+		if command == 'l': 
+			ret = Chain_Generator.l_chain()
+			
+		return ret
 
 	@staticmethod
 	def f_chain():
+		ret = []
 		for pos in range(15, 20):
-			yield([(Face.U, pos), (Face.R, pos), (Face.D, 24-pos), (Face.L, pos)]);
-	
+			ret.append([(Face.U, pos), (Face.R, pos), (Face.D, 24-pos), (Face.L, pos)]);
+		return ret
 			
 	@staticmethod
 	def F_chain():
+		ret = []
 		for pos in range(20, 25):
-			yield([(Face.U, pos), (Face.R, pos), (Face.D, 24-pos), (Face.L, pos)]);
+			ret.append([(Face.U, pos), (Face.R, pos), (Face.D, 24-pos), (Face.L, pos)]);
 		for r in Chain_Generator.rot_face(Face.F):
-			yield(r)
+			ret.append(r)
+		return ret
 	@staticmethod	
 	def L_chain():
 		ret = []
 		for pos in range(0, 5*5, 5):
-			yield([(Face.U, pos), (Face.F, pos), (Face.D, pos), (Face.B, pos)]);
+			ret.append([(Face.U, pos), (Face.F, pos), (Face.D, pos), (Face.B, pos)]);
 		for r in Chain_Generator.rot_face(Face.L):
-			yield(r)
+			ret.append(r)
+		return ret
 	
 	@staticmethod
 	def l_chain():
 		ret = []
 		for pos in range(1, 5*5, 5):
-			yield([(Face.U, pos), (Face.F, pos), (Face.D, pos), (Face.B, pos)]);
-
+			ret.append([(Face.U, pos), (Face.F, pos), (Face.D, pos), (Face.B, pos)]);
+		return ret
+		
 	@staticmethod
 	def r_chain():
 		ret = []
 		for pos in range(3, 5*5, 5):
-			yield([(Face.U, pos), (Face.B, pos), (Face.D, pos), (Face.F, pos)]);
+			ret.append([(Face.U, pos), (Face.B, pos), (Face.D, pos), (Face.F, pos)]);
+		return ret
+		
 	@staticmethod	
 	def R_chain():
 		ret = []
+		print "ret: ", ret
 		for pos in range(4, 5*5, 5):
-			yield([(Face.U, pos), (Face.B, pos), (Face.D, pos), (Face.F, pos)]);
+			ret.append([(Face.U, pos), (Face.B, pos), (Face.D, pos), (Face.F, pos)]);
+			print "ret: ", ret
 		for r in Chain_Generator.rot_face(Face.R):
-			yield(r)
-	
+			ret.append(r)
+			print "ret: ", ret
+		return ret
 		
 class Cube():
 	def __init__(self):
@@ -117,14 +137,18 @@ class Cube():
 			self.state.append(sticker)
 		
 	def apply_chain(self, chain):
-		for c in chain:
-			c.reverse()
-			tmp = self.state[c[0][0]][c[0][1]]
-			
-			for i in range(0, len(c)-1):
-				self.state[c[i][0]][c[i][1]] = self.state[c[i+1][0]][c[i+1][1]]
+		
+		for item in chain:
+			print "item: ", item
+			for c in item:
+				print "c: ", c
+				c.reverse()
+				tmp = self.state[c[0][0]][c[0][1]]
 				
-			self.state[c[len(c)-1][0]][c[len(c)-1][1]] = tmp
+				for i in range(0, len(c)-1):
+					self.state[c[i][0]][c[i][1]] = self.state[c[i+1][0]][c[i+1][1]]
+					
+				self.state[c[len(c)-1][0]][c[len(c)-1][1]] = tmp
 
 class Scrambler():
 	@staticmethod	
@@ -167,7 +191,6 @@ def loop():
 	
 	running = True
 	while running: 
-		#c.apply_chain(Chain_Generator.get_chain('R'))
 		g.draw_cube(c)
 		keymap = {}
 		event = pygame.event.wait()
@@ -176,6 +199,8 @@ def loop():
 			
 			c.apply_chain(Chain_Generator.get_chain(event.unicode)) #handles dvorak
 			
+			if event.unicode == 'e':
+				c.apply_chain(Chain_Generator.get_chain('R\'')) 
 			if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
 				running = False
 		
