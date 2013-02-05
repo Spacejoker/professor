@@ -5,7 +5,7 @@ import time
 import itertools
 from pygame.locals import *
 from cube import *
-
+from algo import Sample_Algo
 class Constants():
 	WINDOW_WIDTH = 450
 	WINDOW_HEIGHT = 600
@@ -25,7 +25,6 @@ class Scrambler():
 			if(mod >3):
 				turn += '\''
 			scramble += turn  + " "
-		print scramble
 		f = open('scramble.txt', 'w')
 		f.write(scramble)
 		f.close()
@@ -50,19 +49,27 @@ class Graphics():
 #Main application loop
 def loop():
 	pygame.init() 
-	scramble = Scrambler.gen_scramble()
 	c = Cube()
-	c.rotate(scramble.split(" "))
 	g = Graphics()
 	
 	running = True
 	prim = False
 	w = False
+
+	algo = Sample_Algo(c)
+	font = pygame.font.SysFont("monospace", 15)
+
 	while running: 
 		g.draw_cube(c)
+
+		pygame.draw.rect(g.window, (0,0,0), (0,0,200,200), 0)
+		label = font.render("Prim: " + str(prim) , 1, (255,255,0))
+		g.window.blit(label, (20,20))
+		label = font.render("w: " + str(w) , 1, (255,255,0))
+		g.window.blit(label, (20,40))
 		keymap = {}
 		event = pygame.event.wait()
-
+		
 		if event.type == pygame.KEYDOWN:
 			#handles dvorak
 			keymap[event.scancode] = event.unicode
@@ -73,6 +80,11 @@ def loop():
 			if(prim):
 				cmd += '\''
 			c.rotate([cmd])
+			
+			if event.unicode == ' ':
+				c.rotate(algo.next_move())
+			if event.unicode == '0':
+				c.rotate(Scrambler.gen_scramble().split(' '))
 
 			if event.unicode == 'p':
 				prim = not prim
@@ -84,18 +96,5 @@ def loop():
 	pygame.quit()
 
 if __name__ == '__main__':
-
-	
-
-	Scrambler.genScramble()
-	
-	print "GET: "
-	for c in Chain_Generator.get_chain('R'):
-		print c
-	
-	print "GET F: "
-	for c in Chain_Generator.get_chain('F'):
-		print c
-	
 	loop()
 	

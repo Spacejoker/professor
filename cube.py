@@ -80,7 +80,6 @@ class Chain_Generator():
 		ret = []
 		for pos in range(15,20):
 			ret.append([(Face.F, pos), (Face.R, (19-pos)*5 + 3), (Face.B,24-pos), (Face.L, (pos-15)*5 + 1)])
-			print "d: ", ret[:-1]
 		return ret
 
 
@@ -89,7 +88,6 @@ class Chain_Generator():
 		ret = []
 		for pos in range(20,25):
 			ret.append([(Face.F, pos), (Face.R, (24 - pos)*5 + 4), (Face.B,24-pos), (Face.L, (pos - 20)*5)])
-			print "D: ", ret[:-1]
 		for r in Chain_Generator.rot_face(Face.D):
 			ret.append(r)
 		return ret
@@ -167,7 +165,6 @@ class Chain_Generator():
 	@staticmethod	
 	def R_chain():
 		ret = []
-		print "ret: ", ret
 		for pos in range(4, 5*5, 5):
 			ret.append([(Face.U, pos), (Face.B, pos), (Face.D, pos), (Face.F, pos)]);
 		for r in Chain_Generator.rot_face(Face.R):
