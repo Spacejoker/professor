@@ -186,7 +186,21 @@ class Cube():
 	
 	def rotate(self, commands):
 		for c in commands:
-			self.apply_chain(Chain_Generator.get_chain(c))
+			c = str(c)
+			backwards = False
+			if(c[-1:] == '\''):
+				backwards = True
+				c = c[:-1]
+			chain = []
+			if( c[-1:] == 'w'):
+				chain.extend(Chain_Generator.get_chain(c[:1].lower()))	
+			chain.extend( Chain_Generator.get_chain(c[:1]) )
+			if chain == None:
+				continue
+			if(backwards):
+				for ch in chain:
+					ch.reverse()
+			self.apply_chain(chain)
 
 	def apply_chain(self, chain):
 		

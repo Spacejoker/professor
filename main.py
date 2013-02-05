@@ -12,7 +12,7 @@ class Constants():
 	STICKER_SIZE = 30
 		
 class Scrambler():
-	@staticethod	
+	@staticmethod	
 	def genScramble():
 		scramble = ""
 		for x in range (0,60):
@@ -53,17 +53,28 @@ def loop():
 	g = Graphics()
 	
 	running = True
+	prim = False
+	w = False
 	while running: 
 		g.draw_cube(c)
 		keymap = {}
 		event = pygame.event.wait()
+
 		if event.type == pygame.KEYDOWN:
+			#handles dvorak
 			keymap[event.scancode] = event.unicode
-			
-			c.apply_chain(Chain_Generator.get_chain(event.unicode)) #handles dvorak
-			
-			if event.unicode == 'e':
-				c.apply_chain(Chain_Generator.get_chain('R\'')) 
+			cmd = event.unicode
+			if w:
+				cmd = cmd.upper()
+				cmd += 'w'
+			if(prim):
+				cmd += '\''
+			c.rotate([cmd])
+
+			if event.unicode == 'p':
+				prim = not prim
+			if event.unicode == 'w':
+				w = not w
 			if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
 				running = False
 		
