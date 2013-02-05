@@ -13,7 +13,7 @@ class Constants():
 		
 class Scrambler():
 	@staticmethod	
-	def genScramble():
+	def gen_scramble():
 		scramble = ""
 		for x in range (0,60):
 			turn = Turns[random.randint(0,5)]
@@ -29,6 +29,8 @@ class Scrambler():
 		f = open('scramble.txt', 'w')
 		f.write(scramble)
 		f.close()
+
+		return scramble
 
 class Graphics():
 	
@@ -48,8 +50,9 @@ class Graphics():
 #Main application loop
 def loop():
 	pygame.init() 
-	
+	scramble = Scrambler.gen_scramble()
 	c = Cube()
+	c.rotate(scramble.split(" "))
 	g = Graphics()
 	
 	running = True
