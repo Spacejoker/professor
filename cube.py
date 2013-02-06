@@ -209,6 +209,9 @@ class Cube():
 				
 			self.state[c[len(c)-1][0]][c[len(c)-1][1]] = tmp
 
+	def get(self, sticker):
+		return self.state[sticker[0]][sticker[1]]
+
 	def dump_state(self):
 		fout = open('state_dump.txt', 'w')
 		
