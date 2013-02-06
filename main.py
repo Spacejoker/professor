@@ -82,6 +82,8 @@ def loop():
 			c.rotate([cmd])
 			
 			if event.unicode == ' ':
+				print "Next move: ", algo.next_move()
+			if event.unicode == 'q':
 				c.rotate(algo.next_move())
 			if event.unicode == '0':
 				c.rotate(Scrambler.gen_scramble().split(' '))
