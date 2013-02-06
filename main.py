@@ -85,7 +85,9 @@ def loop():
 				c.rotate(algo.next_move())
 			if event.unicode == '0':
 				c.rotate(Scrambler.gen_scramble().split(' '))
-
+			if event.unicode == '9':
+				c = Cube()
+				algo = Sample_Algo(c)
 			if event.unicode == 'p':
 				prim = not prim
 			if event.unicode == 'w':

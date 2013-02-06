@@ -173,7 +173,6 @@ class Chain_Generator():
 
 class Cube():
 	def __init__(self):
-		
 		self.state = []
 		for i in range(0,len(Turns)):
 			sticker = []
