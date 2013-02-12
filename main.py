@@ -103,7 +103,10 @@ def loop():
 				print "parsing next step in algo"
 				algo.parse_algo()
 			if event.unicode == '.':
+				t = time.time()
 				algo.test_cube(True)
+				diff = time.time() - t
+				print "time passed: ", diff
 			if event.unicode == 'p':
 				prim = not prim
 			if event.unicode == 'w':

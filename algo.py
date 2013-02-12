@@ -2,6 +2,7 @@ from cube import *
 from collections import deque
 import random
 from copy import copy, deepcopy
+import time
 
 class Block:
 	inner_1x1 = 0 
@@ -111,9 +112,9 @@ class Imported_Algo():
 		while len(que) > 0:
 			seq = que.popleft()
 			s = seq.split(" ")
-			if len(s) > 5:
-				continue
-			#compare = deepcopy(c.state)
+			if len(s) > 4:
+				break
+		
 			c.rotate(s)
 				
 			if self.test_cube(): 
@@ -139,7 +140,7 @@ class Imported_Algo():
 			for m in mods:
 				que.append( seq + ' ' + m)
 	
-
+	#verifies if the cube satisfies all rules in its current state
 	def test_cube(self, p=False):
 		
 		#color by color, just D for now:
@@ -149,7 +150,8 @@ class Imported_Algo():
 		inner_3x1 = [[6,7,8],[6,11,16],[16,17,18],[8,13,18]]
 		inner_3x3 = [[6,7,8,11,13,16,17,18]]
 		inner_3x2 = []
-
+		
+		#building the 3x2 blocks are esier like this
 		for sub in inner_3x1:
 			tmp = []
 			tmp.extend(inner_3x3[0])
@@ -158,63 +160,66 @@ class Imported_Algo():
 				tmp.remove(c)
 			inner_3x2.append(tmp)
 
-		#for each face, examine the stickers with the wanted color
+		#for each face, examine what patterns they have in each color
 
+		#TODO: handle pattern recognizion for each color
+		#color-block
 		num_blocks = []
 		for i in range(0,6):
-			num_blocks.append([0,0])
-
+			num_blocks.append([0,0,0,0,0,0])
+		color = 'D'
 		for face in range (0,6):
 			f = self.cube.state[face]
 			used = []
 
-			stickers = self.get_stickers(f, 'D')
+			stickers = self.get_stickers(f, color )
 			stickers = filter(lambda x: x in inner_3x3[0], stickers)
 		
 			#examine what we have on each side, one hit is enough since we never need 2 free 2x1 or 3x1 blocks in an incorrect position
-			#3x3 only D
-			#3x2
-			if face == Face.D:
-				self.check_case(inner_3x3, Block.inner_3x3, num_blocks, face, used, stickers)
-				self.check_case(inner_3x2, Block.inner_3x2, num_blocks, face, used, stickers)
+			#3x3 and 3x2, only on d-face
+			self.check_case(inner_3x3, Block.inner_3x3, num_blocks, face, used, stickers)
+			self.check_case(inner_3x2, Block.inner_3x2, num_blocks, face, used, stickers)
 			#3x1
 			self.check_case(inner_3x1, Block.inner_3x1, num_blocks, face, used, stickers)
 
 			#2x2 only D
-			if face == Face.D:
-				self.check_case(inner_2x2, Block.inner_2x2, num_blocks, face, used, stickers)
+			self.check_case(inner_2x2, Block.inner_2x2, num_blocks, face, used, stickers)
 
 			#2x1
 			self.check_case(inner_2x1, Block.inner_2x1, num_blocks, face, used, stickers)
-
-			#1x1 - only interesting on D
-			if face == Face.D:
-				self.check_case(inner_1x1, Block.inner_1x1, num_blocks, face, used, stickers)
+			if p:
+				print "Used stuff: ", used
+			#1x1 - only interesting on correct side
+			self.check_case(inner_1x1, Block.inner_1x1, num_blocks, face, used, stickers)
 					
 		if p:
 			print num_blocks
 		
 		for r in self.rules:
-			corr_id = 1
-			if r[3]:
-				corr_id = 0
-			if( num_blocks[r[1]][corr_id] > 0):
-				num_blocks[r[1]][corr_id] -= 1
-				if(corr_id == 0):
-					num_blocks[r[1]][1] -= 1
-
+			req_face = Face_Lookup[r[2]]
+			block_type = r[1]
+			needs_correct_face = r[3]
+			if needs_correct_face:
+				if( num_blocks[block_type][req_face] > 0):
+					num_blocks[block_type][req_face] -= 1
+				else:
+					return False
 			else:
-				return False
+				success = False
+				for face in range(0,6):
+					if num_blocks[block_type][face] > 0:
+						num_blocks[block_type][face] -= 1
+						success = True
+						break
+				if not success:
+					return False
 
 		return True
-		#self.cube.state[face][sticker]
 
 	def check_case(self, cands, case, num_blocks, face, used, stickers):
 		for cand in cands:
 			if len(set(cand) & set(stickers)) == len(cand) and len(set(cand) & set(used)) == 0:
-				num_blocks[case][1] += 1
-				if face == Face.D:
-					num_blocks[case][0] += 1
+				num_blocks[case][face] += 1
 				used.extend(cand)
 
 	def get_stickers(self, face, color):
