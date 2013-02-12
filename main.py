@@ -5,7 +5,8 @@ import time
 import itertools
 from pygame.locals import *
 from cube import *
-from algo import Sample_Algo
+from algo import Sample_Algo, Imported_Algo
+
 class Constants():
 	WINDOW_WIDTH = 450
 	WINDOW_HEIGHT = 600
@@ -56,7 +57,7 @@ def loop():
 	prim = False
 	w = False
 
-	algo = Sample_Algo(c)
+	algo = Imported_Algo(c, 'standard.algo')
 	font = pygame.font.SysFont("monospace", 15)
 
 	while running: 

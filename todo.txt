@@ -1,4 +1,55 @@
-Hantera all notation (Rw')
+﻿Hantera all notation (Rw')
 Hantera kub-rotationer (x, y')
 Sätt upp några stora random-test där scramblade kuber jämförs mot känt state
 Börja fundera på hur block-building ska gå till, centers och edges!
+
+- cube rotations will be needed (X, Y, and Z), for algos and when manuvering the cube for solving.
+- Then two moves will be required to be implemented on the cube-state, r and R for instance.
+- Moves will be of type R, Rp, r, rp, F, Fp, f, fp etc.
+- Will need some kind of graphical representation - might be smart to do python for this reason?
+
+Cube state
+Color[6][16] - simple
+Transition-loops will be needed for all five moves and for each sticker (starting with someone that is affected). An example is 0 -> 0 -> 12 -> 0 for R, starting at UP.
+
+Languages:
+- Haskell: kul, intressant, svårt, vissa grejjer kommer bli sämre.
+- Python: king, enkelt.
+- Java: tråkigt, kommer bli bra kvalle.
+
+//Todo: fix some hardcoded parts so that we can solve all 6 faces
+create a dsl to desicribe an algorithm
+start looking at aftereffects
+
+
+Solving requires some sort of local search approach and to define an algorithm a DSL would be suitable. 
+
+Syntax:
+Needed states for initial algorithm:
+
+A inner block 1x1 of color C, correct position: (Inner, 1x1, C, Correct)
+An inner 2x1 block of color C, any position: (Inner, 2x1, C, Any)
+An inner 2x1 block of color C, correct position: (Inner, 2x1, C, Correct)
+An inner 3x1 block of color C, any position: (Inner, 2x1, C, Any)
+An inner 3x1 block of color C, correct position: (Inner, 2x1, C, Correct)
+An inner 3x3 block of color C, correct position: (Inner, 3x3, C, Correct)
+
+A 2x1 edge pair, any color combination, any position: (Edge, 2x1, _, Any)
+A 3x1 edge triple, any color combination, any position:  (Edge, 3x1, _, Any)
+A 3x1 edge triple, any color combination, stored:  (Edge, 3x1, _, Stored)
+
++ Add a requirement
+- Remove a requirement
+
+Example algorithm:
+
++(Inner, 1x1, D, Correct)
++(Inner, 2x1, D, Any)
++(Inner, 2x1, D, Correct),-(Inner, 2x1, D, Any)
++(Inner, 2x1, D, Any)
++(Inner, 2x1, D, Correct),-(Inner, 2x1, D, Any)
++(Inner, 3x1, D, Any)
++(Inner, 2x1, D, Correct),-(Inner, 2x1, D, Any)
++(Inner, 3x3, D, Correct),-(Inner, 2x1, D, Correct),-(Inner, 2x1, D, Correct),-(Inner, 1x1, D, Correct)
+
+
