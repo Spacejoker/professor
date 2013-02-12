@@ -41,21 +41,18 @@ class Imported_Algo():
 			return ' '
 	
 		#handle a change of requirements
-		
 		commands = split[1].split('|')
 		for cmd in commands:
-			print cmd
 			c = cmd[:-1].split('(')
 			rule = self.parse_rule(c[1])
 			if c[0] == "+":
 				self.rules.append(rule)
-				print "Add ", rule
 			else:
 				self.rules.remove(rule)
-				print "Remove ", rule
-		print "current rules: ", self.rules
+
 		#search for a way of making these requirements come true
-		
+		make_queue()	
+
 		return 'r'
 
 	def parse_rule(self, rule):
@@ -63,6 +60,7 @@ class Imported_Algo():
 		print parts
 		size = parts[1].split('x')
 		print size
+		print parts[3]
 		return (parts[0], (size[0],size[1]), parts[2], parts[3] == 'Correct')
 
 class Sample_Algo():

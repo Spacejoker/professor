@@ -19,6 +19,7 @@ Languages:
 
 //Todo: fix some hardcoded parts so that we can solve all 6 faces
 create a dsl to desicribe an algorithm
+implement usage of the dsl
 start looking at aftereffects
 
 
