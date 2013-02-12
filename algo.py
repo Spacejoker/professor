@@ -30,7 +30,7 @@ class Imported_Algo():
 			new_seq = split[1].split(',')
 			if split[0] == 'set_moves':
 				self.allowed_sequences = new_seq
-			else if split[0] == 'set_search_moves':
+			elif split[0] == 'set_search_moves':
 				self.search_moves = new_seq
 			print new_seq
 			split = self.algo_steps.popleft().split('#')
@@ -46,14 +46,24 @@ class Imported_Algo():
 		for cmd in commands:
 			print cmd
 			c = cmd[:-1].split('(')
+			rule = self.parse_rule(c[1])
 			if c[0] == "+":
-				print "Add ", c[1]
+				self.rules.append(rule)
+				print "Add ", rule
 			else:
-				print "Remove ", c[1]
-
+				self.rules.remove(rule)
+				print "Remove ", rule
+		print "current rules: ", self.rules
 		#search for a way of making these requirements come true
 		
 		return 'r'
+
+	def parse_rule(self, rule):
+		parts = rule.split(',')
+		print parts
+		size = parts[1].split('x')
+		print size
+		return (parts[0], (size[0],size[1]), parts[2], parts[3] == 'Correct')
 
 class Sample_Algo():
 	def __init__(self, cube):
