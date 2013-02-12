@@ -167,38 +167,29 @@ class Imported_Algo():
 		for face in range (0,6):
 			f = self.cube.state[face]
 			used = []
-			db = []	
+
 			stickers = self.get_stickers(f, 'D')
 			stickers = filter(lambda x: x in inner_3x3[0], stickers)
 		
 			#examine what we have on each side, one hit is enough since we never need 2 free 2x1 or 3x1 blocks in an incorrect position
 			#3x3 only D
 			#3x2
+			if face == Face.D:
+				self.check_case(inner_3x3, Block.inner_3x3, num_blocks, face, used, stickers)
+				self.check_case(inner_3x2, Block.inner_3x2, num_blocks, face, used, stickers)
 			#3x1
+			self.check_case(inner_3x1, Block.inner_3x1, num_blocks, face, used, stickers)
+
 			#2x2 only D
 			if face == Face.D:
-				for cand in inner_2x2:
-					if len(set(cand) & set(stickers)) == len(cand) and len(set(cand) & set(used)) == 0:
-						num_blocks[Block.inner_2x2][0] += 1
-						num_blocks[Block.inner_2x2][1] += 1
-						used.extend(cand)
-						print cand
+				self.check_case(inner_2x2, Block.inner_2x2, num_blocks, face, used, stickers)
 
 			#2x1
-			for cand in inner_2x1:
-				if len(set(cand) & set(stickers)) == len(cand) and len(set(cand) & set(used)) == 0:
-					num_blocks[Block.inner_2x1][1] += 1
-					if face == Face.D:
-						num_blocks[Block.inner_2x1][0] += 1
-					used.extend(cand)
+			self.check_case(inner_2x1, Block.inner_2x1, num_blocks, face, used, stickers)
 
 			#1x1 - only interesting on D
 			if face == Face.D:
-				for cand in inner_1x1:
-					if len(set(cand) & set(stickers)) == len(cand):# and len(set(cand) & set(used)) == 0:
-						num_blocks[Block.inner_1x1][0] += 1
-						num_blocks[Block.inner_1x1][1] += 1
-						used.extend(cand)
+				self.check_case(inner_1x1, Block.inner_1x1, num_blocks, face, used, stickers)
 					
 		if p:
 			print num_blocks
@@ -217,6 +208,14 @@ class Imported_Algo():
 
 		return True
 		#self.cube.state[face][sticker]
+
+	def check_case(self, cands, case, num_blocks, face, used, stickers):
+		for cand in cands:
+			if len(set(cand) & set(stickers)) == len(cand) and len(set(cand) & set(used)) == 0:
+				num_blocks[case][1] += 1
+				if face == Face.D:
+					num_blocks[case][0] += 1
+				used.extend(cand)
 
 	def get_stickers(self, face, color):
 		ret = []
