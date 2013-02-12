@@ -8,8 +8,8 @@ from cube import *
 from algo import Sample_Algo, Imported_Algo
 
 class Constants():
-	WINDOW_WIDTH = 450
-	WINDOW_HEIGHT = 600
+	WINDOW_WIDTH = 470
+	WINDOW_HEIGHT = 630
 	STICKER_SIZE = 30
 		
 class Scrambler():
@@ -36,14 +36,13 @@ class Graphics():
 	
 	def __init__(self):
 		self.window = pygame.display.set_mode((Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT)) 
-	
 	def draw_cube(self, cube):
 		for side in range(0, len(cube.state)):
 			for id, sticker in enumerate(cube.state[side]):
 				f = faces[side]
 				color = faces[sticker]
 				size = Constants.STICKER_SIZE
-				pygame.draw.rect(self.window, color.color, (f.position[0] + Helper.get_x(id)*size,f.position[1] + Helper.get_y(id)*size,size-1,size-1), 0)	
+				pygame.draw.rect(self.window, color.color, (f.position[0] + Helper.get_x(id)*size, f.position[1] + Helper.get_y(id)*size, size-1,size-1), 0)	
 				
 		pygame.display.flip() 
 

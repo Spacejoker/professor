@@ -2,6 +2,14 @@ from cube import *
 from collections import deque
 import random
 
+class Block:
+	inner_1x1 = 0 
+	inner_2x1 = 1
+	inner_2x2 = 2
+	inner_3x1 = 3
+	inner_3x3 = 4
+	inner_3x2 = 5
+
 class Imported_Algo():
 	def __init__(self, cube, filename):
 		self.cube = cube
@@ -53,13 +61,23 @@ class Imported_Algo():
 		#search for a way of making these requirements come true
 		self.make_queue()	
 
-		return 'r'
+		return ' '
 
 	def parse_rule(self, rule):
 		parts = rule.split(',')
 		parts = map(lambda x: x.strip(), parts)
-		size = parts[1].split('x')
-		return (parts[0], (size[0],size[1]), parts[2], parts[3] == 'Correct')
+		
+		m = {
+			'1x1' : Block.inner_1x1,
+			'2x1' : Block.inner_2x1,
+			'2x2' : Block.inner_2x2,
+			'3x1' : Block.inner_3x1,
+			'3x3' : Block.inner_3x3,
+			'3x2' : Block.inner_3x2
+		}
+
+		size = m[parts[1]]
+		return (parts[0], size, parts[2], parts[3] == 'Correct')
 
 	def make_queue(self):
 		que = deque()
@@ -92,12 +110,65 @@ class Imported_Algo():
 
 			if done == True :
 				for c in s:
-					self.queue.append(c)
+					self.queued_moves.append(c)
 				return
 
 			#continue the bfs
 			for m in mods:
 				que.append( seq + ' ' + m)
+	
+
+	def test_cube(self):
+		
+		#color by color, just D for now:
+		inner_1x1 = [[6],[7],[8],[11],[13],[16],[17],[18]]
+		inner_2x1 = [[6,7], [7,8], [8,13], [13,18], [6,11], [11,16],[16,17],[17,18]]
+		inner_2x2 = [[6,7,11], [7,8,13], [11,16,17], [13,17,18]]
+		inner_3x1 = [[6,7,8],[6,11,16],[16,17,18],[8,13,18]]
+		inner_3x3 = [[6,7,8,11,13,16,17,18]]
+		inner_3x2 = []
+
+		for sub in inner_3x1:
+			tmp = []
+			tmp.extend(inner_3x3[0])
+			
+			for c in sub:
+				tmp.remove(c)
+			inner_3x2.append(tmp)
+
+		#for each face, examine the stickers with the wanted color
+		for face in range (0,6):
+			f = self.cube.state[face]
+			
+			stickers = self.get_stickers(f, 'D')
+			stickers = filter(lambda x: x in inner_3x3[0], stickers)
+			print stickers, " are the stickers on face ", Turns[face]
+		
+			#examine what we have on each side, one hit is enough since we never need 2 free 2x1 or 3x1 blocks in an incorrect position
+			#3x3 only D
+			if face == Face.D:
+				print "face d!!!!"
+			#3x2
+			#3x1
+			#2x2 only D
+			#2x1
+			#1x1 - only interesting on D
+
+		print "and the current rules are: "
+		for r in self.rules:
+			print r[1]
+		
+		return True
+		#self.cube.state[face][sticker]
+
+	def get_stickers(self, face, color):
+		ret = []
+
+		for id, sticker in enumerate(face):
+			if sticker == Face_Lookup[color]:
+				ret.append(id)
+
+		return ret
 
 class Sample_Algo():
 	def __init__(self, cube):

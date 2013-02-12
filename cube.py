@@ -7,13 +7,18 @@ class Face: #enum
 	U = 3
 	R = 4
 	F = 5
-	
+Face_Lookup = {'D' : 0,	
+		'B' : 1,
+		'L' : 2,
+	'U' : 3,
+	'R' : 4,
+	'F' : 5 }
 class Face_Data():
 	def __init__(self, position, color):
 		self.position = position
 		self.color = color
 
-faces = [Face_Data((150,0), (40,40,40)), Face_Data((150, 150), (0, 255, 0)), Face_Data((0, 300), (255, 150, 0)), Face_Data((150, 300), (255, 255, 0)), Face_Data((300, 300), (255,0,0)), Face_Data((150, 450), (0,0, 255))]
+faces = [Face_Data((153,0), (40,40,40)), Face_Data((153, 153), (0, 255, 0)), Face_Data((0, 306), (255, 150, 0)), Face_Data((153, 306), (255, 255, 0)), Face_Data((306, 306), (255,0,0)), Face_Data((153, 459), (0,0, 255))]
 
 colors = []
 #Helper methods for conversion etc
