@@ -88,6 +88,15 @@ class Imported_Algo():
 		size = m[parts[1]]
 		return (parts[0], size, parts[2], parts[3] == 'Correct')
 
+	def rev_seq(self, s):
+		s.reverse()
+		for i, m in enumerate(s):
+			if(s[i][-1:] == '\''):
+				s[i] = m[:-1]
+			else:
+				s[i] = m + '\''
+		
+
 	def make_queue(self):
 		que = deque()
 		mods = self.allowed_sequences
@@ -104,24 +113,21 @@ class Imported_Algo():
 			s = seq.split(" ")
 			if len(s) > 5:
 				continue
-			compare = deepcopy(c.state)
+			#compare = deepcopy(c.state)
 			c.rotate(s)
 				
 			if self.test_cube(): 
 				done = True
-			c.state = compare
+				
+			#undo what we did to the mutable cube, then revert tho sequence to the correct one
+			self.rev_seq(s)
+			c.rotate(s)
+			
+			self.rev_seq(s)
 
-			#undo what we did to the mutable cube
-			#s.reverse()
-			#for i, m in enumerate(s):
-			#	if(s[i][-1:] == '\''):
-			#		s[i] = m[:-1]
-			#	else:
-			#		s[i] = m + '\''
-			#c.rotate(s)
-			for id, row in enumerate(c.state):
-				if(row != compare[id]):
-					print "Problem detected, ", s
+			#for id, row in enumerate(c.state):
+			#	if(row != compare[id]):
+			#		print "Problem detected, ", s
 
 			if done == True :
 				for c in s:
