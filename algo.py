@@ -1,6 +1,7 @@
 from cube import *
 from collections import deque
 import random
+from copy import copy, deepcopy
 
 class Block:
 	inner_1x1 = 0 
@@ -24,11 +25,7 @@ class Imported_Algo():
 	def get_remaining_steps(self):
 		return self.algo_steps
 
-	def next_move(self):
-		#if we have a prepared move in stock just feed that one
-		if len(self.queued_moves) > 0:
-			return self.queued_moves.popleft()
-	
+	def parse_algo(self):
 		#continue parsing the algorithm lines
 		next_line = self.algo_steps.popleft()
 		split = next_line.split('#')
@@ -57,11 +54,23 @@ class Imported_Algo():
 				self.rules.append(rule)
 			else:
 				self.rules.remove(rule)
-		print 'current rules', self.rules
-		#search for a way of making these requirements come true
-		self.make_queue()	
 
-		return ' '
+		print 'Next step in algo parsed, current rules are: ', self.rules
+
+	def next_move(self):
+		#if we have a prepared move in stock just feed that one
+		if self.test_cube():
+			print "no need to do anything"
+			return ' '
+
+		if len(self.queued_moves) == 0:
+			self.make_queue()
+
+		if len(self.queued_moves) > 0:
+			print "queue before move: ", self.queued_moves
+			return self.queued_moves.popleft()
+		else:
+			return ' '
 
 	def parse_rule(self, rule):
 		parts = rule.split(',')
@@ -84,7 +93,9 @@ class Imported_Algo():
 		mods = self.allowed_sequences
 		c = self.cube
 		done = False
-		
+		if self.test_cube():
+			print "no need to make queue, got skip"
+			return
 		for m in mods:
 			que.append(m)
 
@@ -93,24 +104,29 @@ class Imported_Algo():
 			s = seq.split(" ")
 			if len(s) > 5:
 				continue
-
+			compare = deepcopy(c.state)
 			c.rotate(s)
 				
 			if self.test_cube(): 
 				done = True
-	
+			c.state = compare
+
 			#undo what we did to the mutable cube
-			s.reverse()
-			for i, m in enumerate(s):
-				if(s[i][-1:] == '\''):
-					s[i] = m[:-1]
-				else:
-					s[i] = m + '\''
-			c.rotate(s)
+			#s.reverse()
+			#for i, m in enumerate(s):
+			#	if(s[i][-1:] == '\''):
+			#		s[i] = m[:-1]
+			#	else:
+			#		s[i] = m + '\''
+			#c.rotate(s)
+			for id, row in enumerate(c.state):
+				if(row != compare[id]):
+					print "Problem detected, ", s
 
 			if done == True :
 				for c in s:
 					self.queued_moves.append(c)
+				print "new queue: ", self.queued_moves
 				return
 
 			#continue the bfs
@@ -118,10 +134,10 @@ class Imported_Algo():
 				que.append( seq + ' ' + m)
 	
 
-	def test_cube(self):
+	def test_cube(self, p=False):
 		
 		#color by color, just D for now:
-		inner_1x1 = [[6],[7],[8],[11],[13],[16],[17],[18]]
+		inner_1x1 = [[7],[11],[13],[17]]
 		inner_2x1 = [[6,7], [7,8], [8,13], [13,18], [6,11], [11,16],[16,17],[17,18]]
 		inner_2x2 = [[6,7,11], [7,8,13], [11,16,17], [13,17,18]]
 		inner_3x1 = [[6,7,8],[6,11,16],[16,17,18],[8,13,18]]
@@ -137,27 +153,62 @@ class Imported_Algo():
 			inner_3x2.append(tmp)
 
 		#for each face, examine the stickers with the wanted color
+
+		num_blocks = []
+		for i in range(0,6):
+			num_blocks.append([0,0])
+
 		for face in range (0,6):
 			f = self.cube.state[face]
-			
+			used = []
+			db = []	
 			stickers = self.get_stickers(f, 'D')
 			stickers = filter(lambda x: x in inner_3x3[0], stickers)
-			print stickers, " are the stickers on face ", Turns[face]
 		
 			#examine what we have on each side, one hit is enough since we never need 2 free 2x1 or 3x1 blocks in an incorrect position
 			#3x3 only D
-			if face == Face.D:
-				print "face d!!!!"
 			#3x2
 			#3x1
 			#2x2 only D
-			#2x1
-			#1x1 - only interesting on D
+			if face == Face.D:
+				for cand in inner_2x2:
+					if len(set(cand) & set(stickers)) == len(cand) and len(set(cand) & set(used)) == 0:
+						num_blocks[Block.inner_2x2][0] += 1
+						num_blocks[Block.inner_2x2][1] += 1
+						used.extend(cand)
+						print cand
 
-		print "and the current rules are: "
-		for r in self.rules:
-			print r[1]
+			#2x1
+			for cand in inner_2x1:
+				if len(set(cand) & set(stickers)) == len(cand) and len(set(cand) & set(used)) == 0:
+					num_blocks[Block.inner_2x1][1] += 1
+					if face == Face.D:
+						num_blocks[Block.inner_2x1][0] += 1
+					used.extend(cand)
+
+			#1x1 - only interesting on D
+			if face == Face.D:
+				for cand in inner_1x1:
+					if len(set(cand) & set(stickers)) == len(cand):# and len(set(cand) & set(used)) == 0:
+						num_blocks[Block.inner_1x1][0] += 1
+						num_blocks[Block.inner_1x1][1] += 1
+						used.extend(cand)
+					
+		if p:
+			print num_blocks
 		
+		for r in self.rules:
+			corr_id = 1
+			if r[3]:
+				corr_id = 0
+			if( num_blocks[r[1]][corr_id] > 0):
+				num_blocks[r[1]][corr_id] -= 1
+				if(corr_id == 0):
+					num_blocks[r[1]][1] -= 1
+
+			else:
+				return False
+
 		return True
 		#self.cube.state[face][sticker]
 

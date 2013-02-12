@@ -89,7 +89,21 @@ def loop():
 				c.rotate(Scrambler.gen_scramble().split(' '))
 			if event.unicode == '9':
 				c = Cube()
-				algo = Sample_Algo(c)
+				algo = Imported_Algo(c, 'standard.algo')
+			if event.unicode == 'o':
+				print "Recalculating moves needed"
+				print "Rules to obey:"
+				for r in algo.rules:
+					print r
+				algo.queued_moves.clear()
+				algo.make_queue()
+			if event.unicode == 'e':
+				print algo.queued_moves
+			if event.unicode == 'a':
+				print "parsing next step in algo"
+				algo.parse_algo()
+			if event.unicode == '.':
+				algo.test_cube(True)
 			if event.unicode == 'p':
 				prim = not prim
 			if event.unicode == 'w':
