@@ -49,19 +49,55 @@ class Imported_Algo():
 				self.rules.append(rule)
 			else:
 				self.rules.remove(rule)
-
+		print 'current rules', self.rules
 		#search for a way of making these requirements come true
-		make_queue()	
+		self.make_queue()	
 
 		return 'r'
 
 	def parse_rule(self, rule):
 		parts = rule.split(',')
-		print parts
+		parts = map(lambda x: x.strip(), parts)
 		size = parts[1].split('x')
-		print size
-		print parts[3]
 		return (parts[0], (size[0],size[1]), parts[2], parts[3] == 'Correct')
+
+	def make_queue(self):
+		que = deque()
+		mods = self.allowed_sequences
+		c = self.cube
+		done = False
+		
+		for m in mods:
+			que.append(m)
+
+		while len(que) > 0:
+			seq = que.popleft()
+			s = seq.split(" ")
+			if len(s) > 5:
+				continue
+
+			c.rotate(s)
+				
+			if self.test_cube(): 
+				done = True
+	
+			#undo what we did to the mutable cube
+			s.reverse()
+			for i, m in enumerate(s):
+				if(s[i][-1:] == '\''):
+					s[i] = m[:-1]
+				else:
+					s[i] = m + '\''
+			c.rotate(s)
+
+			if done == True :
+				for c in s:
+					self.queue.append(c)
+				return
+
+			#continue the bfs
+			for m in mods:
+				que.append( seq + ' ' + m)
 
 class Sample_Algo():
 	def __init__(self, cube):
