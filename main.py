@@ -5,13 +5,13 @@ import time
 import itertools
 from pygame.locals import *
 from cube import *
-from algo import Imported_Algo
+from algo import Imported_Algo, Rule_Lookup
 
 class Constants():
-	WINDOW_WIDTH = 470
+	WINDOW_WIDTH = 1200
 	WINDOW_HEIGHT = 630
 	STICKER_SIZE = 30
-		
+
 class Scrambler():
 	@staticmethod	
 	def gen_scramble():
@@ -33,17 +33,45 @@ class Scrambler():
 		return scramble
 
 class Graphics():
-	
+
 	def __init__(self):
 		self.window = pygame.display.set_mode((Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT)) 
-	def draw_cube(self, cube):
+		self.font = pygame.font.SysFont("monospace", 15)
+
+	def draw_cube(self, cube, algo):
+
+		pygame.draw.rect(self.window, (0,0,0), (0,0,Constants.WINDOW_WIDTH,Constants.WINDOW_HEIGHT), 0)
+		#label = self.font.render("Prim: " + str(prim) , 1, (255,255,0))
+		#self.window.blit(label, (20,20))
+		#label = self.font.render("w: " + str(w) , 1, (255,255,0))
+		#self.window.blit(label, (20,40))
+
 		for side in range(0, len(cube.state)):
 			for id, sticker in enumerate(cube.state[side]):
 				f = faces[side]
 				color = faces[sticker]
 				size = Constants.STICKER_SIZE
 				pygame.draw.rect(self.window, color.color, (f.position[0] + Helper.get_x(id)*size, f.position[1] + Helper.get_y(id)*size, size-1,size-1), 0)	
-				
+		num = 1	
+		for step in algo.algo_steps:
+			if num > 7:
+				break
+			if step.split("#")[0] == "comment":
+				label = self.font.render(str(num) + ": " + str(step.split("#")[1]), 1, (255, 0,0))
+				self.window.blit(label, (500,100 + num*20))
+				num += 1
+		for id, rule in enumerate(algo.rules):
+			display = Rule_Lookup[rule[1]] + ", sticker " + str(rule[2]) + " on "
+			if rule[3] != None:
+				display += "face  " + str(Turns[rule[3]])
+			else:
+				display += " any face"
+
+			label = self.font.render(display, 1, (255, 0,0))
+			self.window.blit(label, (800,120 + id*20))
+		label = self.font.render("Allowed: " + str(algo.allowed_sequences), 1, (255, 255,255))
+		self.window.blit(label, (400, 20))
+
 		pygame.display.flip() 
 
 #Main application loop
@@ -51,25 +79,20 @@ def loop():
 	pygame.init() 
 	c = Cube()
 	g = Graphics()
-	
+
 	running = True
 	prim = False
 	w = False
 
 	algo = Imported_Algo(c, 'standard.algo')
 	font = pygame.font.SysFont("monospace", 15)
+	run_to_comment = False
 
 	while running: 
-		g.draw_cube(c)
-
-		pygame.draw.rect(g.window, (0,0,0), (0,0,200,200), 0)
-		label = font.render("Prim: " + str(prim) , 1, (255,255,0))
-		g.window.blit(label, (20,20))
-		label = font.render("w: " + str(w) , 1, (255,255,0))
-		g.window.blit(label, (20,40))
+		g.draw_cube(c, algo)
 		keymap = {}
 		event = pygame.event.wait()
-		
+
 		if event.type == pygame.KEYDOWN:
 			#handles dvorak
 			keymap[event.scancode] = event.unicode
@@ -80,7 +103,26 @@ def loop():
 			if(prim):
 				cmd += 'p'
 			c.rotate([cmd])
-			
+
+			if event.unicode >= '1' and event.unicode <= '7':
+				algo.parse_algo()
+				next_move = ' '
+				done = False
+				while True:
+					c.rotate([next_move])
+					next_move = algo.next_move()
+					g.draw_cube(c, algo)
+					if next_move == None or next_move == ' ' or next_move == '' and (algo.queued_moves) == 0:
+						if done:
+							print "Done with this auto-step, back to manual!"
+							break;
+						if algo.algo_steps[0].split("#")[0] == 'comment':
+							done = True
+						else:
+							algo.parse_algo()
+							g.draw_cube(c, algo)
+					time.sleep(0.1)
+
 			if event.unicode == ' ':
 				print "Next move: ", algo.next_move()
 			if event.unicode == 'q':
@@ -119,9 +161,9 @@ def loop():
 				w = not w
 			if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
 				running = False
-		
+
 	pygame.quit()
 
 if __name__ == '__main__':
 	loop()
-	
+

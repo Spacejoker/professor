@@ -13,6 +13,15 @@ class Block:
 	inner_3x2 = 5
 	inner_1x1_corner = 6
 
+Rule_Lookup = {
+		0 : 'inner_1x1',
+		1 : 'inner_2x1',
+		2 : 'inner_2x2',
+		3 : 'inner_3x1',
+		4 : 'inner_3x3',
+		5: 'inner_3x2',
+		6 : 'inner_1x1_corner'
+	}
 class Imported_Algo():
 	def __init__(self, cube, filename):
 		self.cube = cube
@@ -265,6 +274,8 @@ class Imported_Algo():
 			else:
 				success = False
 				for face in range(0,6):
+					if face == req_face: #any means not on the solved side
+						continue
 					if num_blocks[block_type][face] > 0:
 						num_blocks[block_type][face] -= 1
 						success = True
@@ -293,6 +304,9 @@ class Imported_Algo():
 						break
 			if success:
 				num_blocks[case][face] += 1
+				if case == self.inner_3x1:
+					num_blocks[self.inner_2x1][face] += 1
+					num_blocks[self.inner_1x1][face] += 1
 				used.extend(cand)
 				return
 
