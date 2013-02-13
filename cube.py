@@ -12,7 +12,9 @@ Face_Lookup = {'D' : 0,
 		'L' : 2,
 	'U' : 3,
 	'R' : 4,
-	'F' : 5 }
+	'F' : 5,
+	'Any' : None
+	}
 class Face_Data():
 	def __init__(self, position, color):
 		self.position = position

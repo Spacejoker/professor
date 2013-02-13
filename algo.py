@@ -33,11 +33,12 @@ class Imported_Algo():
 
 		#handle setting up of allowed  moves
 		while split[0] in ['set_moves', 'set_search_moves']:
-			new_seq = split[1].split(',')
 			if split[0] == 'set_moves':
+				new_seq = split[1].split(',')
 				self.allowed_sequences = new_seq
 			elif split[0] == 'set_search_moves':
-				self.search_moves = new_seq
+				face = split[1].strip()
+				self.search_moves = face
 			print new_seq
 			split = self.algo_steps.popleft().split('#')
 
@@ -45,7 +46,7 @@ class Imported_Algo():
 		if split[0] == 'done':
 			print 'algorithm done, you should be happy now'
 			return ' '
-	
+
 		#handle a change of requirements
 		commands = split[1].split('|')
 		for cmd in commands:
@@ -76,18 +77,18 @@ class Imported_Algo():
 	def parse_rule(self, rule):
 		parts = rule.split(',')
 		parts = map(lambda x: x.strip(), parts)
-		
+
 		m = {
-			'1x1' : Block.inner_1x1,
-			'2x1' : Block.inner_2x1,
-			'2x2' : Block.inner_2x2,
-			'3x1' : Block.inner_3x1,
-			'3x3' : Block.inner_3x3,
-			'3x2' : Block.inner_3x2
-		}
+				'1x1' : Block.inner_1x1,
+				'2x1' : Block.inner_2x1,
+				'2x2' : Block.inner_2x2,
+				'3x1' : Block.inner_3x1,
+				'3x3' : Block.inner_3x3,
+				'3x2' : Block.inner_3x2
+				}
 
 		size = m[parts[1]]
-		return (parts[0], size, parts[2], parts[3] == 'Correct')
+		return (parts[0], size, parts[2], Face_Lookup[parts[3]])
 
 	def rev_seq(self, s):
 		s.reverse()
@@ -96,62 +97,87 @@ class Imported_Algo():
 				s[i] = m[:-1]
 			else:
 				s[i] = m + '\''
-		
+
 
 	def make_queue(self):
-		que = deque()
 		mods = self.allowed_sequences
 		c = self.cube
-		done = False
 		if self.test_cube():
 			print "no need to make queue, got skip"
 			return
-		for m in mods:
-			que.append(m)
-		cnt = 0
-		t0 = time.time()
-		test_cube_time = 0
-		while len(que) > 0:
-			cnt = cnt + 1
-			if cnt % 1000 == 0:
-				print cnt
-			seq = que.popleft()
-			s = seq.split(" ")
-			if len(s) > 4:
-				print "breaking"
-				print "time to break: ", (time.time() - t0), " seconds."
-				print "Time spent in:"
-				pirnt "test_cube(): ", test_cube_time
-				break
 		
-			c.rotate(s)
-			t1 = time.time()
-			if self.test_cube(): 
-				done = True
-			test_cube_time += time.time() - t1
-			#undo what we did to the mutable cube, then revert tho sequence to the correct one
-			self.rev_seq(s)
-			c.rotate(s)
-			
-			self.rev_seq(s)
-
-			#for id, row in enumerate(c.state):
-			#	if(row != compare[id]):
-			#		print "Problem detected, ", s
-
-			if done == True :
-				for c in s:
-					self.queued_moves.append(c)
-				print "new queue: ", self.queued_moves
-				return
-
-			#continue the bfs
+		while True:
+			que = deque()
+			done = False
 			for m in mods:
-				que.append( seq + ' ' + m)
-	
+				que.append(m)
+			cnt = 0
+			t0 = time.time()
+			test_cube_time = 0
+			rot_time = 0
+
+			while len(que) > 0:
+				cnt = cnt + 1
+				if cnt % 1000 == 0:
+					print cnt
+				seq = que.popleft()
+				s = seq.split(" ")
+				if cnt > 10000:
+					print "breaking"
+					print "time to break: ", (time.time() - t0), " seconds."
+					print "Time spent in:"
+					print "test_cube(): ", test_cube_time
+					print "c.rotate(s): ", rot_time
+					break
+				t1 = time.time()
+				c.rotate(s)
+				rot_time += time.time() - t1
+
+				t1 = time.time()
+
+				if self.test_cube(): 
+					done = True
+				test_cube_time += time.time() - t1
+				#undo what we did to the mutable cube, then revert tho sequence to the correct one
+				self.rev_seq(s)
+
+				t1 = time.time()
+				c.rotate(s)
+				rot_time += time.time() - t1
+
+				self.rev_seq(s)
+
+				#for id, row in enumerate(c.state):
+				#	if(row != compare[id]):
+				#		print "Problem detected, ", s
+
+				if done == True :
+					for c in s:
+						self.queued_moves.append(c)
+					print "new queue: ", self.queued_moves
+					return
+
+				#continue the bfs
+				for m in mods:
+					que.append( seq + ' ' + m)
+			#the search found nothing, now fall back on the search-moves:
+			search_cands = self.get_faces_with_inner_color('D')
+			move = search_cands[random.randrange(0, len(search_cands))]
+
+			print "performing search move:", move
+			self.queued_moves.append(move)
+			return
+	def get_faces_with_inner_color(self, color):
+		ret = []
+		for face_id, face in enumerate(self.cube.state):
+			for sticker in [6,7,8,11,13,16,17,18]: 
+				if face[sticker] == Face_Lookup[color]:
+					ret.append(Turns[face_id])
+		return ret
+			
 	#verifies if the cube satisfies all rules in its current state
 	def test_cube(self, p=False):
-		
+
 		#color by color, just D for now:
 		inner_1x1 = [[7],[11],[13],[17]]
 		inner_2x1 = [[6,7], [7,8], [8,13], [13,18], [6,11], [11,16],[16,17],[17,18]]
@@ -159,12 +185,12 @@ class Imported_Algo():
 		inner_3x1 = [[6,7,8],[6,11,16],[16,17,18],[8,13,18]]
 		inner_3x3 = [[6,7,8,11,13,16,17,18]]
 		inner_3x2 = []
-		
+
 		#building the 3x2 blocks are esier like this
 		for sub in inner_3x1:
 			tmp = []
 			tmp.extend(inner_3x3[0])
-			
+
 			for c in sub:
 				tmp.remove(c)
 			inner_3x2.append(tmp)
@@ -183,7 +209,7 @@ class Imported_Algo():
 
 			stickers = self.get_stickers(f, color )
 			stickers = filter(lambda x: x in inner_3x3[0], stickers)
-		
+
 			#examine what we have on each side, one hit is enough since we never need 2 free 2x1 or 3x1 blocks in an incorrect position
 			#3x3 and 3x2, only on d-face
 			self.check_case(inner_3x3, Block.inner_3x3, num_blocks, face, used, stickers)
@@ -200,17 +226,17 @@ class Imported_Algo():
 				print "Used stuff: ", used
 			#1x1 - only interesting on correct side
 			self.check_case(inner_1x1, Block.inner_1x1, num_blocks, face, used, stickers)
-					
+
 		if p:
 			print num_blocks
-		
+
 		for r in self.rules:
 			req_face = Face_Lookup[r[2]]
 			block_type = r[1]
-			needs_correct_face = r[3]
-			if needs_correct_face:
-				if( num_blocks[block_type][req_face] > 0):
-					num_blocks[block_type][req_face] -= 1
+			needs_face = r[3]
+			if needs_face != None:
+				if( num_blocks[block_type][needs_face] > 0):
+					num_blocks[block_type][needs_face] -= 1
 				else:
 					return False
 			else:
@@ -237,7 +263,7 @@ class Imported_Algo():
 				if not found:
 					success = False
 					break
-				
+
 				for b in used:
 					if a == b:
 						success = False
@@ -264,9 +290,9 @@ class Sample_Algo():
 	def __init__(self, cube):
 		self.cube = cube
 		self.steps = [[((Face.D,7),Face.D)], 
-			[((Face.D, 6), Face.D)],
-			[((Face.D, 11), Face.D)],
-			[((Face.D, 8), Face.D), ((Face.D, 13), Face.D)],]
+				[((Face.D, 6), Face.D)],
+				[((Face.D, 11), Face.D)],
+				[((Face.D, 8), Face.D), ((Face.D, 13), Face.D)],]
 		self.done = []
 		self.queue = deque()
 
@@ -292,7 +318,7 @@ class Sample_Algo():
 			if len(s) > 5:
 				continue
 			c.rotate(s)
-				
+
 			if self.test_cube(self.done) and self.test_cube(self.steps[0]):
 				print "already done: ", self.done
 				done = True
@@ -312,7 +338,7 @@ class Sample_Algo():
 			for m in mods:
 				que.append( seq + ' ' + m)
 		print "found sequence ", que
-		
+
 	def next_move(self):
 		print "queue: ", self.queue
 		if len(self.queue) > 0:
@@ -329,6 +355,6 @@ class Sample_Algo():
 			else:
 				print "done"
 				self.queue.append(" ")
-				
+
 		return self.queue.popleft()
-	
+

@@ -1,13 +1,14 @@
-set_moves#r,f,l,u,d,b,R,F,L,U,D,B
-set_search_moves#u,U,d,R,F
-req#+(Inner, 1x1, D, Correct)
+set_moves#r,f,l,u,d,b,U,D,R,F,L,B
+set_search_moves#D
+req#+(Inner, 1x1, D, D)
 req#+(Inner, 2x1, D, Any)
-req#+(Inner, 2x2, D, Correct)|-(Inner, 2x1, D, Any)|-(Inner, 1x1, D, Correct)
+req#+(Inner, 2x1, D, U)|-(Inner, 2x1, D, Any)
+req#+(Inner, 2x2, D, D)|-(Inner, 2x1, D, U)|-(Inner, 1x1, D, D)
 req#+(Inner, 2x1, D, Any)
-req#+(Inner, 3x2, D, Correct)|-(Inner, 2x1, D, Any)|-(Inner, 2x2, D, Correct)
+req#+(Inner, 3x2, D, D)|-(Inner, 2x1, D, Any)|-(Inner, 2x2, D, D)
 req#+(Inner, 2x1, D, Any)
 req#+(Inner, 3x1, D, Any)|-(Inner, 2x1, D, Any)
-req#+(Inner, 3x3, D, Correct)|-(Inner, 3x1, D, Any)|-(Inner, 3x2, D, Correct)
-req#+(Inner, 1x1, U, Correct)
+req#+(Inner, 3x3, D, D)|-(Inner, 3x1, D, Any)|-(Inner, 3x2, D, D)
+req#+(Inner, 1x1, U, D)
 done#
 
