@@ -5,7 +5,7 @@ import time
 import itertools
 from pygame.locals import *
 from cube import *
-from algo import Sample_Algo, Imported_Algo
+from algo import Imported_Algo
 
 class Constants():
 	WINDOW_WIDTH = 470
@@ -24,7 +24,7 @@ class Scrambler():
 			if(mod % 3 == 1):
 				turn = turn + 'w'
 			if(mod >3):
-				turn += '\''
+				turn += 'p'
 			scramble += turn  + " "
 		f = open('scramble.txt', 'w')
 		f.write(scramble)
@@ -78,15 +78,21 @@ def loop():
 				cmd = cmd.upper()
 				cmd += 'w'
 			if(prim):
-				cmd += '\''
+				cmd += 'p'
 			c.rotate([cmd])
 			
 			if event.unicode == ' ':
 				print "Next move: ", algo.next_move()
 			if event.unicode == 'q':
-				c.rotate(algo.next_move())
+				c.rotate([algo.next_move()])
 			if event.unicode == '0':
 				c.rotate(Scrambler.gen_scramble().split(' '))
+			if event.unicode == '`':
+				while(len(algo.queued_moves) > 0):
+					c.rotate(algo.next_move())
+			if event.unicode == '8':
+				c = Cube()
+				algo = Imported_Algo(c, 'top.algo')
 			if event.unicode == '9':
 				c = Cube()
 				algo = Imported_Algo(c, 'standard.algo')
@@ -107,7 +113,7 @@ def loop():
 				algo.test_cube(True)
 				diff = time.time() - t
 				print "time passed: ", diff
-			if event.unicode == 'p':
+			if event.unicode == 'y':
 				prim = not prim
 			if event.unicode == 'w':
 				w = not w

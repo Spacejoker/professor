@@ -1,4 +1,4 @@
-set_moves#r,f,l,u,d,b,U,D,R,F,L,B
+set_moves#r,f,l,u,d,b,U,D,R,F,L,B,rp,fp,lp,up,dp,bp,Dp
 set_search_moves#D
 req#+(Inner, 1x1, D, D)
 req#+(Inner, 2x1, D, Any)
@@ -9,6 +9,19 @@ req#+(Inner, 3x2, D, D)|-(Inner, 2x1, D, Any)|-(Inner, 2x2, D, D)
 req#+(Inner, 2x1, D, Any)
 req#+(Inner, 3x1, D, Any)|-(Inner, 2x1, D, Any)
 req#+(Inner, 3x3, D, D)|-(Inner, 3x1, D, Any)|-(Inner, 3x2, D, D)
-req#+(Inner, 1x1, U, D)
+set_moves#r U rp,rp U r, b U bp,bp U b,fp U f,F,R,L,B,Fp,Rp,Lp,Bp
+set_search_moves#U
+req#+(Inner, 1x1, U, U)
+req#+(Inner, 2x1, U, Any)
+req#+(Inner, 2x2, U, U)|-(Inner, 1x1, U, U)|-(Inner, 2x1, U, Any)
+set_moves#F,Fp,L,Lp,B,Bp,R,Rp,u,up,d,dp#block building for top layer
+req#+(Inner, 2x1, U, Any)
+set_moves#r U rp,rp U r, b U bp,bp U b,fp U f,F,R,L,B,U,Up # push blocks to top
+req#+(Inner, 3x2, U, U)|-(Inner, 2x1, U, Any)|-(Inner, 2x2, U, U)
+set_moves#F,Fp,L,Lp,B,Bp,R,Rp,u,up,d,dp#block building for top layer
+req#+(Inner, 2x1, U, Any)
+req#+(Inner, 3x1, U, Any)|-(Inner, 2x1, U, Any)
+req#+(Inner, 3x1, U, F)|-(Inner, 3x1, U, Any)
+set_moves#r U U rp,lp U U l,F,U,Up# push 3x1 block to top
+req#+(Inner, 3x3, U, U)|-(Inner, 3x1, U, F)|-(Inner, 3x2, U, U)
 done#
-

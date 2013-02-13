@@ -1,3 +1,5 @@
+import itertools
+
 #Provide a mapping from notation to code
 Turns = ['D', 'B', 'L', 'U', 'R', 'F']
 class Face: #enum
@@ -53,8 +55,6 @@ class Chain_Generator():
 	@staticmethod
 	def get_chain(command):
 		ret = []
-		if( command[-1:] == '\''):
-			return itertools.chain(Chain_Generator.get_chain(command[:-1]),Chain_Generator.get_chain(command[:-1]),Chain_Generator.get_chain(command[:-1]))
 			
 		if command == 'R': 
 			ret = Chain_Generator.R_chain()
@@ -191,13 +191,14 @@ class Cube():
 		for c in commands:
 			c = str(c)
 			backwards = False
-			if(c[-1:] == '\''):
+			if(c[-1:] == 'p'):
 				backwards = True
 				c = c[:-1]
 			chain = []
 			if( c[-1:] == 'w'):
 				chain.extend(Chain_Generator.get_chain(c[:1].lower()))	
-			chain.extend( Chain_Generator.get_chain(c[:1]) )
+				c = c[-1:]
+			chain.extend( Chain_Generator.get_chain(c) )
 			if chain == None:
 				continue
 			if(backwards):

@@ -2,7 +2,7 @@ from cube import *
 from collections import deque
 import random
 from copy import copy, deepcopy
-import time
+import time	
 
 class Block:
 	inner_1x1 = 0 
@@ -22,6 +22,23 @@ class Imported_Algo():
 		self.allowed_sequences = []
 		self.rules = []
 		self.queued_moves = deque()
+	
+		#build patterns to recognize
+		self.inner_1x1 = [[7],[11],[13],[17]]
+		self.inner_2x1 = [[6,7], [7,8], [8,13], [13,18], [6,11], [11,16],[16,17],[17,18]]
+		self.inner_2x2 = [[6,7,11], [7,8,13], [11,16,17], [13,17,18]]
+		self.inner_3x1 = [[6,7,8],[6,11,16],[16,17,18],[8,13,18]]
+		self.inner_3x3 = [[6,7,8,11,13,16,17,18]]
+		self.inner_3x2 = []
+
+		#building the 3x2 blocks are esier like this
+		for sub in self.inner_3x1:
+			tmp = []
+			tmp.extend(self.inner_3x3[0])
+
+			for c in sub:
+				tmp.remove(c)
+			self.inner_3x2.append(tmp)
 
 	def get_remaining_steps(self):
 		return self.algo_steps
@@ -36,10 +53,10 @@ class Imported_Algo():
 			if split[0] == 'set_moves':
 				new_seq = split[1].split(',')
 				self.allowed_sequences = new_seq
+				print new_seq
 			elif split[0] == 'set_search_moves':
 				face = split[1].strip()
 				self.search_moves = face
-			print new_seq
 			split = self.algo_steps.popleft().split('#')
 
 
@@ -70,7 +87,9 @@ class Imported_Algo():
 
 		if len(self.queued_moves) > 0:
 			print "queue before move: ", self.queued_moves
-			return self.queued_moves.popleft()
+			pop = self.queued_moves.popleft()
+			print 'returning ', pop
+			return pop
 		else:
 			return ' '
 
@@ -93,15 +112,16 @@ class Imported_Algo():
 	def rev_seq(self, s):
 		s.reverse()
 		for i, m in enumerate(s):
-			if(s[i][-1:] == '\''):
+			if(s[i][-1:] == 'p'):
 				s[i] = m[:-1]
 			else:
-				s[i] = m + '\''
+				s[i] = m + 'p'
 
 
 	def make_queue(self):
 		mods = self.allowed_sequences
 		c = self.cube
+		print mods
 		if self.test_cube():
 			print "no need to make queue, got skip"
 			return
@@ -161,12 +181,13 @@ class Imported_Algo():
 				for m in mods:
 					que.append( seq + ' ' + m)
 			#the search found nothing, now fall back on the search-moves:
-			search_cands = self.get_faces_with_inner_color('D')
+			search_cands = self.get_faces_with_inner_color(self.search_moves)
 			move = search_cands[random.randrange(0, len(search_cands))]
 
 			print "performing search move:", move
 			self.queued_moves.append(move)
 			return
+
 	def get_faces_with_inner_color(self, color):
 		ret = []
 		for face_id, face in enumerate(self.cube.state):
@@ -178,60 +199,51 @@ class Imported_Algo():
 	#verifies if the cube satisfies all rules in its current state
 	def test_cube(self, p=False):
 
-		#color by color, just D for now:
-		inner_1x1 = [[7],[11],[13],[17]]
-		inner_2x1 = [[6,7], [7,8], [8,13], [13,18], [6,11], [11,16],[16,17],[17,18]]
-		inner_2x2 = [[6,7,11], [7,8,13], [11,16,17], [13,17,18]]
-		inner_3x1 = [[6,7,8],[6,11,16],[16,17,18],[8,13,18]]
-		inner_3x3 = [[6,7,8,11,13,16,17,18]]
-		inner_3x2 = []
-
-		#building the 3x2 blocks are esier like this
-		for sub in inner_3x1:
-			tmp = []
-			tmp.extend(inner_3x3[0])
-
-			for c in sub:
-				tmp.remove(c)
-			inner_3x2.append(tmp)
-
+		for color in Turns:
+			ok = self.test_color(color, p)
+			if not ok:
+				return False
+		return True
 		#for each face, examine what patterns they have in each color
-
 		#TODO: handle pattern recognizion for each color
-		#color-block
+
+	def test_color(self, color, p):
 		num_blocks = []
 		for i in range(0,6):
 			num_blocks.append([0,0,0,0,0,0])
-		color = 'D'
 		for face in range (0,6):
 			f = self.cube.state[face]
 			used = []
 
 			stickers = self.get_stickers(f, color )
-			stickers = filter(lambda x: x in inner_3x3[0], stickers)
+			stickers = filter(lambda x: x in self.inner_3x3[0], stickers)
 
 			#examine what we have on each side, one hit is enough since we never need 2 free 2x1 or 3x1 blocks in an incorrect position
 			#3x3 and 3x2, only on d-face
-			self.check_case(inner_3x3, Block.inner_3x3, num_blocks, face, used, stickers)
-			self.check_case(inner_3x2, Block.inner_3x2, num_blocks, face, used, stickers)
+			self.check_case(self.inner_3x3, Block.inner_3x3, num_blocks, face, used, stickers)
+			self.check_case(self.inner_3x2, Block.inner_3x2, num_blocks, face, used, stickers)
 			#3x1
-			self.check_case(inner_3x1, Block.inner_3x1, num_blocks, face, used, stickers)
+			self.check_case(self.inner_3x1, Block.inner_3x1, num_blocks, face, used, stickers)
 
 			#2x2 only D
-			self.check_case(inner_2x2, Block.inner_2x2, num_blocks, face, used, stickers)
+			self.check_case(self.inner_2x2, Block.inner_2x2, num_blocks, face, used, stickers)
 
 			#2x1
-			self.check_case(inner_2x1, Block.inner_2x1, num_blocks, face, used, stickers)
+			self.check_case(self.inner_2x1, Block.inner_2x1, num_blocks, face, used, stickers)
 			if p:
-				print "Used stuff: ", used
+				print "Face is ", face, ", Used stuff: ", used
 			#1x1 - only interesting on correct side
-			self.check_case(inner_1x1, Block.inner_1x1, num_blocks, face, used, stickers)
+			self.check_case(self.inner_1x1, Block.inner_1x1, num_blocks, face, used, stickers)
 
 		if p:
-			print num_blocks
+			print "Color: ", color, ", num_blocks: ", num_blocks
 
 		for r in self.rules:
 			req_face = Face_Lookup[r[2]]
+			
+			if r[2] != color:
+				continue
+			
 			block_type = r[1]
 			needs_face = r[3]
 			if needs_face != None:
@@ -285,76 +297,4 @@ class Imported_Algo():
 				ret.append(id)
 
 		return ret
-
-class Sample_Algo():
-	def __init__(self, cube):
-		self.cube = cube
-		self.steps = [[((Face.D,7),Face.D)], 
-				[((Face.D, 6), Face.D)],
-				[((Face.D, 11), Face.D)],
-				[((Face.D, 8), Face.D), ((Face.D, 13), Face.D)],]
-		self.done = []
-		self.queue = deque()
-
-	def test_cube(self, done):
-		c = self.cube
-		for item in done:
-			#print item
-			if self.cube.get(item[0]) != item[1]:
-				return False
-		return True
-
-	def make_queue(self):
-		print "making queue, total target is ", self.done
-		que = deque()
-		mods = ['r','f','l','u','d','b','D']
-		c = self.cube
-		done = False
-		for m in mods:
-			que.append(m)
-		while len(que) > 0:
-			seq = que.popleft()
-			s = seq.split(" ")
-			if len(s) > 5:
-				continue
-			c.rotate(s)
-
-			if self.test_cube(self.done) and self.test_cube(self.steps[0]):
-				print "already done: ", self.done
-				done = True
-
-			s.reverse()
-			for i, m in enumerate(s):
-				if(s[i][-1:] == '\''):
-					s[i] = m[:-1]
-				else:
-					s[i] = m + '\''
-			c.rotate(s)
-
-			if done == True :
-				for c in s:
-					self.queue.append(c)
-				return
-			for m in mods:
-				que.append( seq + ' ' + m)
-		print "found sequence ", que
-
-	def next_move(self):
-		print "queue: ", self.queue
-		if len(self.queue) > 0:
-			return self.queue.popleft()
-		else:
-			print self.steps[0]
-			self.done.extend(self.steps[0])
-			if self.steps > 0:
-				while len(self.queue) == 0:
-					self.make_queue()
-					if len(self.queue) == 0:
-						self.cube.rotate([Turns[random.randint(0,5)]])
-				self.steps = self.steps[1:]
-			else:
-				print "done"
-				self.queue.append(" ")
-
-		return self.queue.popleft()
 
