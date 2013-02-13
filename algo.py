@@ -110,6 +110,7 @@ class Imported_Algo():
 			que.append(m)
 		cnt = 0
 		t0 = time.time()
+		test_cube_time = 0
 		while len(que) > 0:
 			cnt = cnt + 1
 			if cnt % 1000 == 0:
@@ -119,13 +120,15 @@ class Imported_Algo():
 			if len(s) > 4:
 				print "breaking"
 				print "time to break: ", (time.time() - t0), " seconds."
+				print "Time spent in:"
+				pirnt "test_cube(): ", test_cube_time
 				break
 		
 			c.rotate(s)
-				
+			t1 = time.time()
 			if self.test_cube(): 
 				done = True
-				
+			test_cube_time += time.time() - t1
 			#undo what we did to the mutable cube, then revert tho sequence to the correct one
 			self.rev_seq(s)
 			c.rotate(s)
