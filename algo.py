@@ -108,11 +108,17 @@ class Imported_Algo():
 			return
 		for m in mods:
 			que.append(m)
-
+		cnt = 0
+		t0 = time.time()
 		while len(que) > 0:
+			cnt = cnt + 1
+			if cnt % 1000 == 0:
+				print cnt
 			seq = que.popleft()
 			s = seq.split(" ")
 			if len(s) > 4:
+				print "breaking"
+				print "time to break: ", (time.time() - t0), " seconds."
 				break
 		
 			c.rotate(s)
@@ -218,10 +224,30 @@ class Imported_Algo():
 
 	def check_case(self, cands, case, num_blocks, face, used, stickers):
 		for cand in cands:
-			if len(set(cand) & set(stickers)) == len(cand) and len(set(cand) & set(used)) == 0:
+			success = True
+			for a in cand:
+				found = False
+				for b in stickers:
+					if a == b:
+						found = True
+						break;
+				if not found:
+					success = False
+					break
+				
+				for b in used:
+					if a == b:
+						success = False
+						break
+			if success:
 				num_blocks[case][face] += 1
 				used.extend(cand)
+				return
 
+		#for cand in cands:
+		#	if len(set(cand) & set(stickers)) == len(cand) and len(set(cand) & set(used)) == 0:
+		#		num_blocks[case][face] += 1
+		#		used.extend(cand)
 	def get_stickers(self, face, color):
 		ret = []
 
