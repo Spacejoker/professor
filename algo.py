@@ -11,6 +11,7 @@ class Block:
 	inner_3x1 = 3
 	inner_3x3 = 4
 	inner_3x2 = 5
+	inner_1x1_corner = 6
 
 class Imported_Algo():
 	def __init__(self, cube, filename):
@@ -30,8 +31,9 @@ class Imported_Algo():
 		self.inner_3x1 = [[6,7,8],[6,11,16],[16,17,18],[8,13,18]]
 		self.inner_3x3 = [[6,7,8,11,13,16,17,18]]
 		self.inner_3x2 = []
+		self.inner_1x1_corner = [[6],[8],[16],[18]]
 
-		#building the 3x2 blocks are esier like this
+		#building the 3x2 blocks are easier like this
 		for sub in self.inner_3x1:
 			tmp = []
 			tmp.extend(self.inner_3x3[0])
@@ -49,7 +51,7 @@ class Imported_Algo():
 		split = next_line.split('#')
 
 		#handle setting up of allowed  moves
-		while split[0] in ['set_moves', 'set_search_moves']:
+		while split[0] in ['set_moves', 'set_search_moves', 'comment']:
 			if split[0] == 'set_moves':
 				new_seq = split[1].split(',')
 				self.allowed_sequences = new_seq
@@ -57,6 +59,9 @@ class Imported_Algo():
 			elif split[0] == 'set_search_moves':
 				face = split[1].strip()
 				self.search_moves = face
+			elif split[0] == 'comment':
+				pass
+
 			split = self.algo_steps.popleft().split('#')
 
 
@@ -72,7 +77,11 @@ class Imported_Algo():
 			if c[0] == "+":
 				self.rules.append(rule)
 			else:
-				self.rules.remove(rule)
+				try:
+					self.rules.remove(rule)
+				except:
+					raise NameError("Rule is incorrect, cannot remove:" + str(rule))
+					
 
 		print 'Next step in algo parsed, current rules are: ', self.rules
 
@@ -103,7 +112,8 @@ class Imported_Algo():
 				'2x2' : Block.inner_2x2,
 				'3x1' : Block.inner_3x1,
 				'3x3' : Block.inner_3x3,
-				'3x2' : Block.inner_3x2
+				'3x2' : Block.inner_3x2,
+				'1x1_corner' : Block.inner_1x1_corner
 				}
 
 		size = m[parts[1]]
@@ -209,8 +219,8 @@ class Imported_Algo():
 
 	def test_color(self, color, p):
 		num_blocks = []
-		for i in range(0,6):
-			num_blocks.append([0,0,0,0,0,0])
+		for i in range(0,7):
+			num_blocks.append([0,0,0,0,0,0,0])
 		for face in range (0,6):
 			f = self.cube.state[face]
 			used = []
@@ -234,6 +244,7 @@ class Imported_Algo():
 				print "Face is ", face, ", Used stuff: ", used
 			#1x1 - only interesting on correct side
 			self.check_case(self.inner_1x1, Block.inner_1x1, num_blocks, face, used, stickers)
+			self.check_case(self.inner_1x1_corner, Block.inner_1x1_corner, num_blocks, face, used, stickers)
 
 		if p:
 			print "Color: ", color, ", num_blocks: ", num_blocks
