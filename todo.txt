@@ -56,5 +56,5 @@ Example algorithm:
 
 file-stuff:
 http://www.aenhancers.com/viewtopic.php?f=3&t=1895
-
+http://www.tranberry.com/photoshop/photoshop_scripting/PS4GeeksOrlando/IntroScripts/openFolder.jsx
 
