@@ -23,8 +23,9 @@ Rule_Lookup = {
 		6 : 'inner_1x1_corner'
 	}
 class Imported_Algo():
-	def __init__(self, cube, filename):
+	def __init__(self, cube, filename, stats):
 		self.cube = cube
+		self.stats = stats
 		file = open(filename, 'r')
 		self.algo_steps = deque()
 		for line in file.readlines():
@@ -54,8 +55,8 @@ class Imported_Algo():
 	def get_remaining_steps(self):
 		return self.algo_steps
 
+	#continue parsing the algorithm lines
 	def parse_algo(self):
-		#continue parsing the algorithm lines
 		next_line = self.algo_steps.popleft()
 		split = next_line.split('#')
 
@@ -64,7 +65,6 @@ class Imported_Algo():
 			if split[0] == 'set_moves':
 				new_seq = split[1].split(',')
 				self.allowed_sequences = new_seq
-				print new_seq
 			elif split[0] == 'set_search_moves':
 				face = split[1].strip()
 				self.search_moves = face
@@ -90,23 +90,18 @@ class Imported_Algo():
 					self.rules.remove(rule)
 				except:
 					raise NameError("Rule is incorrect, cannot remove:" + str(rule))
-					
 
-		print 'Next step in algo parsed, current rules are: ', self.rules
 
 	def next_move(self):
 		#if we have a prepared move in stock just feed that one
 		if self.test_cube():
-			print "no need to do anything"
 			return ' '
 
 		if len(self.queued_moves) == 0:
 			self.make_queue()
 
 		if len(self.queued_moves) > 0:
-			print "queue before move: ", self.queued_moves
 			pop = self.queued_moves.popleft()
-			print 'returning ', pop
 			return pop
 		else:
 			return ' '
@@ -140,9 +135,7 @@ class Imported_Algo():
 	def make_queue(self):
 		mods = self.allowed_sequences
 		c = self.cube
-		print mods
 		if self.test_cube():
-			print "no need to make queue, got skip"
 			return
 		
 		while True:
@@ -151,49 +144,29 @@ class Imported_Algo():
 			for m in mods:
 				que.append(m)
 			cnt = 0
-			t0 = time.time()
-			test_cube_time = 0
-			rot_time = 0
 
 			while len(que) > 0:
 				cnt = cnt + 1
-				if cnt % 1000 == 0:
-					print cnt
 				seq = que.popleft()
 				s = seq.split(" ")
-				if cnt > 10000:
-					print "breaking"
-					print "time to break: ", (time.time() - t0), " seconds."
-					print "Time spent in:"
-					print "test_cube(): ", test_cube_time
-					print "c.rotate(s): ", rot_time
-					break
-				t1 = time.time()
-				c.rotate(s)
-				rot_time += time.time() - t1
 
-				t1 = time.time()
+				if cnt > 10000:
+					break
+				c.rotate(s)
 
 				if self.test_cube(): 
 					done = True
-				test_cube_time += time.time() - t1
 				#undo what we did to the mutable cube, then revert tho sequence to the correct one
 				self.rev_seq(s)
 
-				t1 = time.time()
 				c.rotate(s)
-				rot_time += time.time() - t1
 
 				self.rev_seq(s)
-
-				#for id, row in enumerate(c.state):
-				#	if(row != compare[id]):
-				#		print "Problem detected, ", s
 
 				if done == True :
 					for c in s:
 						self.queued_moves.append(c)
-					print "new queue: ", self.queued_moves
+					self.stats.nr_search_steps += cnt
 					return
 
 				#continue the bfs
@@ -203,10 +176,11 @@ class Imported_Algo():
 			search_cands = self.get_faces_with_inner_color(self.search_moves)
 			move = search_cands[random.randrange(0, len(search_cands))]
 
-			print "performing search move:", move
 			self.queued_moves.append(move)
+			self.stats.nr_search_steps += cnt
 			return
-
+	
+	#handles inner faces, not for edges or corners
 	def get_faces_with_inner_color(self, color):
 		ret = []
 		for face_id, face in enumerate(self.cube.state):
