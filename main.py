@@ -7,6 +7,10 @@ from pygame.locals import *
 from cube import *
 from algo import Imported_Algo, Rule_Lookup
 
+class Mode():
+	MENU = 1
+	SIMULATION = 2
+
 class Constants():
 	WINDOW_WIDTH = 1200
 	WINDOW_HEIGHT = 630
@@ -87,6 +91,7 @@ class Graphics():
 		pygame.display.flip() 
 class Simulation():
 	def __init__(self):
+		self.mode = Mode.MENU
 		pass
 #Main application loop
 	def loop(self):
@@ -184,5 +189,10 @@ class Simulation():
 
 if __name__ == '__main__':
 	sim = Simulation()
-	sim.loop()
+	while True:
+	if sim.mode == Mode.MENU:
+		print 'ok'
+		sim.mode = Mode.SIMULATION
+	else:
+		sim.loop()
 
