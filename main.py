@@ -89,18 +89,34 @@ class Graphics():
 		self.window.blit(label ,(600, 550))
 
 		pygame.display.flip() 
+	
+	def draw_menu(self):
+		label = self.font.render("The professor's cube!", 1, (255,255,255))
+		self.window.blit(label ,(300, 550))
+
+		pygame.display.flip() 
+	
 class Simulation():
 	def __init__(self):
 		self.mode = Mode.MENU
+		self.running = True
+		pygame.init() 
+		self.g = Graphics()
+		pass
+	def menu(self):
+		while self.mode == Mode.MENU:
+			self.g.draw_menu()
+			event = pygame.event.wait()
+
+			if event.type == pygame.KEYDOWN:
+				self.mode = Mode.SIMULATION
 		pass
 #Main application loop
 	def loop(self):
-		pygame.init() 
 		c = Cube()
-		g = Graphics()
 		s = Stats()
+		g = self.g
 
-		running = True
 		prim = False
 		w = False
 
@@ -108,7 +124,7 @@ class Simulation():
 		font = pygame.font.SysFont("monospace", 15)
 		run_to_comment = False
 
-		while running: 
+		while self.running: 
 			g.draw_cube(c, algo, s)
 			keymap = {}
 			event = pygame.event.wait()
@@ -183,16 +199,17 @@ class Simulation():
 				if event.unicode == 'w':
 					w = not w
 				if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-					running = False
+					self.running = False
 
 		pygame.quit()
 
 if __name__ == '__main__':
 	sim = Simulation()
 	while True:
-	if sim.mode == Mode.MENU:
-		print 'ok'
-		sim.mode = Mode.SIMULATION
-	else:
-		sim.loop()
+		if sim.mode == Mode.MENU:
+			print 'ok'
+			sim.menu()
+		else:
+			sim.loop()
+			sim.mode = Mode.MENU
 
