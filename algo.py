@@ -68,11 +68,11 @@ class Imported_Algo():
 			elif split[0] == 'set_search_moves':
 				face = split[1].strip()
 				self.search_moves = face
-			elif split[0] == 'comment':
-				pass
-
-			split = self.algo_steps.popleft().split('#')
-
+			
+			elif split[0] == 'comment': 
+				print "at comment"
+				pass 
+			split = self.algo_steps.popleft().split('#') 
 
 		if split[0] == 'done':
 			print 'algorithm done, you should be happy now'
@@ -152,6 +152,7 @@ class Imported_Algo():
 
 				if cnt > 10000:
 					break
+
 				c.rotate(s)
 
 				if self.test_cube(): 

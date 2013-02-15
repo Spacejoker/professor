@@ -6,6 +6,7 @@ import itertools
 from pygame.locals import *
 from cube import *
 from algo import Imported_Algo, Rule_Lookup
+import pymongo
 
 class Mode():
 	MENU = 1
@@ -16,13 +17,32 @@ class Constants():
 	WINDOW_HEIGHT = 630
 	STICKER_SIZE = 30
 
+class Persist():
+	def __init__(self):
+		conn = pymongo.Connection('localhost', 27017)
+		self.db = conn['cube']	
+		self.result = self.db.result
+	def save(self, data):
+		print "items in db: "
+		for i in self.result.find():
+			print i
+		self.result.save(data)
+
 class Stats():
 	def __init__(self):
 		self.nr_moves = 0
 		self.nr_search_steps = 0
+		self.persist = Persist()
+
 	def reset(self):
 		self.nr_moves = 0
 		self.nr_search_steps = 0
+	
+	def save(self, data):
+		chunk = { 'state' : data,
+			'nr_moves' : self.nr_moves,
+			'nr_search_steps' : self.nr_search_steps }
+		self.persist.save(chunk)
 class Scrambler():
 	@staticmethod	
 	def gen_scramble():
@@ -102,7 +122,9 @@ class Simulation():
 		self.running = True
 		pygame.init() 
 		self.g = Graphics()
-		pass
+	pass
+
+	
 	def menu(self):
 		while self.mode == Mode.MENU:
 			self.g.draw_menu()
@@ -154,7 +176,9 @@ class Simulation():
 							if done:
 								print "Done with this auto-step, back to manual!"
 								break;
-							if algo.algo_steps[0].split("#")[0] == 'comment':
+							split = algo.algo_steps[0].split("#")
+							if split[0] == 'comment':
+								s.save(split[1])
 								done = True
 							else:
 								algo.parse_algo()
