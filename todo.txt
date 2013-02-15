@@ -54,3 +54,7 @@ Example algorithm:
 +(Inner, 3x3, D, Correct),-(Inner, 2x1, D, Correct),-(Inner, 2x1, D, Correct),-(Inner, 1x1, D, Correct)
 
 
+file-stuff:
+http://www.aenhancers.com/viewtopic.php?f=3&t=1895
+http://www.tranberry.com/photoshop/photoshop_scripting/PS4GeeksOrlando/IntroScripts/openFolder.jsx
+
