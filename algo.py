@@ -59,6 +59,7 @@ class Imported_Algo():
 	def parse_algo(self):
 		next_line = self.algo_steps.popleft()
 		split = next_line.split('#')
+		self.stats.current_nr_search_moves = 0
 
 		#handle setting up of allowed  moves
 		while split[0] in ['set_moves', 'set_search_moves', 'comment']:
@@ -151,6 +152,7 @@ class Imported_Algo():
 				s = seq.split(" ")
 
 				if cnt > 10000:
+					self.stats.current_nr_search_moves += 1
 					break
 
 				c.rotate(s)

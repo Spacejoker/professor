@@ -32,11 +32,13 @@ class Stats():
 	def __init__(self):
 		self.nr_moves = 0
 		self.nr_search_steps = 0
+		self.current_nr_search_moves = 0
 		self.persist = Persist()
 
 	def reset(self):
 		self.nr_moves = 0
 		self.nr_search_steps = 0
+		self.current_nr_search_moves = 0
 	
 	def save(self, data):
 		chunk = { 'state' : data,
@@ -45,7 +47,7 @@ class Stats():
 		self.persist.save(chunk)
 class Scrambler():
 	@staticmethod	
-	def gen_scramble():
+	def gen_scramble(export = False):
 		scramble = ""
 		for x in range (0,60):
 			turn = Turns[random.randint(0,5)]
@@ -57,9 +59,10 @@ class Scrambler():
 			if(mod >3):
 				turn += 'p'
 			scramble += turn  + " "
-		f = open('scramble.txt', 'w')
-		f.write(scramble)
-		f.close()
+		if export:
+			f = open('scramble.txt', 'w')
+			f.write(scramble)
+			f.close()
 
 		return scramble
 
@@ -72,10 +75,6 @@ class Graphics():
 	def draw_cube(self, cube, algo, stats):
 
 		pygame.draw.rect(self.window, (0,0,0), (0,0,Constants.WINDOW_WIDTH,Constants.WINDOW_HEIGHT), 0)
-		#label = self.font.render("Prim: " + str(prim) , 1, (255,255,0))
-		#self.window.blit(label, (20,20))
-		#label = self.font.render("w: " + str(w) , 1, (255,255,0))
-		#self.window.blit(label, (20,40))
 
 		for side in range(0, len(cube.state)):
 			for id, sticker in enumerate(cube.state[side]):
@@ -100,6 +99,7 @@ class Graphics():
 
 			label = self.font.render(display, 1, (255, 0,0))
 			self.window.blit(label, (800,120 + id*20))
+
 		label = self.font.render("Allowed: " + str(algo.allowed_sequences), 1, (255, 255,255))
 		self.window.blit(label, (400, 20))
 		label = self.font.render("Nr moves: " + str(stats.nr_moves), 1, (255,255,255))
@@ -135,18 +135,24 @@ class Simulation():
 		pass
 #Main application loop
 	def loop(self):
-		c = Cube()
-		s = Stats()
-		g = self.g
+		self.c = Cube()
+		self.s = Stats()
 
 		prim = False
 		w = False
 
-		algo = Imported_Algo(c, 'standard.algo', s)
+		algo = Imported_Algo(self.c, 'standard.algo', self.s)
 		font = pygame.font.SysFont("monospace", 15)
 		run_to_comment = False
 
 		while self.running: 
+			if self.s.current_nr_search_moves > 2:
+				print "fail"
+				self.reset_cubes()
+			s = self.s
+			c = self.c
+			g = self.g
+
 			g.draw_cube(c, algo, s)
 			keymap = {}
 			event = pygame.event.wait()
@@ -160,7 +166,12 @@ class Simulation():
 					cmd += 'w'
 				if(prim):
 					cmd += 'p'
-				c.rotate([cmd])
+				if event.unicode == 'y':
+					prim = not prim
+				if event.unicode == 'w':
+					w = not w
+				if event.unicode.upper() in Turns:	
+					c.rotate([cmd])
 
 				if event.unicode >= '1' and event.unicode <= '7':
 					algo.parse_algo()
@@ -198,9 +209,8 @@ class Simulation():
 					c = Cube()
 					algo = Imported_Algo(c, 'top.algo', s)
 				if event.unicode == '9':
-					c = Cube()
-					s.reset()
-					algo = Imported_Algo(c, 'standard.algo', s)
+					self.reset_cube()
+				#Debug controls
 				if event.unicode == 'o':
 					print "Recalculating moves needed"
 					print "Rules to obey:"
@@ -208,24 +218,27 @@ class Simulation():
 						print r
 					algo.queued_moves.clear()
 					algo.make_queue()
+
 				if event.unicode == 'e':
 					print algo.queued_moves
+
 				if event.unicode == 'a':
-					print "parsing next step in algo"
 					algo.parse_algo()
+					
 				if event.unicode == '.':
 					t = time.time()
 					algo.test_cube(True)
 					diff = time.time() - t
 					print "time passed: ", diff
-				if event.unicode == 'y':
-					prim = not prim
-				if event.unicode == 'w':
-					w = not w
 				if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
 					self.running = False
 
 		pygame.quit()
+
+	def reset_cube(self):
+		self.c = Cube()
+	  	self.s.reset()
+		algo = Imported_Algo(self.c, 'standard.algo', self.s)
 
 if __name__ == '__main__':
 	sim = Simulation()
