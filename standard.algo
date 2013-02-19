@@ -9,25 +9,28 @@ req#+(Inner, 3x2, D, D)|-(Inner, 2x1, D, Any)|-(Inner, 2x2, D, D)
 req#+(Inner, 2x1, D, Any)
 req#+(Inner, 3x1, D, Any)|-(Inner, 2x1, D, Any)
 req#+(Inner, 3x3, D, D)|-(Inner, 3x1, D, Any)|-(Inner, 3x2, D, D)
-comment#Bottom face done
+comment#Bottom 3x3 done
 set_moves#r U rp,rp U r, b U bp,bp U b,fp U f,F,R,L,B,Fp,Rp,Lp,Bp
 set_search_moves#U
 req#+(Inner, 1x1, U, U)
 req#+(Inner, 2x1, U, Any)
-req#+(Inner, 2x2, U, U)|-(Inner, 1x1, U, U)|-(Inner, 2x1, U, Any)
+set_moves#r U rp,rp U r, b U bp,bp U b,fp U f,F,R,L,B,Fp,Rp,Lp,Bp,u,d
+req#+(Inner, 2x1, U, F)|-(Inner, 2x1, U, Any)
+set_moves#r U rp,r Up rp, lp U l, lp Up l,F,Fp, U, Up
+req#+(Inner, 2x2, U, U)|-(Inner, 1x1, U, U)|-(Inner, 2x1, U, F)
 set_moves#F,Fp,L,Lp,B,Bp,R,Rp,u,up,d,dp,u u,d d#block building for top layer
 req#+(Inner, 2x1, U, Any)
 req#+(Inner, 2x1, U, F)|-(Inner, 2x1, U, Any)
 set_moves#r U rp,r Up rp,lp U l,lp Up l,Fp,F,U,Up # push blocks to top
 req#+(Inner, 3x2, U, U)|-(Inner, 2x1, U, F)|-(Inner, 2x2, U, U)
-set_moves#F,Fp,L,Lp,B,Bp,R,Rp,u,up,d,dp#block building for top layer
+set_moves#F,Fp,L,Lp,B,Bp,R,Rp,u,up,d,dp,r,l,f,b,R R, F F, B B, L L#block building for top layer
 req#+(Inner, 1x1_corner, U, Any)
 req#+(Inner, 2x1, U, Any)
 req#+(Inner, 3x1, U, Any)|-(Inner, 2x1, U, Any)|-(Inner, 1x1_corner, U, Any)
 req#+(Inner, 3x1, U, F)|-(Inner, 3x1, U, Any)
 set_moves#r U U rp,lp U U l,F,U,Up# push 3x1 block to top
 req#+(Inner, 3x3, U, U)|-(Inner, 3x1, U, F)|-(Inner, 3x2, U, U)
-comment# Top face done
+comment#Top 3x3 done
 set_moves#u,d,F,Fp,L,Lp,B,Bp,R,Rp,up,dp
 set_search_moves#F
 req#+(Inner, 1x1, F, F)
@@ -36,11 +39,13 @@ req#+(Inner, 2x2, F, F)|-(Inner, 1x1, F, F)|-(Inner, 2x1, F, Any)
 req#+(Inner, 2x1, F, Any)
 req#+(Inner, 3x2, F, F)|-(Inner, 2x1, F, Any)|-(Inner, 2x2, F, F)
 req#+(Inner, 2x1, F, Any)
-req#+(Inner, 3x1, F, Any)|-(Inner, 2x1, F, Any)
+req#+(Inner, 2x1, F, L)|-(Inner, 2x1, F, Any)
+req#+(Inner, 1x1_corner, F, B)
+req#+(Inner, 3x1, F, Any)|-(Inner, 2x1, F, L)|-(Inner, 1x1_corner, F, B)
 req#+(Inner, 3x1, F, L)|-(Inner, 3x1, F, Any)
 set_moves#F, Fp, L, Lp, u, d, up, dp
 req#+(Inner, 3x3, F, F)|-(Inner, 3x1, F, L)|-(Inner, 3x2, F, F)
-comment#Front done
+comment#Front 3x3 done
 set_moves#u,d,L,Lp,B,Bp,R,Rp,up,dp, up L L u, d L L dp
 set_search_moves#L
 req#+(Inner, 1x1, L, L)
@@ -51,12 +56,14 @@ req#+(Inner, 2x1, L, B)|-(Inner, 1x1, L, B)
 req#+(Inner, 3x2, L, L)|-(Inner, 2x1, L, B)|-(Inner, 2x2, L, L)
 set_moves#u,d,L,Lp,B,Bp,R,Rp,up,dp, up B B u, d B B dp
 req#+(Inner, 2x1, L, Any)
-req#+(Inner, 3x1, L, Any)|-(Inner, 2x1, L, Any)
+req#+(Inner, 2x1, L, R)|-(Inner, 2x1, L, Any)
+req#+(Inner, 1x1_corner, L, B)
+req#+(Inner, 3x1, L, Any)|-(Inner, 2x1, L, R)|-(Inner, 1x1_corner, L, B)
 set_moves#u,d,L,Lp,B,Bp,R,Rp,up,dp, up B B u, d B B dp
 req#+(Inner, 3x1, L, B)|-(Inner, 3x1, L, Any)
 set_moves#B, Bp, L, Lp, u, d, up, dp, up L L u, d L L dp
 req#+(Inner, 3x3, L, L)|-(Inner, 3x1, L, B)|-(Inner, 3x2, L, L)
-comment#Left done
+comment#Left 3x3 done
 set_moves#u,d,up,dp,B,Bp,R,Rp
 set_search_moves#B
 req#+(Inner, 1x1, B, B)
@@ -69,5 +76,11 @@ req#+(Inner, 2x1, B, Any)
 req#+(Inner, 3x1, B, Any)|-(Inner, 2x1, B, Any)
 req#+(Inner, 3x1, B, R)|-(Inner, 3x1, B, Any)
 req#+(Inner, 3x3, B, B)|-(Inner, 3x1, B, R)|-(Inner, 3x2, B, B)
-comment#All middle pieces done
+comment#All 3x3 done
+req#+(Bulid_Edge, Outer, Any, FR)
+req#+(Build_Edge, Outer, Oriented, FR)|-(Bulid_Edge, Outer, Any, FR)
+req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR)
+req#+(Build_Edge, Outer, Any, FR)
+req#+(Build_Edge, Outer, Oriented, FR)|-(Build_Edge, Outer, Any, FR)
+req#+(Edge, 3x1x1, FR)|-(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR)
 done#
