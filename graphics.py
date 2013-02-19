@@ -81,7 +81,7 @@ class Graphics():
 		self.window.blit(label ,(600, 550))
 		
 		edge_x = 600
-		edge_y = 350t 
+		edge_y = 350 
 		for edge in added_edges:
 			name = edge[0]
 			self.window.blit(self.font.render(name, 1, text_color), (edge_x, edge_y))

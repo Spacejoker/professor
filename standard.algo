@@ -1,5 +1,6 @@
 set_moves#r,f,l,u,d,b,U,D,R,F,L,B,rp,fp,lp,up,dp,bp,Dp
 set_search_moves#D
+set_mode#inner
 req#+(Inner, 1x1, D, D)
 req#+(Inner, 2x1, D, Any)
 req#+(Inner, 2x1, D, U)|-(Inner, 2x1, D, Any)

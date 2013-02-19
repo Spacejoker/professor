@@ -143,7 +143,7 @@ class Simulation():
 				if event.unicode.upper() in Turns:	
 					c.rotate([cmd])
 
-				if event.unicode >= '1' and event.unicode <= '7':
+				if event.unicode == '1':
 					algo.parse_algo()
 					next_move = ' '
 					done = False
@@ -181,6 +181,10 @@ class Simulation():
 				if event.unicode == '`':
 					while(len(algo.queued_moves) > 0):
 						c.rotate(algo.next_move())
+
+				if event.unicode == '7':
+					c = Cube()
+					algo = Imported_Algo(c, 'edge.algo', s)
 
 				if event.unicode == '8':
 					c = Cube()

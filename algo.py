@@ -4,6 +4,15 @@ import random
 from copy import copy, deepcopy
 import time	
 
+#enum types for readability
+class Orientation:
+	any = 0
+	oriented = 1
+
+class Edge:
+	outer = 0
+	center = 1
+
 class Block:
 	inner_1x1 = 0 
 	inner_2x1 = 1
@@ -63,10 +72,11 @@ class Imported_Algo():
 		self.stats.current_nr_search_moves = 0
 
 		#handle setting up of allowed  moves
-		while split[0] in ['set_moves', 'set_search_moves', 'comment']:
+		while split[0] in ['set_moves', 'set_search_moves', 'comment', 'set_mode']:
 			if split[0] == 'set_moves':
 				new_seq = split[1].split(',')
 				self.allowed_sequences = new_seq
+
 			elif split[0] == 'set_search_moves':
 				face = split[1].strip()
 				self.search_moves = face
@@ -74,6 +84,10 @@ class Imported_Algo():
 			elif split[0] == 'comment': 
 				print "at comment"
 				pass 
+
+			elif split[0] == 'set_mode':
+				self.mode = split[1].strip()
+
 			split = self.algo_steps.popleft().split('#') 
 
 		if split[0] == 'done':
@@ -111,19 +125,33 @@ class Imported_Algo():
 	def parse_rule(self, rule):
 		parts = rule.split(',')
 		parts = map(lambda x: x.strip(), parts)
+		
+		if self.mode == 'inner':
 
-		m = {
-				'1x1' : Block.inner_1x1,
-				'2x1' : Block.inner_2x1,
-				'2x2' : Block.inner_2x2,
-				'3x1' : Block.inner_3x1,
-				'3x3' : Block.inner_3x3,
-				'3x2' : Block.inner_3x2,
-				'1x1_corner' : Block.inner_1x1_corner
-				}
+			m = {
+					'1x1' : Block.inner_1x1,
+					'2x1' : Block.inner_2x1,
+					'2x2' : Block.inner_2x2,
+					'3x1' : Block.inner_3x1,
+					'3x3' : Block.inner_3x3,
+					'3x2' : Block.inner_3x2,
+					'1x1_corner' : Block.inner_1x1_corner
+					}
 
-		size = m[parts[1]]
-		return (parts[0], size, parts[2], Face_Lookup[parts[3]])
+			size = m[parts[1]]
+			return (parts[0], size, parts[2], Face_Lookup[parts[3]])
+
+		elif self.mode == 'edge':
+			#outer edge / center edge:
+			piece = {
+					'Outer' : Edge.outer,
+					'Center' : Edge.center
+					}
+			
+			orientation = { 'Any' : Orientation.any,
+					'Oriented' : Orientation.oriented
+					}
+			return (parts[0], piece[parts[1]], orientation[parts[2]], parts[3])
 
 	def rev_seq(self, s):
 		s.reverse()
