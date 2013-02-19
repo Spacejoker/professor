@@ -65,6 +65,18 @@ class Scrambler():
 			f.close()
 
 		return scramble
+	@staticmethod
+	def gen_edge_destroy():
+		tot = ""
+		for x in range(0, 60):
+			setup = 'u'
+			move = 'R U Rp'
+			undo = 'up'
+			tot += setup + " " + move + " " + undo
+			for y in range(0,20):
+				tot += Turns[random.randint(0,5)]
+
+		return tot
 
 class Graphics():
 
@@ -133,7 +145,7 @@ class Simulation():
 			if event.type == pygame.KEYDOWN:
 				self.mode = Mode.SIMULATION
 		pass
-#Main application loop
+	#Main application loop
 	def loop(self):
 		self.c = Cube()
 		self.s = Stats()
@@ -145,6 +157,7 @@ class Simulation():
 		font = pygame.font.SysFont("monospace", 15)
 		run_to_comment = False
 
+		#handle input and draw graphics
 		while self.running: 
 			if self.s.current_nr_search_moves > 2:
 				print "fail"
@@ -161,15 +174,20 @@ class Simulation():
 				#handles dvorak
 				keymap[event.scancode] = event.unicode
 				cmd = event.unicode
+
 				if w:
 					cmd = cmd.upper()
 					cmd += 'w'
+
 				if(prim):
 					cmd += 'p'
+
 				if event.unicode == 'y':
 					prim = not prim
+
 				if event.unicode == 'w':
 					w = not w
+
 				if event.unicode.upper() in Turns:	
 					c.rotate([cmd])
 
@@ -198,16 +216,24 @@ class Simulation():
 
 				if event.unicode == ' ':
 					print "Next move: ", algo.next_move()
+
 				if event.unicode == 'q':
 					c.rotate([algo.next_move()])
+				
+				if event.unicode == '[':
+					c.rotate(Scrambler.gen_edge_destroy().split(' '))
+
 				if event.unicode == '0':
 					c.rotate(Scrambler.gen_scramble().split(' '))
+
 				if event.unicode == '`':
 					while(len(algo.queued_moves) > 0):
 						c.rotate(algo.next_move())
+
 				if event.unicode == '8':
 					c = Cube()
 					algo = Imported_Algo(c, 'top.algo', s)
+
 				if event.unicode == '9':
 					self.reset_cube()
 				#Debug controls
@@ -229,7 +255,7 @@ class Simulation():
 					t = time.time()
 					algo.test_cube(True)
 					diff = time.time() - t
-					print "time passed: ", diff
+				
 				if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
 					self.running = False
 
@@ -244,7 +270,6 @@ if __name__ == '__main__':
 	sim = Simulation()
 	while True:
 		if sim.mode == Mode.MENU:
-			print 'ok'
 			sim.menu()
 		else:
 			sim.loop()

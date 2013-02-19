@@ -52,3 +52,15 @@ Batch mode (parameters)
 Show statistics
 
 Set up a storage for statistics, local db?
+
+//Using external code for menu: http://www.pygame.org/project-MenuSystem-2031-.html
+
+Todo 2013-02-19:
+fix a scramble that only destroys edges
+set up a new edge-build-only-algorithm
+Implement a check if we have a correct piece on LB/BR/FL that mathes the middle piece on FR
+flip it correctly
+pair them up
+find another piece
+flip that one correctly
+put them togehter and store in top layer

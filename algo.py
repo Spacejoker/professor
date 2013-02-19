@@ -24,7 +24,7 @@ Rule_Lookup = {
 	}
 class Imported_Algo():
 
-	def __init__(self, cube, filename):
+	def __init__(self, cube, filename, stats):
 		self.cube = cube
 		self.stats = stats
 		file = open(filename, 'r')
