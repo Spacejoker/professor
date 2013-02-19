@@ -86,6 +86,7 @@ class Simulation():
 		self.running = True
 		pygame.init() 
 		self.g = Graphics()
+		self.algo_file = 'standard.algo'
 	pass
 
 	
@@ -105,7 +106,7 @@ class Simulation():
 		prim = False
 		w = False
 
-		algo = Imported_Algo(self.c, 'standard.algo', self.s)
+		self.algo = Imported_Algo(self.c, 'standard.algo', self.s)
 		font = pygame.font.SysFont("monospace", 15)
 		run_to_comment = False
 
@@ -117,8 +118,9 @@ class Simulation():
 			s = self.s
 			c = self.c
 			g = self.g
+			algo = self.algo
 
-			g.draw_cube(c, algo, s)
+			g.draw_cube(c, self.algo, s)
 			keymap = {}
 			event = pygame.event.wait()
 
@@ -144,9 +146,10 @@ class Simulation():
 					c.rotate([cmd])
 
 				if event.unicode == '1':
-					algo.parse_algo()
+					self.algo.parse_algo()
 					next_move = ' '
 					done = False
+
 					while True:
 						c.rotate([next_move])
 						next_move = algo.next_move()
@@ -182,13 +185,10 @@ class Simulation():
 					while(len(algo.queued_moves) > 0):
 						c.rotate(algo.next_move())
 
-				if event.unicode == '7':
-					c = Cube()
-					algo = Imported_Algo(c, 'edge.algo', s)
 
-				if event.unicode == '8':
-					c = Cube()
-					algo = Imported_Algo(c, 'top.algo', s)
+				if event.unicode == '7':
+					self.algo_file = 'edge.algo'
+					self.reset_cube()
 
 				if event.unicode == '9':
 					self.reset_cube()
@@ -220,7 +220,8 @@ class Simulation():
 	def reset_cube(self):
 		self.c = Cube()
 	  	self.s.reset()
-		algo = Imported_Algo(self.c, 'standard.algo', self.s)
+		print 'loading: ' + self.algo_file
+		self.algo = Imported_Algo(self.c, self.algo_file, self.s)
 
 if __name__ == '__main__':
 	sim = Simulation()

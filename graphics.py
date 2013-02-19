@@ -7,30 +7,7 @@ from main import *
 
 faces = [Face_Data((153,0), (40,40,40)), Face_Data((153, 153), (255, 150, 0)), Face_Data((0, 306), (0, 0, 255)), Face_Data((153, 306), (255, 255, 0)), Face_Data((306, 306), (0,255,0)), Face_Data((153, 459), (255,0, 0))]
 
-class Edge_Pair():
-	def __init__(self, left, right):
-		self.left = left
-		self.right = right
-
-	def left_face(self):
-		return self.left[0]
-
-	def left_sticker(self):
-		return self.left[1]
-	
-	def right_face(self):
-		return self.right[0]
-
-	def right_sticker(self):
-		return self.right[1]
-
 #helper to be able to show all edge-sets for edge building
-added_edges = [
-		('FR', [Edge_Pair((Face.F, 9),(Face.R,21)), Edge_Pair((Face.F, 14),(Face.R, 22)), Edge_Pair((Face.F, 19),(Face.R, 23))]),
-		('LF', [Edge_Pair((Face.L, 23),(Face.F,5)), Edge_Pair((Face.L, 22),(Face.F, 10)), Edge_Pair((Face.L, 21),(Face.F, 15))]),
-		('BL', [Edge_Pair((Face.B, 15),(Face.L, 3)), Edge_Pair((Face.B, 10),(Face.L, 2)), Edge_Pair((Face.B, 5),(Face.L, 1))]),
-		('RB', [Edge_Pair((Face.R, 1),(Face.B, 19)), Edge_Pair((Face.R, 2),(Face.B, 14)), Edge_Pair((Face.R, 3),(Face.B, 9))]),
-		]
 text_color = (255, 220, 220)
 
 class Graphics():
@@ -63,11 +40,15 @@ class Graphics():
 		
 		#display rules in a list
 		for id, rule in enumerate(algo.rules):
-			display = Rule_Lookup[rule[1]] + ", sticker " + str(rule[2]) + " on "
-			if rule[3] != None:
-				display += "face  " + str(Turns[rule[3]])
-			else:
-				display += " any face"
+			display = ""
+			if rule[0] == 'Inner':
+				display = Rule_Lookup[rule[1]] + ", sticker " + str(rule[2]) + " on "
+				if rule[3] != None:
+					display += "face  " + str(Turns[rule[3]])
+				else:
+					display += " any face"
+			if rule[0] == 'Edge':
+				display += str(rule)
 
 			label = self.font.render(display, 1, (255, 0,0))
 			self.window.blit(label, (800,120 + id*20))
@@ -82,7 +63,7 @@ class Graphics():
 		
 		edge_x = 600
 		edge_y = 350 
-		for edge in added_edges:
+		for edge in edge_pieces:
 			name = edge[0]
 			self.window.blit(self.font.render(name, 1, text_color), (edge_x, edge_y))
 			for num, pair in enumerate(edge[1]):
@@ -94,7 +75,6 @@ class Graphics():
 
 		pygame.display.flip() 
 	def draw_face(self, color, x, y):
-		print color
 		size = Constants.STICKER_SIZE
 		pygame.draw.rect(self.window, color, (x, y, size-1, size-1), 0)
 

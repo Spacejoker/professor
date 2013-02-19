@@ -126,7 +126,7 @@ class Imported_Algo():
 		parts = rule.split(',')
 		parts = map(lambda x: x.strip(), parts)
 		
-		if self.mode == 'inner':
+		if parts[0] == 'Inner':
 
 			m = {
 					'1x1' : Block.inner_1x1,
@@ -141,7 +141,7 @@ class Imported_Algo():
 			size = m[parts[1]]
 			return (parts[0], size, parts[2], Face_Lookup[parts[3]])
 
-		elif self.mode == 'edge':
+		elif parts[0] == 'Build_Edge':
 			#outer edge / center edge:
 			piece = {
 					'Outer' : Edge.outer,
@@ -152,6 +152,8 @@ class Imported_Algo():
 					'Oriented' : Orientation.oriented
 					}
 			return (parts[0], piece[parts[1]], orientation[parts[2]], parts[3])
+		elif parts[0] == 'Edge':
+			return (parts[0], parts[1], parts[2])
 
 	def rev_seq(self, s):
 		s.reverse()
@@ -165,6 +167,7 @@ class Imported_Algo():
 	def make_queue(self):
 		mods = self.allowed_sequences
 		c = self.cube
+		flip_algo = 'R U Rp Up Fp U F'
 		if self.test_cube():
 			return
 		
@@ -179,7 +182,15 @@ class Imported_Algo():
 				cnt = cnt + 1
 				seq = que.popleft()
 				s = seq.split(" ")
+				if self.mode == 'build_edge':
+					print 'teste'	
+					rev = []
+					rev.extend(s)
+					self.rev_seq(rev)
 
+					s.extend(flip_algo.split(' '))
+					s.extend(rev)
+					print "evaluating: ", s
 				if cnt > 10000:
 					self.stats.current_nr_search_moves += 1
 					break
@@ -204,11 +215,15 @@ class Imported_Algo():
 				#continue the bfs
 				for m in mods:
 					que.append( seq + ' ' + m)
-			#the search found nothing, now fall back on the search-moves:
-			search_cands = self.get_faces_with_inner_color(self.search_moves)
-			move = search_cands[random.randrange(0, len(search_cands))]
 
-			self.queued_moves.append(move)
+			#the search found nothing, now fall back on the search-moves:
+			if self.mode == 'inner':
+				search_cands = self.get_faces_with_inner_color(self.search_moves)
+				move = search_cands[random.randrange(0, len(search_cands))]
+
+				self.queued_moves.append(move)
+			elif self.mode == 'edge':
+				self.queued_moves.append('L L')
 			self.stats.nr_search_steps += cnt
 			return
 	
@@ -223,11 +238,62 @@ class Imported_Algo():
 			
 	#verifies if the cube satisfies all rules in its current state
 	def test_cube(self, p=False):
-
 		for color in Turns:
 			ok = self.test_color(color, p)
 			if not ok:
 				return False
+
+		#edge building rules:
+		for rule in self.rules:
+			c = self.cube
+			if rule[0].strip() == 'Build_Edge':
+				if rule[1] == Edge.outer:
+					#and r[2] == Orientation.oriented:
+					fr_mid = edge_pieces[0][1][1]
+					left = self.cube.state[fr_mid.left_face()][fr_mid.left_sticker()]
+					right = self.cube.state[fr_mid.right_face()][fr_mid.right_sticker()]
+
+					#check all pairs in mid layer, except for FR
+					found = False
+					for i in range(1, 4):
+						for piece_id in [0,2]: #only want to look at top and bottom edges
+							piece = edge_pieces[i][1][piece_id]
+							l_cand = self.cube.state[piece.left_face()][piece.left_sticker()]
+							r_cand = self.cube.state[piece.right_face()][piece.right_sticker()]
+							if l_cand == left and r_cand == right:
+								found = True
+								break
+							if rule[2] == Orientation.oriented:
+								r_cand = self.cube.state[piece.left_face()][piece.left_sticker()]
+								l_cand = self.cube.state[piece.right_face()][piece.right_sticker()]
+								if l_cand == left and r_cand == right:
+									found = True
+									break
+
+					if not found:
+						return False
+			if rule[0] == 'Edge':
+				if rule[1] in ['2x1x1']: #store is for 3x1x1
+					fr_mid = edge_pieces[0][1][1]
+					left = self.cube.state[fr_mid.left_face()][fr_mid.left_sticker()]
+					right = self.cube.state[fr_mid.right_face()][fr_mid.right_sticker()]
+					
+					top = edge_pieces[0][1][0]
+					l_top = self.cube.state[top.left_face()][top.left_sticker()]
+					r_top = self.cube.state[top.right_face()][top.right_sticker()]
+					
+					bot = edge_pieces[0][1][2]
+					l_bot = self.cube.state[bot.left_face()][bot.left_sticker()]
+					r_bot = self.cube.state[bot.right_face()][bot.right_sticker()]
+					cnt = 0	
+
+					if left == l_top and right == r_top:
+						cnt += 1
+					if left == l_bot and right == r_bot:
+						cnt += 1
+					if cnt == 0:
+						return False
+					
 		return True
 		#for each face, examine what patterns they have in each color
 		#TODO: handle pattern recognizion for each color
@@ -289,8 +355,6 @@ class Imported_Algo():
 							break
 					if not success:
 						return False
-			if r[0] == 'Build_Edge':
-				pass
 
 		return True
 
