@@ -22,7 +22,6 @@ class Face_Data():
 		self.position = position
 		self.color = color
 
-faces = [Face_Data((153,0), (40,40,40)), Face_Data((153, 153), (0, 255, 0)), Face_Data((0, 306), (255, 150, 0)), Face_Data((153, 306), (255, 255, 0)), Face_Data((306, 306), (255,0,0)), Face_Data((153, 459), (0,0, 255))]
 
 colors = []
 #Helper methods for conversion etc

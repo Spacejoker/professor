@@ -7,6 +7,7 @@ from pygame.locals import *
 from cube import *
 from algo import Imported_Algo, Rule_Lookup
 import pymongo
+from graphics import *
 
 class Mode():
 	MENU = 1
@@ -78,56 +79,6 @@ class Scrambler():
 				tot += Turns[random.randint(0,5)] + " "
 		print tot
 		return tot
-
-class Graphics():
-
-	def __init__(self):
-		self.window = pygame.display.set_mode((Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT)) 
-		self.font = pygame.font.SysFont("monospace", 15)
-
-	def draw_cube(self, cube, algo, stats):
-
-		pygame.draw.rect(self.window, (0,0,0), (0,0,Constants.WINDOW_WIDTH,Constants.WINDOW_HEIGHT), 0)
-
-		for side in range(0, len(cube.state)):
-			for id, sticker in enumerate(cube.state[side]):
-				f = faces[side]
-				color = faces[sticker]
-				size = Constants.STICKER_SIZE
-				pygame.draw.rect(self.window, color.color, (f.position[0] + Helper.get_x(id)*size, f.position[1] + Helper.get_y(id)*size, size-1,size-1), 0)	
-		num = 1	
-		for step in algo.algo_steps:
-			if num > 7:
-				break
-			if step.split("#")[0] == "comment":
-				label = self.font.render(str(num) + ": " + str(step.split("#")[1]), 1, (255, 0,0))
-				self.window.blit(label, (500,100 + num*20))
-				num += 1
-		for id, rule in enumerate(algo.rules):
-			display = Rule_Lookup[rule[1]] + ", sticker " + str(rule[2]) + " on "
-			if rule[3] != None:
-				display += "face  " + str(Turns[rule[3]])
-			else:
-				display += " any face"
-
-			label = self.font.render(display, 1, (255, 0,0))
-			self.window.blit(label, (800,120 + id*20))
-
-		label = self.font.render("Allowed: " + str(algo.allowed_sequences), 1, (255, 255,255))
-		self.window.blit(label, (400, 20))
-		label = self.font.render("Nr moves: " + str(stats.nr_moves), 1, (255,255,255))
-		self.window.blit(label ,(600, 600))
-
-		label = self.font.render("Nr search steps: " + str(stats.nr_search_steps), 1, (255,255,255))
-		self.window.blit(label ,(600, 550))
-
-		pygame.display.flip() 
-	
-	def draw_menu(self):
-		label = self.font.render("The professor's cube!", 1, (255,255,255))
-		self.window.blit(label ,(300, 550))
-
-		pygame.display.flip() 
 	
 class Simulation():
 	def __init__(self):

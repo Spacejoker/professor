@@ -51,12 +51,13 @@ Graphical solve (with selected algorithm)
 Batch mode (parameters)
 Show statistics
 
-Set up a storage for statistics, local db?
+Set up a storage for statistics, local db? done
 
 //Using external code for menu: http://www.pygame.org/project-MenuSystem-2031-.html
 
 Todo 2013-02-19:
 fix a scramble that only destroys edges
+make an option to display edges more clearly in the gui
 set up a new edge-build-only-algorithm
 Implement a check if we have a correct piece on LB/BR/FL that mathes the middle piece on FR
 flip it correctly
