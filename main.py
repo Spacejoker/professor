@@ -63,8 +63,9 @@ class Scrambler():
 			f = open('scramble.txt', 'w')
 			f.write(scramble)
 			f.close()
-
+		print scramble
 		return scramble
+
 	@staticmethod
 	def gen_edge_destroy():
 		tot = ""
@@ -72,10 +73,10 @@ class Scrambler():
 			setup = 'u'
 			move = 'R U Rp'
 			undo = 'up'
-			tot += setup + " " + move + " " + undo
+			tot += setup + " " + move + " " + undo + " "
 			for y in range(0,20):
-				tot += Turns[random.randint(0,5)]
-
+				tot += Turns[random.randint(0,5)] + " "
+		print tot
 		return tot
 
 class Graphics():
