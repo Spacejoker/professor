@@ -1,0 +1,6 @@
+set_moves#d,d',u',u,r U r',r,r',b,b'
+set_search_moves#U
+req#+(Inner, 1x1, U, U)
+req#+(Inner, 2x1, U, Any)
+done#
+
