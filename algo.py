@@ -23,6 +23,7 @@ Rule_Lookup = {
 		6 : 'inner_1x1_corner'
 	}
 class Imported_Algo():
+
 	def __init__(self, cube, filename):
 		self.cube = cube
 		file = open(filename, 'r')
