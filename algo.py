@@ -265,29 +265,32 @@ class Imported_Algo():
 			print "Color: ", color, ", num_blocks: ", num_blocks
 
 		for r in self.rules:
-			req_face = Face_Lookup[r[2]]
-			
-			if r[2] != color:
-				continue
-			
-			block_type = r[1]
-			needs_face = r[3]
-			if needs_face != None:
-				if( num_blocks[block_type][needs_face] > 0):
-					num_blocks[block_type][needs_face] -= 1
+			if r[0] == 'Inner':
+				req_face = Face_Lookup[r[2]]
+				
+				if r[2] != color:
+					continue
+				
+				block_type = r[1]
+				needs_face = r[3]
+				if needs_face != None:
+					if( num_blocks[block_type][needs_face] > 0):
+						num_blocks[block_type][needs_face] -= 1
+					else:
+						return False
 				else:
-					return False
-			else:
-				success = False
-				for face in range(0,6):
-					if face == req_face: #any means not on the solved side
-						continue
-					if num_blocks[block_type][face] > 0:
-						num_blocks[block_type][face] -= 1
-						success = True
-						break
-				if not success:
-					return False
+					success = False
+					for face in range(0,6):
+						if face == req_face: #any means not on the solved side
+							continue
+						if num_blocks[block_type][face] > 0:
+							num_blocks[block_type][face] -= 1
+							success = True
+							break
+					if not success:
+						return False
+			if r[0] == 'Build_Edge':
+				pass
 
 		return True
 
