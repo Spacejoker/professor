@@ -47,13 +47,13 @@ edge_pieces = {
 		'BL': [Edge_Pair((Face.B, 15),(Face.L, 3)), Edge_Pair((Face.B, 10),(Face.L, 2)), Edge_Pair((Face.B, 5),(Face.L, 1))],
 		'RB': [Edge_Pair((Face.R, 1),(Face.B, 19)), Edge_Pair((Face.R, 2),(Face.B, 14)), Edge_Pair((Face.R, 3),(Face.B, 9))],
 		'UF': [Edge_Pair((Face.U, 21),(Face.F, 1)), Edge_Pair((Face.U, 22),(Face.F, 2)), Edge_Pair((Face.U, 23),(Face.F, 3))],
-		'UL': [Edge_Pair((Face.U, 21),(Face.F, 1)), Edge_Pair((Face.U, 22),(Face.F, 2)), Edge_Pair((Face.U, 23),(Face.F, 3))],
-		'UB': [Edge_Pair((Face.U, 21),(Face.F, 1)), Edge_Pair((Face.U, 22),(Face.F, 2)), Edge_Pair((Face.U, 23),(Face.F, 3))],
-		'UR': [Edge_Pair((Face.U, 21),(Face.F, 1)), Edge_Pair((Face.U, 22),(Face.F, 2)), Edge_Pair((Face.U, 23),(Face.F, 3))],
-		'DF': [Edge_Pair((Face.U, 21),(Face.F, 1)), Edge_Pair((Face.U, 22),(Face.F, 2)), Edge_Pair((Face.U, 23),(Face.F, 3))],
-		'DL': [Edge_Pair((Face.U, 21),(Face.F, 1)), Edge_Pair((Face.U, 22),(Face.F, 2)), Edge_Pair((Face.U, 23),(Face.F, 3))],
-		'DB': [Edge_Pair((Face.U, 21),(Face.F, 1)), Edge_Pair((Face.U, 22),(Face.F, 2)), Edge_Pair((Face.U, 23),(Face.F, 3))],
-		'DR': [Edge_Pair((Face.U, 21),(Face.F, 1)), Edge_Pair((Face.U, 22),(Face.F, 2)), Edge_Pair((Face.U, 23),(Face.F, 3))],
+		'UL': [Edge_Pair((Face.U, 5),(Face.L, 9)), Edge_Pair((Face.U, 10),(Face.L, 14)), Edge_Pair((Face.U, 15),(Face.L, 19))],
+		'UB': [Edge_Pair((Face.U, 1),(Face.B, 21)), Edge_Pair((Face.U, 2),(Face.B, 22)), Edge_Pair((Face.U, 3),(Face.B, 23))],
+		'UR': [Edge_Pair((Face.U, 9),(Face.R, 5)), Edge_Pair((Face.U, 14),(Face.R, 10)), Edge_Pair((Face.U, 19),(Face.R, 15))],
+		'DF': [Edge_Pair((Face.D, 1),(Face.F, 21)), Edge_Pair((Face.D, 2),(Face.F, 22)), Edge_Pair((Face.D, 3),(Face.F, 23))],
+		'DL': [Edge_Pair((Face.D, 5),(Face.L, 15)), Edge_Pair((Face.D, 10),(Face.L, 10)), Edge_Pair((Face.D, 15),(Face.F, 5))],
+		'DB': [Edge_Pair((Face.D, 21),(Face.B, 1)), Edge_Pair((Face.D, 22),(Face.B, 2)), Edge_Pair((Face.D, 23),(Face.B, 3))],
+		'DR': [Edge_Pair((Face.D, 9),(Face.R, 19)), Edge_Pair((Face.D, 14),(Face.R, 14)), Edge_Pair((Face.D, 19),(Face.R, 9))],
 
 		}
 colors = []
