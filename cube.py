@@ -51,7 +51,7 @@ edge_pieces = {
 		'UB': [Edge_Pair((Face.U, 1),(Face.B, 21)), Edge_Pair((Face.U, 2),(Face.B, 22)), Edge_Pair((Face.U, 3),(Face.B, 23))],
 		'UR': [Edge_Pair((Face.U, 9),(Face.R, 5)), Edge_Pair((Face.U, 14),(Face.R, 10)), Edge_Pair((Face.U, 19),(Face.R, 15))],
 		'DF': [Edge_Pair((Face.D, 1),(Face.F, 21)), Edge_Pair((Face.D, 2),(Face.F, 22)), Edge_Pair((Face.D, 3),(Face.F, 23))],
-		'DL': [Edge_Pair((Face.D, 5),(Face.L, 15)), Edge_Pair((Face.D, 10),(Face.L, 10)), Edge_Pair((Face.D, 15),(Face.F, 5))],
+		'DL': [Edge_Pair((Face.D, 5),(Face.L, 15)), Edge_Pair((Face.D, 10),(Face.L, 10)), Edge_Pair((Face.D, 15),(Face.L, 5))],
 		'DB': [Edge_Pair((Face.D, 21),(Face.B, 1)), Edge_Pair((Face.D, 22),(Face.B, 2)), Edge_Pair((Face.D, 23),(Face.B, 3))],
 		'DR': [Edge_Pair((Face.D, 9),(Face.R, 19)), Edge_Pair((Face.D, 14),(Face.R, 14)), Edge_Pair((Face.D, 19),(Face.R, 9))],
 

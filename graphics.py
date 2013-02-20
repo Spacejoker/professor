@@ -56,15 +56,23 @@ class Graphics():
 		label = self.font.render("Allowed: " + str(algo.allowed_sequences), 1, (255, 255,255))
 		self.window.blit(label, (400, 20))
 		label = self.font.render("Nr moves: " + str(stats.nr_moves), 1, (255,255,255))
-		self.window.blit(label ,(600, 600))
+		self.window.blit(label ,(900, 600))
 
 		label = self.font.render("Nr search steps: " + str(stats.nr_search_steps), 1, (255,255,255))
-		self.window.blit(label ,(600, 550))
-		
-		edge_x = 600
-		edge_y = 350
+		self.window.blit(label ,(600, 600))
 
-		for name in ['FR', 'LF', 'BL', 'RB']:#edge_pieces.iteritems():
+		self.draw_edges(['FR', 'LF', 'BL', 'RB'], 600, 250, cube, size)
+		self.draw_edges(['UF', 'UL', 'UB', 'UR'], 600, 370, cube, size)
+		self.draw_edges(['DF', 'DL', 'DB', 'DR'], 600, 490, cube, size)
+
+		pygame.display.flip() 
+
+	def draw_edges(self, names, x0, y0, cube, size):
+
+		edge_x = x0
+		edge_y = y0
+
+		for name in names:
 			edges = edge_pieces[name]
 			self.window.blit(self.font.render(name, 1, text_color), (edge_x, edge_y))
 			for num, pair in enumerate(edges):
@@ -74,7 +82,6 @@ class Graphics():
 				self.draw_face(faces[snd].color, edge_x + size, edge_y + num*size + 20)
 			edge_x += 100
 
-		pygame.display.flip() 
 	def draw_face(self, color, x, y):
 		size = Constants.STICKER_SIZE
 		pygame.draw.rect(self.window, color, (x, y, size-1, size-1), 0)
