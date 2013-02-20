@@ -1,5 +1,6 @@
 set_moves#L L,B B,u,d,up,dp,u u, d d,L U Lp Up Bp Up B,R U Rp Up Fp Up F
-set_mode#edge
+set_flip_algo#R U Rp Up Fp U F
+set_mode#normal
 set_search_moves#L
 req#+(Inner, 3x3, B, B)
 req#+(Inner, 3x3, U, U)
@@ -9,13 +10,22 @@ req#+(Inner, 3x3, L, L)
 req#+(Inner, 3x3, D, D)
 req#+(Build_Edge, Outer, Any, FR, LF-BL-RB)
 comment#First piece found
-req#+(Build_Edge, Outer, Oriented, FR)|-(Build_Edge, Outer, Any, FR)
+req#+(Build_Edge, Outer, Oriented, FR, LF-BL-RB)|-(Build_Edge, Outer, Any, FR, LF-BL-RB)
 comment#First piece oriented
 set_mode#build_edge
 set_moves#u,d,up,dp,u u,d d
-req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR)
+req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR, LF-BL-RB)
 comment#First block built
-req#+(Build_Edge, Outer, Non_Oriented, FR)
+set_moves#D, U, L, B, L L, B B, Lp Up L U F Up Fp
+set_mode#normal
+req#+(Build_Edge, Outer, Non_Oriented, FR, LF)
 comment#Next edge, not oriented
-req#+(Build_Edge, Outer, Oriented, FR)|-(Build_Edge, Outer, Any, FR)
-req#+(Edge, 3x1x1, FR)|-(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR)
+set_mode#build_edge
+set_moves#up, u, dp, d
+set_flip_algo#Lp Up L U F Up Fp
+req#+(Edge, 3x1x1, FR)|-(Build_Edge, Outer, Non_Oriented, FR, LF)|-(Edge, 2x1x1, FR)
+comment#built the 3x1x1 on FR
+set_moves#R, U, U U, Up, Rp, D, D D, Dp
+set_mode#normal
+req#+(Store_Edge, 1)|-(Edge, 3x1x1, FR)
+comment#stored the piece

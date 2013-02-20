@@ -64,7 +64,8 @@ class Graphics():
 		edge_x = 600
 		edge_y = 350
 
-		for name, edges in edge_pieces.iteritems():
+		for name in ['FR', 'LF', 'BL', 'RB']:#edge_pieces.iteritems():
+			edges = edge_pieces[name]
 			self.window.blit(self.font.render(name, 1, text_color), (edge_x, edge_y))
 			for num, pair in enumerate(edges):
 				fst = cube.state[pair.left_face()][pair.left_sticker()]

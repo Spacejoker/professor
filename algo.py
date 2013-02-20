@@ -63,6 +63,8 @@ class Imported_Algo():
 				tmp.remove(c)
 			self.inner_3x2.append(tmp)
 
+		self.stored = 0
+
 	def get_remaining_steps(self):
 		return self.algo_steps
 
@@ -73,7 +75,7 @@ class Imported_Algo():
 		self.stats.current_nr_search_moves = 0
 
 		#handle setting up of allowed  moves
-		while split[0] in ['set_moves', 'set_search_moves', 'comment', 'set_mode']:
+		while split[0] in ['set_moves', 'set_search_moves', 'comment', 'set_mode', 'set_flip_algo']:
 			if split[0] == 'set_moves':
 				new_seq = split[1].split(',')
 				self.allowed_sequences = new_seq
@@ -88,6 +90,9 @@ class Imported_Algo():
 
 			elif split[0] == 'set_mode':
 				self.mode = split[1].strip()
+			
+			elif split[0] == 'set_flip_algo':
+				self.flip_algo = split[1].strip()
 
 			split = self.algo_steps.popleft().split('#') 
 
@@ -101,8 +106,9 @@ class Imported_Algo():
 			c = cmd[:-1].split('(')
 			rule = self.parse_rule(c[1])
 			if c[0] == "+":
-				self.rules.append(rule)
-			else:
+				if rule[0] != "Stored_Edge":
+					self.rules.append(rule)
+			elif c[0] == '-':
 				try:
 					self.rules.remove(rule)
 				except:
@@ -156,7 +162,10 @@ class Imported_Algo():
 			return (parts[0], piece[parts[1]], orientation[parts[2]], parts[3], parts[4].split('-'))
 		
 		elif parts[0] == 'Edge':
-			return (parts[0], parts[1], parts[2])
+			return (parts[0], parts[1], parts[2].split('-'))
+		elif parts[0] == 'Store_Edge':
+			self.stored += 1
+			return ('Store_Edge')
 
 	def rev_seq(self, s):
 		s.reverse()
@@ -170,7 +179,8 @@ class Imported_Algo():
 	def make_queue(self):
 		mods = self.allowed_sequences
 		c = self.cube
-		flip_algo = 'R U Rp Up Fp U F'
+		flip_algo = self.flip_algo #'R U Rp Up Fp U F'
+		print 'flip algo:', flip_algo
 		if self.test_cube():
 			return
 		
@@ -185,6 +195,8 @@ class Imported_Algo():
 				cnt = cnt + 1
 				seq = que.popleft()
 				s = seq.split(" ")
+				if cnt % 1000 == 0:
+					print "performed ", cnt, " seach steps"
 				if self.mode == 'build_edge':
 					print 'teste'	
 					rev = []
@@ -246,9 +258,9 @@ class Imported_Algo():
 		sndleft = self.cube.state[snd.left_face()][snd.left_sticker()]
 		sndright = self.cube.state[snd.right_face()][snd.right_sticker()]
 
-		if fstleft == sndleft and fstright == sndright:
+		if not oriented == Orientation.non_oriented and fstleft == sndleft and fstright == sndright:
 			return True
-		if not oriented and fstleft == sndright and fstright == sndleft:
+		if not oriented == Orientation.oriented and fstleft == sndright and fstright == sndleft:
 			return True
 		return False
 
@@ -272,34 +284,52 @@ class Imported_Algo():
 
 					for edge_pos in rule[4]:
 						for piece_id in [0,2]: #only want to look at top and bottom edges
-							if self.same_piece(fr_mid, edge_pieces[edge_pos][piece_id], oriented = (rule[2] == Orientation.oriented)):
+							if self.same_piece(fr_mid, edge_pieces[edge_pos][piece_id], rule[2]):
 								found = True
 								break
 
 					if not found:
 						return False
 			if rule[0] == 'Edge':
-				if rule[1] in ['2x1x1']: #store is for 3x1x1
-					fr_mid = edge_pieces['FR'][1]
-					left = self.cube.state[fr_mid.left_face()][fr_mid.left_sticker()]
-					right = self.cube.state[fr_mid.right_face()][fr_mid.right_sticker()]
-					
-					top = edge_pieces['FR'][0]
-					l_top = self.cube.state[top.left_face()][top.left_sticker()]
-					r_top = self.cube.state[top.right_face()][top.right_sticker()]
-					
-					bot = edge_pieces['FR'][2]
-					l_bot = self.cube.state[bot.left_face()][bot.left_sticker()]
-					r_bot = self.cube.state[bot.right_face()][bot.right_sticker()]
-					cnt = 0	
+				if rule[1] in ['2x1x1', '3x1x1']:
+					for cur_place in rule[2]:
 
-					if left == l_top and right == r_top:
-						cnt += 1
-					if left == l_bot and right == r_bot:
-						cnt += 1
-					if cnt == 0:
-						return False
-					
+						fr_mid = edge_pieces[cur_place][1]
+						
+						top = edge_pieces[cur_place][0]
+						
+						bot = edge_pieces[cur_place][2]
+						cnt = 0	
+
+						if self.same_piece(fr_mid, top, oriented=True):
+							cnt += 1
+						if self.same_piece(fr_mid, bot, oriented=True):
+							cnt += 1
+						if rule[1] == '2x1x1' and cnt == 0:
+							return False
+						if rule[1] == '3x1x1' and cnt <= 1:
+							return False
+		found_stored = 0
+
+		for cur_place in ['UF', 'UL',  'UB',  'UR',  'DF',  'DL',  'DB',  'DR'] :
+			fr_mid = edge_pieces[cur_place][1]
+			
+			top = edge_pieces[cur_place][0]
+			
+			bot = edge_pieces[cur_place][2]
+			cnt = 0	
+
+			if self.same_piece(fr_mid, top, oriented=True):
+				cnt += 1
+			if self.same_piece(fr_mid, bot, oriented=True):
+				cnt += 1
+			if cnt >= 2:
+				found_stored += 1
+				if found_stored >= self.stored:
+					break
+		if found_stored < self.stored:
+			return False
+
 		return True
 		#for each face, examine what patterns they have in each color
 		#TODO: handle pattern recognizion for each color
