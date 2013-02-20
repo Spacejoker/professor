@@ -142,6 +142,7 @@ class Simulation():
 					w = not w
 
 				if event.unicode.upper() in Turns:	
+					print cmd
 					c.rotate([cmd])
 
 				if event.unicode == '1':
@@ -167,7 +168,10 @@ class Simulation():
 								algo.parse_algo()
 								g.draw_cube(c, algo, s)
 						time.sleep(0.1)
-
+	
+				if event.unicode == 'i':
+					print c.all_commands
+				
 				if event.unicode == ' ':
 					print "Next move: ", algo.next_move()
 

@@ -218,10 +218,20 @@ class Cube():
 			for x in range(0,25):
 				sticker.append(i)
 			self.state.append(sticker)
+		self.all_commands = []	
 	
 	def rotate(self, commands):
+
 		for c in commands:
 			c = str(c)
+			if c == ' ' or len(c) == 0:
+				continue
+			#store all commands that have had effect on the cube
+			if len(self.all_commands) > 0 and (self.all_commands[-1] == c + 'p' or self.all_commands[-1] + 'p' == c):
+				self.all_commands = self.all_commands[:-1]
+			else:
+				self.all_commands.append(c)
+
 			backwards = False
 			if(c[-1:] == 'p'):
 				backwards = True
