@@ -1,4 +1,4 @@
-set_moves#Lp Up L, L D Lp, U, U U, Up, D, D D, Dp
+set_moves#L L,B B,u,d,up,dp,u u, d d,L U Lp Up Bp Up B,R U Rp Up Fp Up F
 set_flip_algo#R U Rp Up Fp U F
 set_mode#normal
 set_search_moves#L
@@ -8,16 +8,15 @@ req#+(Inner, 3x3, R, R)
 req#+(Inner, 3x3, F, F)
 req#+(Inner, 3x3, L, L)
 req#+(Inner, 3x3, D, D)
-req#+(Build_Edge, Outer, Any, FR, LF)
+req#+(Build_Edge, Outer, Any, FR, LF-BL-RB)
 comment#First piece found
-set_moves#Lp Up L U F Up Fp
-req#+(Build_Edge, Outer, Oriented, FR, LF)|-(Build_Edge, Outer, Any, FR, LF)
+req#+(Build_Edge, Outer, Oriented, FR, LF-BL-RB)|-(Build_Edge, Outer, Any, FR, LF-BL-RB)
 comment#First piece oriented
 set_mode#build_edge
 set_moves#u,d,up,dp,u u,d d
-req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR, LF)
+req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR, LF-BL-RB)
 comment#First block built
-set_moves#D, U, L, B, L L, B B, Lp,Lp Up L, L D Lp, Lp Up L U F Up Fp
+set_moves#D, U, L, B, L L, B B, Lp Up L U F Up Fp
 set_mode#normal
 req#+(Build_Edge, Outer, Non_Oriented, FR, LF)
 comment#Next edge, not oriented
@@ -29,18 +28,17 @@ comment#built the 3x1x1 on FR
 set_moves#R, U, U U, Up, Rp, D, D D, Dp
 set_mode#normal
 req#+(Store_Edge, 1)|-(Edge, 3x1x1, FR)
-comment#Stored piece ------------------------------------------------------------------------------------------------------
-set_moves#Lp Up L, L D Lp, U, U U, Up, D, D D, Dp
+comment#stored the piece ---------------------------------------------------------------------------------------------------------
+set_moves#L L,B B,u,d,up,dp,u u, d d,L U Lp Up Bp Up B,R U Rp Up Fp Up F
 set_flip_algo#R U Rp Up Fp U F
 set_mode#normal
 set_search_moves#L
-req#+(Build_Edge, Outer, Any, FR, LF)
-set_moves#Lp Up L U F Up Fp
-req#+(Build_Edge, Outer, Oriented, FR, LF)|-(Build_Edge, Outer, Any, FR, LF)
+req#+(Build_Edge, Outer, Any, FR, LF-BL-RB)
+req#+(Build_Edge, Outer, Oriented, FR, LF-BL-RB)|-(Build_Edge, Outer, Any, FR, LF-BL-RB)
 set_mode#build_edge
 set_moves#u,d,up,dp,u u,d d
-req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR, LF)
-set_moves#D, U, L, B, L L, B B, Lp,Lp Up L, L D Lp, Lp Up L U F Up Fp
+req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR, LF-BL-RB)
+set_moves#D, U, L, B, L L, B B, Lp Up L U F Up Fp
 set_mode#normal
 req#+(Build_Edge, Outer, Non_Oriented, FR, LF)
 set_mode#build_edge
@@ -50,18 +48,17 @@ req#+(Edge, 3x1x1, FR)|-(Build_Edge, Outer, Non_Oriented, FR, LF)|-(Edge, 2x1x1,
 set_moves#R, U, U U, Up, Rp, D, D D, Dp
 set_mode#normal
 req#+(Store_Edge, 1)|-(Edge, 3x1x1, FR)
-comment#Stored piece 2 ------------------------------------------------------------------------------------------------------
-set_moves#Lp Up L, L D Lp, U, U U, Up, D, D D, Dp
+comment#stored the piece ---------------------------------------------------------------------------------------------------------
+set_moves#L L,B B,u,d,up,dp,u u, d d,L U Lp Up Bp Up B,R U Rp Up Fp Up F
 set_flip_algo#R U Rp Up Fp U F
 set_mode#normal
 set_search_moves#L
-req#+(Build_Edge, Outer, Any, FR, LF)
-set_moves#Lp Up L U F Up Fp
-req#+(Build_Edge, Outer, Oriented, FR, LF)|-(Build_Edge, Outer, Any, FR, LF)
+req#+(Build_Edge, Outer, Any, FR, LF-BL-RB)
+req#+(Build_Edge, Outer, Oriented, FR, LF-BL-RB)|-(Build_Edge, Outer, Any, FR, LF-BL-RB)
 set_mode#build_edge
 set_moves#u,d,up,dp,u u,d d
-req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR, LF)
-set_moves#D, U, L, B, L L, B B, Lp,Lp Up L, L D Lp, Lp Up L U F Up Fp
+req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR, LF-BL-RB)
+set_moves#D, U, L, B, L L, B B, Lp Up L U F Up Fp
 set_mode#normal
 req#+(Build_Edge, Outer, Non_Oriented, FR, LF)
 set_mode#build_edge
@@ -71,18 +68,17 @@ req#+(Edge, 3x1x1, FR)|-(Build_Edge, Outer, Non_Oriented, FR, LF)|-(Edge, 2x1x1,
 set_moves#R, U, U U, Up, Rp, D, D D, Dp
 set_mode#normal
 req#+(Store_Edge, 1)|-(Edge, 3x1x1, FR)
-comment#Stored piece ------------------------------------------------------------------------------------------------------
-set_moves#Lp Up L, L D Lp, U, U U, Up, D, D D, Dp
+comment#stored the piece ---------------------------------------------------------------------------------------------------------
+set_moves#L L,B B,u,d,up,dp,u u, d d,L U Lp Up Bp Up B,R U Rp Up Fp Up F
 set_flip_algo#R U Rp Up Fp U F
 set_mode#normal
 set_search_moves#L
-req#+(Build_Edge, Outer, Any, FR, LF)
-set_moves#Lp Up L U F Up Fp
-req#+(Build_Edge, Outer, Oriented, FR, LF)|-(Build_Edge, Outer, Any, FR, LF)
+req#+(Build_Edge, Outer, Any, FR, LF-BL-RB)
+req#+(Build_Edge, Outer, Oriented, FR, LF-BL-RB)|-(Build_Edge, Outer, Any, FR, LF-BL-RB)
 set_mode#build_edge
 set_moves#u,d,up,dp,u u,d d
-req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR, LF)
-set_moves#D, U, L, B, L L, B B, Lp,Lp Up L, L D Lp, Lp Up L U F Up Fp
+req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR, LF-BL-RB)
+set_moves#D, U, L, B, L L, B B, Lp Up L U F Up Fp
 set_mode#normal
 req#+(Build_Edge, Outer, Non_Oriented, FR, LF)
 set_mode#build_edge
@@ -92,18 +88,17 @@ req#+(Edge, 3x1x1, FR)|-(Build_Edge, Outer, Non_Oriented, FR, LF)|-(Edge, 2x1x1,
 set_moves#R, U, U U, Up, Rp, D, D D, Dp
 set_mode#normal
 req#+(Store_Edge, 1)|-(Edge, 3x1x1, FR)
-comment#Stored piece ------------------------------------------------------------------------------------------------------
-set_moves#Lp Up L, L D Lp, U, U U, Up, D, D D, Dp
+comment#stored the piece ---------------------------------------------------------------------------------------------------------
+set_moves#L L,B B,u,d,up,dp,u u, d d,L U Lp Up Bp Up B,R U Rp Up Fp Up F
 set_flip_algo#R U Rp Up Fp U F
 set_mode#normal
 set_search_moves#L
-req#+(Build_Edge, Outer, Any, FR, LF)
-set_moves#Lp Up L U F Up Fp
-req#+(Build_Edge, Outer, Oriented, FR, LF)|-(Build_Edge, Outer, Any, FR, LF)
+req#+(Build_Edge, Outer, Any, FR, LF-BL-RB)
+req#+(Build_Edge, Outer, Oriented, FR, LF-BL-RB)|-(Build_Edge, Outer, Any, FR, LF-BL-RB)
 set_mode#build_edge
 set_moves#u,d,up,dp,u u,d d
-req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR, LF)
-set_moves#D, U, L, B, L L, B B, Lp,Lp Up L, L D Lp, Lp Up L U F Up Fp
+req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR, LF-BL-RB)
+set_moves#D, U, L, B, L L, B B, Lp Up L U F Up Fp
 set_mode#normal
 req#+(Build_Edge, Outer, Non_Oriented, FR, LF)
 set_mode#build_edge
@@ -113,18 +108,17 @@ req#+(Edge, 3x1x1, FR)|-(Build_Edge, Outer, Non_Oriented, FR, LF)|-(Edge, 2x1x1,
 set_moves#R, U, U U, Up, Rp, D, D D, Dp
 set_mode#normal
 req#+(Store_Edge, 1)|-(Edge, 3x1x1, FR)
-comment#Stored piece ------------------------------------------------------------------------------------------------------
-set_moves#Lp Up L, L D Lp, U, U U, Up, D, D D, Dp
+comment#stored the piece ---------------------------------------------------------------------------------------------------------
+set_moves#L L,B B,u,d,up,dp,u u, d d,L U Lp Up Bp Up B,R U Rp Up Fp Up F
 set_flip_algo#R U Rp Up Fp U F
 set_mode#normal
 set_search_moves#L
-req#+(Build_Edge, Outer, Any, FR, LF)
-set_moves#Lp Up L U F Up Fp
-req#+(Build_Edge, Outer, Oriented, FR, LF)|-(Build_Edge, Outer, Any, FR, LF)
+req#+(Build_Edge, Outer, Any, FR, LF-BL-RB)
+req#+(Build_Edge, Outer, Oriented, FR, LF-BL-RB)|-(Build_Edge, Outer, Any, FR, LF-BL-RB)
 set_mode#build_edge
 set_moves#u,d,up,dp,u u,d d
-req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR, LF)
-set_moves#D, U, L, B, L L, B B, Lp,Lp Up L, L D Lp, Lp Up L U F Up Fp
+req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR, LF-BL-RB)
+set_moves#D, U, L, B, L L, B B, Lp Up L U F Up Fp
 set_mode#normal
 req#+(Build_Edge, Outer, Non_Oriented, FR, LF)
 set_mode#build_edge
@@ -134,18 +128,17 @@ req#+(Edge, 3x1x1, FR)|-(Build_Edge, Outer, Non_Oriented, FR, LF)|-(Edge, 2x1x1,
 set_moves#R, U, U U, Up, Rp, D, D D, Dp
 set_mode#normal
 req#+(Store_Edge, 1)|-(Edge, 3x1x1, FR)
-comment#Stored piece ------------------------------------------------------------------------------------------------------
-set_moves#Lp Up L, L D Lp, U, U U, Up, D, D D, Dp
+comment#stored the piece ---------------------------------------------------------------------------------------------------------
+set_moves#L L,B B,u,d,up,dp,u u, d d,L U Lp Up Bp Up B,R U Rp Up Fp Up F
 set_flip_algo#R U Rp Up Fp U F
 set_mode#normal
 set_search_moves#L
-req#+(Build_Edge, Outer, Any, FR, LF)
-set_moves#Lp Up L U F Up Fp
-req#+(Build_Edge, Outer, Oriented, FR, LF)|-(Build_Edge, Outer, Any, FR, LF)
+req#+(Build_Edge, Outer, Any, FR, LF-BL-RB)
+req#+(Build_Edge, Outer, Oriented, FR, LF-BL-RB)|-(Build_Edge, Outer, Any, FR, LF-BL-RB)
 set_mode#build_edge
 set_moves#u,d,up,dp,u u,d d
-req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR, LF)
-set_moves#D, U, L, B, L L, B B, Lp,Lp Up L, L D Lp, Lp Up L U F Up Fp
+req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR, LF-BL-RB)
+set_moves#D, U, L, B, L L, B B, Lp Up L U F Up Fp
 set_mode#normal
 req#+(Build_Edge, Outer, Non_Oriented, FR, LF)
 set_mode#build_edge
@@ -155,18 +148,17 @@ req#+(Edge, 3x1x1, FR)|-(Build_Edge, Outer, Non_Oriented, FR, LF)|-(Edge, 2x1x1,
 set_moves#R, U, U U, Up, Rp, D, D D, Dp
 set_mode#normal
 req#+(Store_Edge, 1)|-(Edge, 3x1x1, FR)
-comment#Stored piece ------------------------------------------------------------------------------------------------------
-set_moves#Lp Up L, L D Lp, U, U U, Up, D, D D, Dp
+comment#stored the piece ---------------------------------------------------------------------------------------------------------
+set_moves#L L,B B,u,d,up,dp,u u, d d,L U Lp Up Bp Up B,R U Rp Up Fp Up F
 set_flip_algo#R U Rp Up Fp U F
 set_mode#normal
 set_search_moves#L
-req#+(Build_Edge, Outer, Any, FR, LF)
-set_moves#Lp Up L U F Up Fp
-req#+(Build_Edge, Outer, Oriented, FR, LF)|-(Build_Edge, Outer, Any, FR, LF)
+req#+(Build_Edge, Outer, Any, FR, LF-BL-RB)
+req#+(Build_Edge, Outer, Oriented, FR, LF-BL-RB)|-(Build_Edge, Outer, Any, FR, LF-BL-RB)
 set_mode#build_edge
 set_moves#u,d,up,dp,u u,d d
-req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR, LF)
-set_moves#D, U, L, B, L L, B B, Lp,Lp Up L, L D Lp, Lp Up L U F Up Fp
+req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR, LF-BL-RB)
+set_moves#D, U, L, B, L L, B B, Lp Up L U F Up Fp
 set_mode#normal
 req#+(Build_Edge, Outer, Non_Oriented, FR, LF)
 set_mode#build_edge
@@ -176,7 +168,7 @@ req#+(Edge, 3x1x1, FR)|-(Build_Edge, Outer, Non_Oriented, FR, LF)|-(Edge, 2x1x1,
 set_moves#R, U, U U, Up, Rp, D, D D, Dp
 set_mode#normal
 req#+(Store_Edge, 1)|-(Edge, 3x1x1, FR)
-comment#Stored piece 8 ------------------------------------------------------------------------------------------------------
+comment#8 stored pieces done ------------------------------------------------------------------------------------------------------
 set_moves#L L,B B,u,d,up,dp,u u, d d,L U Lp Up Bp Up B,R U Rp Up Fp Up F
 set_flip_algo#R U Rp Up Fp U F
 set_mode#normal

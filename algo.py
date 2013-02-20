@@ -198,14 +198,13 @@ class Imported_Algo():
 				if cnt % 1000 == 0:
 					print "performed ", cnt, " seach steps"
 				if self.mode == 'build_edge':
-					print 'teste'	
 					rev = []
 					rev.extend(s)
 					self.rev_seq(rev)
 
 					s.extend(flip_algo.split(' '))
 					s.extend(rev)
-					print "evaluating: ", s
+					#print "evaluating: ", s
 				if cnt > 10000:
 					self.stats.current_nr_search_moves += 1
 					break
