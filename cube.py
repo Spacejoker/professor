@@ -46,7 +46,6 @@ edge_pieces = {
 		'LF': [Edge_Pair((Face.L, 23),(Face.F,5)), Edge_Pair((Face.L, 22),(Face.F, 10)), Edge_Pair((Face.L, 21),(Face.F, 15))],
 		'BL': [Edge_Pair((Face.B, 15),(Face.L, 3)), Edge_Pair((Face.B, 10),(Face.L, 2)), Edge_Pair((Face.B, 5),(Face.L, 1))],
 		'RB': [Edge_Pair((Face.R, 1),(Face.B, 19)), Edge_Pair((Face.R, 2),(Face.B, 14)), Edge_Pair((Face.R, 3),(Face.B, 9))],
-		
 		'UF': [Edge_Pair((Face.U, 21),(Face.F, 1)), Edge_Pair((Face.U, 22),(Face.F, 2)), Edge_Pair((Face.U, 23),(Face.F, 3))],
 		'UL': [Edge_Pair((Face.U, 21),(Face.F, 1)), Edge_Pair((Face.U, 22),(Face.F, 2)), Edge_Pair((Face.U, 23),(Face.F, 3))],
 		'UB': [Edge_Pair((Face.U, 21),(Face.F, 1)), Edge_Pair((Face.U, 22),(Face.F, 2)), Edge_Pair((Face.U, 23),(Face.F, 3))],
