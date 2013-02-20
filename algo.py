@@ -153,7 +153,8 @@ class Imported_Algo():
 					'Oriented' : Orientation.oriented,
 					'Non_Oriented' : Orientation.non_oriented
 					}
-			return (parts[0], piece[parts[1]], orientation[parts[2]], parts[3])
+			return (parts[0], piece[parts[1]], orientation[parts[2]], parts[3], parts[4].split('-'))
+		
 		elif parts[0] == 'Edge':
 			return (parts[0], parts[1], parts[2])
 
@@ -264,12 +265,12 @@ class Imported_Algo():
 			if rule[0].strip() == 'Build_Edge':
 				if rule[1] == Edge.outer:
 					#and r[2] == Orientation.oriented:
-					fr_mid = edge_pieces['FR'][1]
+					fr_mid = edge_pieces[rule[3]][1]
 					
 					#check all pairs in mid layer, except for FR
 					found = False
 
-					for edge_pos in ['LF','BL','RB']:
+					for edge_pos in rule[4]:
 						for piece_id in [0,2]: #only want to look at top and bottom edges
 							if self.same_piece(fr_mid, edge_pieces[edge_pos][piece_id], oriented = (rule[2] == Orientation.oriented)):
 								found = True

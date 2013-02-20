@@ -7,7 +7,7 @@ req#+(Inner, 3x3, R, R)
 req#+(Inner, 3x3, F, F)
 req#+(Inner, 3x3, L, L)
 req#+(Inner, 3x3, D, D)
-req#+(Build_Edge, Outer, Any, FR)
+req#+(Build_Edge, Outer, Any, FR, LF-BL-RB)
 comment#First piece found
 req#+(Build_Edge, Outer, Oriented, FR)|-(Build_Edge, Outer, Any, FR)
 comment#First piece oriented
