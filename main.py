@@ -8,6 +8,7 @@ from cube import *
 from algo import Imported_Algo, Rule_Lookup
 import pymongo
 from graphics import *
+import datetime
 
 class Mode():
 	MENU = 1
@@ -28,6 +29,30 @@ class Persist():
 			#jprint i
 		self.result.save(data)
 
+	def dump_state(self, data):
+		problem_state = self.db.problem_state
+		problem_state.remove()
+		problem_state.save(data)
+		print "dumped state!"
+
+	def list_problems(self):
+		probs = self.db.problem_state.find()
+
+		for p in probs:
+			print p
+
+	def get_first_problem(self):
+		probs = self.db.problem_state.find()
+		print "Rules:"
+		for rule in probs[0]['rules']:
+			print rule
+		print probs[0]['stored'], " pieces stored"
+		print probs[0]['mode'], " is the mode"
+		return probs[0]
+
+	def clear_problems(self):
+		self.db.problem_state.remove()
+
 class Stats():
 	def __init__(self):
 		self.nr_moves = 0
@@ -39,11 +64,11 @@ class Stats():
 		self.nr_moves = 0
 		self.nr_search_steps = 0
 		self.current_nr_search_moves = 0
-	
+
 	def save(self, data):
 		chunk = { 'state' : data,
-			'nr_moves' : self.nr_moves,
-			'nr_search_steps' : self.nr_search_steps }
+				'nr_moves' : self.nr_moves,
+				'nr_search_steps' : self.nr_search_steps }
 		self.persist.save(chunk)
 class Scrambler():
 	@staticmethod	
@@ -78,7 +103,7 @@ class Scrambler():
 				tot += Turns[random.randint(0,5)] + " "
 		print tot
 		return tot
-	
+
 class Simulation():
 	def __init__(self):
 		self.mode = Mode.MENU
@@ -88,7 +113,7 @@ class Simulation():
 		self.algo_file = 'standard.algo'
 	pass
 
-	
+
 	def menu(self):
 		while self.mode == Mode.MENU:
 			self.g.draw_menu()
@@ -96,7 +121,7 @@ class Simulation():
 
 			if event.type == pygame.KEYDOWN:
 				self.mode = Mode.SIMULATION
-		pass
+	
 	#Main application loop
 	def loop(self):
 		self.c = Cube()
@@ -153,9 +178,9 @@ class Simulation():
 					while True:
 						c.rotate([next_move])
 						next_move = algo.next_move()
-						if next_move != ' ':
-							s.nr_moves += 1
+						
 						g.draw_cube(c, algo, s)
+						
 						if next_move == None or next_move == ' ' or next_move == '' and (algo.queued_moves) == 0:
 							if done:
 								print "Done with this auto-step, back to manual!"
@@ -167,17 +192,21 @@ class Simulation():
 							else:
 								algo.parse_algo()
 								g.draw_cube(c, algo, s)
-						time.sleep(0.1)
-	
+						else :
+							s.nr_moves += 1
+							if prim:
+								time.sleep(0.1)
+
+
+				if event.unicode == 'j':
+					print s.persist.list_problems()
+
 				if event.unicode == 'i':
-					print c.all_commands
-				
-				if event.unicode == ' ':
-					print "Next move: ", algo.next_move()
+					algo.dump_state(s.persist)
 
 				if event.unicode == 'q':
 					c.rotate([algo.next_move()])
-				
+
 				if event.unicode == '[':
 					c.rotate(Scrambler.gen_edge_destroy().split(' '))
 
@@ -187,6 +216,9 @@ class Simulation():
 				if event.unicode == '`':
 					while(len(algo.queued_moves) > 0):
 						c.rotate(algo.next_move())
+
+				if event.unicode == 'k':
+					algo.load_state(s.persist)
 
 
 				if event.unicode == '7':
@@ -203,18 +235,18 @@ class Simulation():
 						print r
 					algo.queued_moves.clear()
 					algo.make_queue()
-
+					print "result is: ", algo.queued_moves
 				if event.unicode == 'e':
 					print algo.queued_moves
 
 				if event.unicode == 'a':
 					algo.parse_algo()
-					
+
 				if event.unicode == '.':
 					t = time.time()
 					algo.test_cube(True)
 					diff = time.time() - t
-				
+
 				if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
 					self.running = False
 
@@ -222,7 +254,7 @@ class Simulation():
 
 	def reset_cube(self):
 		self.c = Cube()
-	  	self.s.reset()
+		self.s.reset()
 		print 'loading: ' + self.algo_file
 		self.algo = Imported_Algo(self.c, self.algo_file, self.s)
 

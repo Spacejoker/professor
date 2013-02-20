@@ -2,7 +2,7 @@ from cube import *
 from collections import deque
 import random
 from copy import copy, deepcopy
-import time	
+import time, datetime
 
 #enum types for readability
 class Orientation:
@@ -118,7 +118,7 @@ class Imported_Algo():
 	def next_move(self):
 		#if we have a prepared move in stock just feed that one
 		if self.test_cube():
-			return ' '
+			return None
 
 		if len(self.queued_moves) == 0:
 			self.make_queue()
@@ -127,7 +127,7 @@ class Imported_Algo():
 			pop = self.queued_moves.popleft()
 			return pop
 		else:
-			return ' '
+			return None
 
 	def parse_rule(self, rule):
 		parts = rule.split(',')
@@ -166,6 +166,31 @@ class Imported_Algo():
 		elif parts[0] == 'Store_Edge':
 			self.stored += 1
 			return ('Store_Edge')
+	def dump_state(self, s):
+
+		chunk = { 
+				'scramble' : self.cube.all_commands,
+				'rules' : self.rules,
+				"date": datetime.datetime.utcnow(),
+				'mode' : self.mode,
+				'flip_algo' : self.flip_algo,
+				'search_moves' : self.search_moves,
+				'stored' : self.stored
+				}
+		s.dump_state(chunk)
+
+	def load_state(self, s):
+
+		prob = s.get_first_problem()
+
+		self.cube.rotate(prob['scramble'])
+		self.rules = prob['rules']
+		self.flip_algo = prob['flip_algo']
+		self.mode = prob['mode']
+		self.stored = prob['stored']
+		
+		f = open('search.algo', 'r')
+		self.allowed_sequences = f.readlines()[0][:-1].split(",")
 
 	def rev_seq(self, s):
 		s.reverse()
@@ -174,7 +199,6 @@ class Imported_Algo():
 				s[i] = m[:-1]
 			else:
 				s[i] = m + 'p'
-
 
 	def make_queue(self):
 		mods = self.allowed_sequences
@@ -207,7 +231,8 @@ class Imported_Algo():
 					#print "evaluating: ", s
 				if cnt > 10000:
 					self.stats.current_nr_search_moves += 1
-					break
+					self.dump_state(self.stats.persist)
+					return
 
 				c.rotate(s)
 
@@ -250,7 +275,7 @@ class Imported_Algo():
 					ret.append(Turns[face_id])
 		return ret
 	
-	def same_piece(self, fst, snd, oriented=False):
+	def same_piece(self, fst, snd, oriented=Orientation.non_oriented):
 		fstleft = self.cube.state[fst.left_face()][fst.left_sticker()]
 		fstright = self.cube.state[fst.right_face()][fst.right_sticker()]
 		
@@ -300,9 +325,9 @@ class Imported_Algo():
 						bot = edge_pieces[cur_place][2]
 						cnt = 0	
 
-						if self.same_piece(fr_mid, top, oriented=True):
+						if self.same_piece(fr_mid, top, oriented=Orientation.oriented):
 							cnt += 1
-						if self.same_piece(fr_mid, bot, oriented=True):
+						if self.same_piece(fr_mid, bot, oriented=Orientation.oriented):
 							cnt += 1
 						if rule[1] == '2x1x1' and cnt == 0:
 							return False
