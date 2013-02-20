@@ -24,9 +24,8 @@ class Persist():
 		self.db = conn['cube']	
 		self.result = self.db.result
 	def save(self, data):
-		print "items in db: "
-		for i in self.result.find():
-			print i
+		#for i in self.result.find():
+			#jprint i
 		self.result.save(data)
 
 class Stats():

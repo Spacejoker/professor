@@ -8,6 +8,7 @@ import time
 class Orientation:
 	any = 0
 	oriented = 1
+	non_oriented = 2
 
 class Edge:
 	outer = 0
@@ -149,7 +150,8 @@ class Imported_Algo():
 					}
 			
 			orientation = { 'Any' : Orientation.any,
-					'Oriented' : Orientation.oriented
+					'Oriented' : Orientation.oriented,
+					'Non_Oriented' : Orientation.non_oriented
 					}
 			return (parts[0], piece[parts[1]], orientation[parts[2]], parts[3])
 		elif parts[0] == 'Edge':
@@ -235,7 +237,20 @@ class Imported_Algo():
 				if face[sticker] == Face_Lookup[color]:
 					ret.append(Turns[face_id])
 		return ret
-			
+	
+	def same_piece(self, fst, snd, oriented=False):
+		fstleft = self.cube.state[fst.left_face()][fst.left_sticker()]
+		fstright = self.cube.state[fst.right_face()][fst.right_sticker()]
+		
+		sndleft = self.cube.state[snd.left_face()][snd.left_sticker()]
+		sndright = self.cube.state[snd.right_face()][snd.right_sticker()]
+
+		if fstleft == sndleft and fstright == sndright:
+			return True
+		if not oriented and fstleft == sndright and fstright == sndleft:
+			return True
+		return False
+
 	#verifies if the cube satisfies all rules in its current state
 	def test_cube(self, p=False):
 		for color in Turns:
@@ -249,40 +264,30 @@ class Imported_Algo():
 			if rule[0].strip() == 'Build_Edge':
 				if rule[1] == Edge.outer:
 					#and r[2] == Orientation.oriented:
-					fr_mid = edge_pieces[0][1][1]
-					left = self.cube.state[fr_mid.left_face()][fr_mid.left_sticker()]
-					right = self.cube.state[fr_mid.right_face()][fr_mid.right_sticker()]
-
+					fr_mid = edge_pieces['FR'][1]
+					
 					#check all pairs in mid layer, except for FR
 					found = False
-					for i in range(1, 4):
+
+					for edge_pos in ['LF','BL','RB']:
 						for piece_id in [0,2]: #only want to look at top and bottom edges
-							piece = edge_pieces[i][1][piece_id]
-							l_cand = self.cube.state[piece.left_face()][piece.left_sticker()]
-							r_cand = self.cube.state[piece.right_face()][piece.right_sticker()]
-							if l_cand == left and r_cand == right:
+							if self.same_piece(fr_mid, edge_pieces[edge_pos][piece_id], oriented = (rule[2] == Orientation.oriented)):
 								found = True
 								break
-							if rule[2] == Orientation.oriented:
-								r_cand = self.cube.state[piece.left_face()][piece.left_sticker()]
-								l_cand = self.cube.state[piece.right_face()][piece.right_sticker()]
-								if l_cand == left and r_cand == right:
-									found = True
-									break
 
 					if not found:
 						return False
 			if rule[0] == 'Edge':
 				if rule[1] in ['2x1x1']: #store is for 3x1x1
-					fr_mid = edge_pieces[0][1][1]
+					fr_mid = edge_pieces['FR'][1]
 					left = self.cube.state[fr_mid.left_face()][fr_mid.left_sticker()]
 					right = self.cube.state[fr_mid.right_face()][fr_mid.right_sticker()]
 					
-					top = edge_pieces[0][1][0]
+					top = edge_pieces['FR'][0]
 					l_top = self.cube.state[top.left_face()][top.left_sticker()]
 					r_top = self.cube.state[top.right_face()][top.right_sticker()]
 					
-					bot = edge_pieces[0][1][2]
+					bot = edge_pieces['FR'][2]
 					l_bot = self.cube.state[bot.left_face()][bot.left_sticker()]
 					r_bot = self.cube.state[bot.right_face()][bot.right_sticker()]
 					cnt = 0	

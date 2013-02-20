@@ -62,11 +62,11 @@ class Graphics():
 		self.window.blit(label ,(600, 550))
 		
 		edge_x = 600
-		edge_y = 350 
-		for edge in edge_pieces:
-			name = edge[0]
+		edge_y = 350
+
+		for name, edges in edge_pieces.iteritems():
 			self.window.blit(self.font.render(name, 1, text_color), (edge_x, edge_y))
-			for num, pair in enumerate(edge[1]):
+			for num, pair in enumerate(edges):
 				fst = cube.state[pair.left_face()][pair.left_sticker()]
 				snd = cube.state[pair.right_face()][pair.right_sticker()]
 				self.draw_face(faces[fst].color, edge_x, edge_y + num*size + 20)

@@ -15,6 +15,7 @@ set_mode#build_edge
 set_moves#u,d,up,dp,u u,d d
 req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR)
 comment#First block built
-req#+(Build_Edge, Outer, Any, FR)
+req#+(Build_Edge, Outer, Non_Oriented, FR)
+comment#Next edge, not oriented
 req#+(Build_Edge, Outer, Oriented, FR)|-(Build_Edge, Outer, Any, FR)
 req#+(Edge, 3x1x1, FR)|-(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR)

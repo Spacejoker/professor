@@ -41,15 +41,15 @@ class Edge_Pair():
 	def __str__(self):
 		return "left: " + str(self.left) + ", right: " + str(self.right)
 
-edge_pieces = [
-		('FR', [Edge_Pair((Face.F, 9),(Face.R,21)), Edge_Pair((Face.F, 14),(Face.R, 22)), Edge_Pair((Face.F, 19),(Face.R, 23))]),
-		('LF', [Edge_Pair((Face.L, 23),(Face.F,5)), Edge_Pair((Face.L, 22),(Face.F, 10)), Edge_Pair((Face.L, 21),(Face.F, 15))]),
-		('BL', [Edge_Pair((Face.B, 15),(Face.L, 3)), Edge_Pair((Face.B, 10),(Face.L, 2)), Edge_Pair((Face.B, 5),(Face.L, 1))]),
-		('RB', [Edge_Pair((Face.R, 1),(Face.B, 19)), Edge_Pair((Face.R, 2),(Face.B, 14)), Edge_Pair((Face.R, 3),(Face.B, 9))]),
-		('UF', [Edge_Pair((Face.U, 21),(Face.F, 1)), Edge_Pair((Face.U, 22),(Face.F, 2)), Edge_Pair((Face.U, 23),(Face.F, 3))])
+edge_pieces = {
+		'FR': [Edge_Pair((Face.F, 9),(Face.R,21)), Edge_Pair((Face.F, 14),(Face.R, 22)), Edge_Pair((Face.F, 19),(Face.R, 23))],
+		'LF': [Edge_Pair((Face.L, 23),(Face.F,5)), Edge_Pair((Face.L, 22),(Face.F, 10)), Edge_Pair((Face.L, 21),(Face.F, 15))],
+		'BL': [Edge_Pair((Face.B, 15),(Face.L, 3)), Edge_Pair((Face.B, 10),(Face.L, 2)), Edge_Pair((Face.B, 5),(Face.L, 1))],
+		'RB': [Edge_Pair((Face.R, 1),(Face.B, 19)), Edge_Pair((Face.R, 2),(Face.B, 14)), Edge_Pair((Face.R, 3),(Face.B, 9))],
+		'UF': [Edge_Pair((Face.U, 21),(Face.F, 1)), Edge_Pair((Face.U, 22),(Face.F, 2)), Edge_Pair((Face.U, 23),(Face.F, 3))]
 
 
-		]
+		}
 colors = []
 #Helper methods for conversion etc
 class Helper():
