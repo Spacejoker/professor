@@ -104,9 +104,10 @@ class Imported_Algo():
 		commands = split[1].split('|')
 		for cmd in commands:
 			c = cmd[:-1].split('(')
+			print c
 			rule = self.parse_rule(c[1])
 			if c[0] == "+":
-				if rule[0] != "Stored_Edge":
+				if rule != None and rule[0] != "Stored_Edge":
 					self.rules.append(rule)
 			elif c[0] == '-':
 				try:
@@ -121,7 +122,9 @@ class Imported_Algo():
 			return None
 
 		if len(self.queued_moves) == 0:
-			self.make_queue()
+			success = self.make_queue()
+			if success == 'fail':
+				return "fail"
 
 		if len(self.queued_moves) > 0:
 			pop = self.queued_moves.popleft()
@@ -230,9 +233,8 @@ class Imported_Algo():
 					s.extend(rev)
 					#print "evaluating: ", s
 				if cnt > 10000:
-					self.stats.current_nr_search_moves += 1
 					self.dump_state(self.stats.persist)
-					return
+					return 'fail'
 
 				c.rotate(s)
 
@@ -264,7 +266,7 @@ class Imported_Algo():
 			elif self.mode == 'edge':
 				self.queued_moves.append('L L')
 			self.stats.nr_search_steps += cnt
-			return
+			return True
 	
 	#handles inner faces, not for edges or corners
 	def get_faces_with_inner_color(self, color):

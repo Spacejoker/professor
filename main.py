@@ -129,20 +129,30 @@ class Simulation():
 
 		prim = False
 		w = False
+		batch = False
 
 		self.algo = Imported_Algo(self.c, 'standard.algo', self.s)
 		font = pygame.font.SysFont("monospace", 15)
 		run_to_comment = False
+		self.reset = False
 
 		#handle input and draw graphics
 		while self.running: 
-			if self.s.current_nr_search_moves > 2:
-				print "fail"
-				self.reset_cubes()
 			s = self.s
 			c = self.c
 			g = self.g
 			algo = self.algo
+
+			if self.reset:
+				print self.reset, " is the reset state"
+				self.reset_cube()
+				c.rotate(Scrambler.gen_scramble().split(' '))
+				self.reset = False
+		
+			if batch:
+				print algo.rules
+				self.to_next_comment(c, algo, s)
+				continue
 
 			g.draw_cube(c, self.algo, s)
 			keymap = {}
@@ -171,32 +181,10 @@ class Simulation():
 					c.rotate([cmd])
 
 				if event.unicode == '1':
-					self.algo.parse_algo()
-					next_move = ' '
-					done = False
+					self.to_next_comment(c, algo, s)
 
-					while True:
-						c.rotate([next_move])
-						next_move = algo.next_move()
-						
-						g.draw_cube(c, algo, s)
-						
-						if next_move == None or next_move == ' ' or next_move == '' and (algo.queued_moves) == 0:
-							if done:
-								print "Done with this auto-step, back to manual!"
-								break;
-							split = algo.algo_steps[0].split("#")
-							if split[0] == 'comment':
-								s.save(split[1])
-								done = True
-							else:
-								algo.parse_algo()
-								g.draw_cube(c, algo, s)
-						else :
-							s.nr_moves += 1
-							if prim:
-								time.sleep(0.1)
-
+				if event.unicode == '2':
+					batch = True
 
 				if event.unicode == 'j':
 					print s.persist.list_problems()
@@ -257,6 +245,43 @@ class Simulation():
 		self.s.reset()
 		print 'loading: ' + self.algo_file
 		self.algo = Imported_Algo(self.c, self.algo_file, self.s)
+
+	def to_next_comment(self, c, algo, s):
+		self.algo.parse_algo()
+		next_move = ' '
+		done = False
+		g = self.g
+		prim = False
+
+		while True:
+			c.rotate([next_move])
+			next_move = algo.next_move()
+			if next_move == 'fail':
+				print 'reseting cube due to error'
+				self.reset = True
+				break
+
+			g.draw_cube(c, algo, s)
+			
+			if next_move == None or next_move == ' ' or next_move == '' and (algo.queued_moves) == 0:
+				if done:
+					print "Done with this auto-step, back to manual!"
+					break;
+				split = algo.algo_steps[0].split("#")
+				if split[0] == 'comment':
+					s.save(split[1])
+					done = True
+				if split[1] == 'done':
+					print 'reseting cube since the algo is complete'
+					self.reset = True
+					break
+				else:
+					algo.parse_algo()
+					g.draw_cube(c, algo, s)
+			else :
+				s.nr_moves += 1
+				if prim:
+					time.sleep(0.1)
 
 if __name__ == '__main__':
 	sim = Simulation()
