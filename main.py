@@ -92,6 +92,15 @@ class Scrambler():
 		return scramble
 
 	@staticmethod
+	def gen_3x3x3_scramble():
+		tot = ""
+		for x in range(0, 60):
+			for y in range(0,20):
+				tot += Turns[random.randint(0,5)] + " "
+		print tot
+		return tot
+
+	@staticmethod
 	def gen_edge_destroy():
 		tot = ""
 		for x in range(0, 60):
@@ -141,8 +150,9 @@ class Simulation():
 
 	def custom_scramble(self):
 		parity_scramble = "F r r B B U U l U U rp U U r U U F F r F F lp B B r r Fp"
+		scramble_3x3 = Scrambler.gen_3x3x3_scramble()
 
-		scramble = parity_scramble
+		scramble = scramble_3x3
 		self.c.rotate(scramble.split(" "))
 
 	def show_queued_moves(self):

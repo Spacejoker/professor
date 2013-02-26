@@ -304,5 +304,11 @@ set_flip_algo#Lp Up L U F Up Fp
 req#+(Edge, 3x1x1, FR)|-(Build_Edge, Outer, Non_Oriented, FR, LF)|-(Edge, 2x1x1, FR)
 comment# Built edge 11 --------------------------------------------------------------------------
 req#+(Parity)
-comment#done
-
+comment#parity fixed
+set_moves#R Rp, L, Lp, F, Fp, B, Bp, U, Up, D, Dp
+set_mode#normal
+req#+(Cross, 1)
+req#+(Cross, 1)
+req#+(Cross, 1)
+req#+(Cross, 1)
+comment#Cross done

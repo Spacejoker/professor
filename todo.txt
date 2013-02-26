@@ -77,3 +77,8 @@ refactoring needs?
 //broken down:
 refactor user-input mapping #done
 fix custom-scramble
+hardcoded parity fix LF
+Solve the cross
+Solve pairs
+OLL
+PLL
