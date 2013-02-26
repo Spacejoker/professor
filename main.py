@@ -120,12 +120,14 @@ class Simulation():
 				'j': self.s.persist.list_problems,
 				'q': self.next_move, #c.rotate([algo.next_move()])
 				'[': self.destroy_edges, #c.rotate(Scrambler.gen_edge_destroy().split(' '))
+				']' : self.custom_scramble,
 				'k': self.load_state,
 				'7': self.load_edge_algo,
 				'9' : self.reset_cube,
 				'o' : self.recalc,
 				'e' : self.show_queued_moves,
-				'a' : self.algo.parse_algo}
+				'a' : self.algo.parse_algo,
+				}
 
 	def menu(self):
 		while self.mode == Mode.MENU:
@@ -137,11 +139,18 @@ class Simulation():
 	def recalc(self):
 		self.algo.load_state(self.s.persist)
 
+	def custom_scramble(self):
+		parity_scramble = "F r r B B U U l U U rp U U r U U F F r F F lp B B r r Fp"
+
+		scramble = parity_scramble
+		self.c.rotate(scramble.split(" "))
+
 	def show_queued_moves(self):
 		print self.algo.queued_moves
 
 	def next_move(self):
-		self.c.rotate([algo.next_move()])
+		print 'move:', self.algo.next_move()
+		self.c.rotate([self.algo.next_move()])
 
 	def destroy_edges(self):
 		self.c.rotate(Scrambler.gen_edge_destroy().split(' '))
@@ -257,9 +266,10 @@ class Simulation():
 					break;
 				split = algo.algo_steps[0].split("#")
 				if split[0] == 'comment':
+					print "comment!", split[1]
 					s.save(split[1])
 					done = True
-				if split[1] == 'done':
+				elif split[1] == 'done':
 					print 'reseting cube since the algo is complete'
 					self.reset = True
 					break

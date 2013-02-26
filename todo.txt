@@ -72,3 +72,8 @@ Complete the solve - fix parity and solve the 3x3 cube
 Refine the standard algorithm, make it not fail over 1/100
 update graphics/layout of application
 refactoring needs?
+
+
+//broken down:
+refactor user-input mapping #done
+fix custom-scramble

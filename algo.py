@@ -106,6 +106,7 @@ class Imported_Algo():
 			c = cmd[:-1].split('(')
 			print c
 			rule = self.parse_rule(c[1])
+			print 'parsed rule:', rule
 			if c[0] == "+":
 				if rule != None and rule[0] != "Stored_Edge":
 					self.rules.append(rule)
@@ -118,7 +119,7 @@ class Imported_Algo():
 
 	def next_move(self):
 		#if we have a prepared move in stock just feed that one
-		if self.test_cube():
+		if len(self.queued_moves) == 0 and self.test_cube():
 			return None
 
 		if len(self.queued_moves) == 0:
@@ -170,7 +171,17 @@ class Imported_Algo():
 			self.stored += 1
 			return (parts[0])
 		elif parts[0] == 'Parity':
-			return (parts[0])
+			#check if we have a parity error:
+
+			mid = edge_pieces['LF'][1]
+						
+			top = edge_pieces['LF'][0]
+
+			if self.same_piece(mid, top, oriented=Orientation.non_oriented):
+				parity_fix = "F r r B B U U l U U rp U U r U U F F r F F lp B B r r"
+				for move in parity_fix.split(" "):
+					self.queued_moves.append(move)
+					pass
 
 	def dump_state(self, s):
 
@@ -210,7 +221,6 @@ class Imported_Algo():
 		mods = self.allowed_sequences
 		c = self.cube
 		flip_algo = self.flip_algo #'R U Rp Up Fp U F'
-		print 'flip algo:', flip_algo
 		if self.test_cube():
 			return
 		
@@ -226,7 +236,7 @@ class Imported_Algo():
 				seq = que.popleft()
 				s = seq.split(" ")
 				if cnt % 1000 == 0:
-					print "performed ", cnt, " seach steps"
+					print "performed", cnt, "seach steps"
 				if self.mode == 'build_edge':
 					rev = []
 					rev.extend(s)
