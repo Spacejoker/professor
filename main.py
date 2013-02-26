@@ -131,12 +131,17 @@ class Simulation():
 				'[': self.destroy_edges, #c.rotate(Scrambler.gen_edge_destroy().split(' '))
 				']' : self.custom_scramble,
 				'k': self.load_state,
+				'6': self.show_rules,
 				'7': self.load_edge_algo,
+				'8': self.load_3x3_algo,
 				'9' : self.reset_cube,
 				'o' : self.recalc,
 				'e' : self.show_queued_moves,
 				'a' : self.algo.parse_algo,
 				}
+	
+	def show_rules(self):
+		print self.algo.rules
 
 	def menu(self):
 		while self.mode == Mode.MENU:
@@ -151,8 +156,8 @@ class Simulation():
 	def custom_scramble(self):
 		parity_scramble = "F r r B B U U l U U rp U U r U U F F r F F lp B B r r Fp"
 		scramble_3x3 = Scrambler.gen_3x3x3_scramble()
-
-		scramble = scramble_3x3
+		wr_scramble = "L2 Dp U L R B L R D D U B B Fp U Lp Rp Bp Fp D F Lp B B U U Rp Bp F F"
+		scramble = wr_scramble
 		self.c.rotate(scramble.split(" "))
 
 	def show_queued_moves(self):
@@ -167,6 +172,10 @@ class Simulation():
 
 	def list_problems(self):
 		self.s.persist.list_problems()
+
+	def load_3x3_algo(self):
+		self.algo_file = '3x3.algo'
+		self.reset_cube()
 
 	def load_edge_algo(self):
 		self.algo_file = 'edge.algo'
@@ -246,8 +255,6 @@ class Simulation():
 	def reset_cube(self):
 		self.c = Cube()
 		self.s.reset()
-		print 'loading: ' + self.algo_file
-		self.algo_file = 'standard.algo'
 		self.algo = Imported_Algo(self.c, self.algo_file, self.s)
 
 	def to_next_comment(self):

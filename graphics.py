@@ -65,7 +65,30 @@ class Graphics():
 		self.draw_edges(['UF', 'UL', 'UB', 'UR'], 600, 370, cube, size)
 		self.draw_edges(['DF', 'DL', 'DB', 'DR'], 600, 490, cube, size)
 
+		self.draw_corners(cube, size)
+
 		pygame.display.flip() 
+
+	def draw_corners(self, cube, size):
+
+		c = cube.create_corner_map()
+		x = 700
+		y = 50
+		cnt = 0
+		for name, stickers in c.items():
+			if cnt >= 4:
+				cnt = 0
+				y += 2*size + 20
+				x = 700
+			cnt += 1
+
+			label = self.font.render(name, 1, (255,255,255))
+			self.window.blit(label ,(x, y))
+			self.draw_face(faces[stickers[1]].color, x + size/2, y + 20)
+			self.draw_face(faces[stickers[2]].color, x , y + 20 + size)
+			self.draw_face(faces[stickers[0]].color, x - size/2, y + 20)
+
+			x += size * 4
 
 	def draw_edges(self, names, x0, y0, cube, size):
 

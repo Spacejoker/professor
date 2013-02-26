@@ -12,11 +12,11 @@ class Face: #enum
 Face_Lookup = {'D' : 0,	
 		'B' : 1,
 		'L' : 2,
-	'U' : 3,
-	'R' : 4,
-	'F' : 5,
-	'Any' : None
-	}
+		'U' : 3,
+		'R' : 4,
+		'F' : 5,
+		'Any' : None
+		}
 class Face_Data():
 	def __init__(self, position, color):
 		self.position = position
@@ -32,7 +32,7 @@ class Edge_Pair():
 
 	def left_sticker(self):
 		return self.left[1]
-	
+
 	def right_face(self):
 		return self.right[0]
 
@@ -56,6 +56,7 @@ edge_pieces = {
 		'DR': [Edge_Pair((Face.D, 9),(Face.R, 19)), Edge_Pair((Face.D, 14),(Face.R, 14)), Edge_Pair((Face.D, 19),(Face.R, 9))],
 
 		}
+
 colors = []
 #Helper methods for conversion etc
 class Helper():
@@ -65,11 +66,11 @@ class Helper():
 	@staticmethod
 	def get_x(id):
 		return id % 5
-		
+
 	@staticmethod
 	def get_y(id):
 		return id/5
-	
+
 
 class Chain_Generator():
 	@staticmethod
@@ -78,7 +79,7 @@ class Chain_Generator():
 		ret = []
 		for i in range(0, 4):
 			ret.append([(face, Helper.to_int(0, i)), (face, Helper.to_int(i, 4)), (face, Helper.to_int(4, 4-i)), (face, Helper.to_int(4-i, 0))])
-		
+
 		#chains for the inner cicrle
 		for i in range(1, 3):
 			ret.append([(face, Helper.to_int(1, i)), (face, Helper.to_int(i, 3)), (face, Helper.to_int(3, 4-i)), (face, Helper.to_int(4-i, 1))])
@@ -87,7 +88,7 @@ class Chain_Generator():
 	@staticmethod
 	def get_chain(command):
 		ret = []
-			
+
 		if command == 'R': 
 			ret = Chain_Generator.R_chain()
 		elif command == 'r': 
@@ -193,14 +194,14 @@ class Chain_Generator():
 		for pos in range(1, 5*5, 5):
 			ret.append([(Face.U, pos), (Face.F, pos), (Face.D, pos), (Face.B, pos)]);
 		return ret
-		
+
 	@staticmethod
 	def r_chain():
 		ret = []
 		for pos in range(3, 5*5, 5):
 			ret.append([(Face.U, pos), (Face.B, pos), (Face.D, pos), (Face.F, pos)]);
 		return ret
-		
+
 	@staticmethod	
 	def R_chain():
 		ret = []
@@ -219,7 +220,7 @@ class Cube():
 				sticker.append(i)
 			self.state.append(sticker)
 		self.all_commands = []	
-	
+
 	def rotate(self, commands):
 
 		for c in commands:
@@ -236,11 +237,19 @@ class Cube():
 			if(c[-1:] == 'p'):
 				backwards = True
 				c = c[:-1]
+			double = False
+			if c[-1:] == '2':
+				c = c[:-1]
+				double = True
 			chain = []
 			if( c[-1:] == 'w'):
 				chain.extend(Chain_Generator.get_chain(c[:1].lower()))	
+				if double:
+					chain.extend( Chain_Generator.get_chain(c[:1]) )
 				c = c[-1:]
 			chain.extend( Chain_Generator.get_chain(c) )
+			if double:
+				chain.extend( Chain_Generator.get_chain(c) )
 			if chain == None:
 				continue
 			if(backwards):
@@ -249,14 +258,14 @@ class Cube():
 			self.apply_chain(chain)
 
 	def apply_chain(self, chain):
-		
+
 		for c in chain:
 			c.reverse()
 			tmp = self.state[c[0][0]][c[0][1]]
-			
+
 			for i in range(0, len(c)-1):
 				self.state[c[i][0]][c[i][1]] = self.state[c[i+1][0]][c[i+1][1]]
-				
+
 			self.state[c[len(c)-1][0]][c[len(c)-1][1]] = tmp
 
 	def get(self, sticker):
@@ -264,7 +273,7 @@ class Cube():
 
 	def dump_state(self):
 		fout = open('state_dump.txt', 'w')
-		
+
 		for face in self.state:
 			for sticker in face:
 				fout.write(sticker + ",")
@@ -272,3 +281,61 @@ class Cube():
 
 		fout.close()
 
+	def create_corner_map(self):
+		state = self.state
+		return { 'ULF': (state[Face.U][20], state[Face.L][24], state[Face.F][0]),
+				'UBL':(state[Face.U][0], state[Face.B][20], state[Face.L][4]),
+				'URB': (state[Face.U][4], state[Face.R][0], state[Face.B][24]),
+				'UFR': (state[Face.U][24], state[Face.F][4], state[Face.R][20]),
+				'DLF' :(state[Face.D][0],state[Face.L][20],state[Face.F][20]),
+				'DBL' : (state[Face.D][20],state[Face.B][0],state[Face.L][0]),
+				'DRB' : (state[Face.D][24],state[Face.R][4],state[Face.B][4]),
+				'DFR' : (state[Face.D][4],state[Face.F][24],state[Face.R][24]),
+				}
+
+	def get_corner_stickers(self, corner):
+
+		return  self.create_corner_map()[corner]
+
+	def get_corner_position(self, corner_name):
+		for key, corner in self.create_corner_map().items():
+			correct_corner = True
+			for c in corner_name:
+				found = False
+				for color in corner:
+					if c == Turns[color]:
+						found = True
+				if not found:
+					correct_corner = False
+					break
+			if correct_corner:
+				return key
+		return "ERROR"
+	def create_edge_map(self):
+		keys = edge_pieces.keys()
+		ret = {}
+		state = self.state
+		for key in keys:
+			e = edge_pieces[key][0]
+			fst = state[e.left_face()][e.left_sticker()]
+			snd = state[e.right_face()][e.right_sticker()]
+			ret[key] = (fst, snd)
+			
+		return ret	
+	def get_edge_stickers(self, edge):
+		return self.create_edge_map()[edge]
+
+	def get_f2l_edge_position(self, corner_name):
+		for key, corner in self.create_edge_map().items():
+			correct_corner = True
+			for c in corner_name:
+				found = False
+				for color in corner:
+					if c == Turns[color]:
+						found = True
+				if not found:
+					correct_corner = False
+					break
+			if correct_corner:
+				return key
+		return "ERROR"

@@ -63,7 +63,9 @@ class Imported_Algo():
 				tmp.remove(c)
 			self.inner_3x2.append(tmp)
 
-		self.stored = 0
+		self.stored = 0 #stored edges when building them
+		self.cross = 0 #bottom cross for 3x3 solve
+		self.pairs = 0
 
 	def get_remaining_steps(self):
 		return self.algo_steps
@@ -167,9 +169,11 @@ class Imported_Algo():
 		
 		elif parts[0] == 'Edge':
 			return (parts[0], parts[1], parts[2].split('-'))
+
 		elif parts[0] == 'Store_Edge':
 			self.stored += 1
 			return (parts[0])
+
 		elif parts[0] == 'Parity':
 			#check if we have a parity error:
 
@@ -181,7 +185,19 @@ class Imported_Algo():
 				parity_fix = "F r r B B U U l U U rp U U r U U F F r F F lp B B r r"
 				for move in parity_fix.split(" "):
 					self.queued_moves.append(move)
-					pass
+
+		elif parts[0] == 'Cross':
+			#self.rules = [] #must be reduced to a 3x3, so we can clear the old rules, might be stupid so ill remove the optimization for now
+			self.cross += 1
+
+		elif parts[0] == 'Corner':
+			return (parts[0], parts[1], parts[2].split('-'), parts[3])
+		elif parts[0] == 'F2L_Edge':
+			return (parts[0], parts[1], parts[2].split('-'), parts[3])
+		elif parts[0] in  ['OLL_Cross', 'OLL', 'PLL_Corners', 'PLL']:
+			return (parts[0], parts[1])
+		elif parts[0] == 'Pair':
+			self.pairs += 1
 
 	def dump_state(self, s):
 
@@ -348,6 +364,51 @@ class Imported_Algo():
 							return False
 						if rule[1] == '3x1x1' and cnt <= 1:
 							return False
+			if rule[0] == 'Corner':
+				cur_pos = self.cube.get_corner_position(rule[1])
+				if cur_pos not in rule[2]:
+					return False
+
+				if rule[3] != 'Any':
+
+					stickers = self.cube.get_corner_stickers(cur_pos)
+					required_pos = rule[3]
+					idx = cur_pos.find(required_pos)
+					idx_face = stickers[idx]
+
+					if idx_face != Face_Lookup[rule[1][0]]:
+						return False
+			if rule[0] == 'F2L_Edge':
+				cur_pos = self.cube.get_f2l_edge_position(rule[1])
+				if cur_pos not in rule[2]:
+					return False
+
+				if rule[3] != 'Any':
+
+					stickers = self.cube.get_edge_stickers(cur_pos)
+					required_pos = rule[3]
+					idx = cur_pos.find(required_pos)
+					idx_face = stickers[idx]
+
+					if idx_face != Face_Lookup[rule[1][0]]:
+						return False
+			if rule[0] == 'OLL_Cross':
+				print "Testing oll cross"
+				for pos in range(1, 24):
+					if pos == 4 or pos == 20:
+						continue
+					if self.cube.state[Face.U][pos] != Face.U:
+						return False
+			if rule[0] == 'OLL':
+				for pos in range(0, 25):
+					if self.cube.state[Face.U][pos] != Face.U:
+						return False
+			if rule[0] == 'PLL_Corners':
+				state = self.cube.state
+				corner_faces = [(Face.F, 0),(Face.F,4),(Face.L,4),(Face.L,24),(Face.B,20),(Face.B,24),(Face.R,0),(Face.R,20)]
+				for i in corner_faces:
+					if state[i[0]][i[1]] != i[0]:
+						return False
 		found_stored = 0
 
 		for cur_place in ['UF', 'UL',  'UB',  'UR',  'DF',  'DL',  'DB',  'DR'] :
@@ -368,6 +429,33 @@ class Imported_Algo():
 					break
 		if found_stored < self.stored:
 			return False
+		
+		found_cross = 0
+		for cross_piece in ['DF', 'DL',  'DB',  'DR']:
+			mid = edge_pieces[cross_piece][1]
+			down_color = self.cube.state[mid.left_face()][mid.left_sticker()]
+			up_color = self.cube.state[mid.right_face()][mid.right_sticker()]
+			if down_color == Face.D and up_color == mid.right_face():
+				found_cross += 1
+		
+		if found_cross < self.cross:
+			return False
+		done_pairs = 0
+		for pair in ['FR','LF','BL','RB']:
+			mid = edge_pieces[cross_piece][1]
+			down_color = self.cube.state[mid.left_face()][mid.left_sticker()]
+			up_color = self.cube.state[mid.right_face()][mid.right_sticker()]
+
+			corner = self.cube.get_corner_stickers('D' + pair)
+			if corner [0] == Face.D and corner[1] == down_color and corner[2] == up_color:
+				done_pairs += 1
+			pass
+		if done_pairs < self.pairs:
+			return False
+		for corner in ['ULF', 'UBL', 'URB', 'UFR']:
+			cor = self.cube.get_corner_stickers(corner)
+
+
 
 		return True
 		#for each face, examine what patterns they have in each color
@@ -458,10 +546,6 @@ class Imported_Algo():
 				used.extend(cand)
 				return
 
-		#for cand in cands:
-		#	if len(set(cand) & set(stickers)) == len(cand) and len(set(cand) & set(used)) == 0:
-		#		num_blocks[case][face] += 1
-		#		used.extend(cand)
 	def get_stickers(self, face, color):
 		ret = []
 
