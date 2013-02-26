@@ -403,12 +403,21 @@ class Imported_Algo():
 				for pos in range(0, 25):
 					if self.cube.state[Face.U][pos] != Face.U:
 						return False
+			corner_faces = [(Face.F, 0),(Face.F,4),(Face.L,4),(Face.L,24),(Face.B,20),(Face.B,24),(Face.R,0),(Face.R,20)]
 			if rule[0] == 'PLL_Corners':
 				state = self.cube.state
-				corner_faces = [(Face.F, 0),(Face.F,4),(Face.L,4),(Face.L,24),(Face.B,20),(Face.B,24),(Face.R,0),(Face.R,20)]
 				for i in corner_faces:
 					if state[i[0]][i[1]] != i[0]:
 						return False
+
+			if rule[0] == 'PLL':
+				state = self.cube.state
+				mid_pieces = [(Face.F, 2), (Face.L, 14), (Face.B, 22), (Face.R, 10)]
+				corner_faces.extend(mid_pieces)
+				for i in corner_faces:
+					if state[i[0]][i[1]] != i[0]:
+						return False
+
 		found_stored = 0
 
 		for cur_place in ['UF', 'UL',  'UB',  'UR',  'DF',  'DL',  'DB',  'DR'] :
