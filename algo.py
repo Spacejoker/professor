@@ -168,7 +168,10 @@ class Imported_Algo():
 			return (parts[0], parts[1], parts[2].split('-'))
 		elif parts[0] == 'Store_Edge':
 			self.stored += 1
-			return ('Store_Edge')
+			return (parts[0])
+		elif parts[0] == 'Parity':
+			return (parts[0])
+
 	def dump_state(self, s):
 
 		chunk = { 

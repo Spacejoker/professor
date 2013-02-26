@@ -56,7 +56,7 @@ Set up a storage for statistics, local db? done
 //Using external code for menu: http://www.pygame.org/project-MenuSystem-2031-.html
 
 Todo 2013-02-19:
-fix a scramble that only destroys edges
+fix a scramble that only destroys edge
 make an option to display edges more clearly in the gui
 set up a new edge-build-only-algorithm
 Implement a check if we have a correct piece on LB/BR/FL that mathes the middle piece on FR
@@ -65,3 +65,10 @@ pair them up
 find another piece
 flip that one correctly
 put them togehter and store in top layer
+
+Todo 2013-02-26:
+Start writing report, look at structure and such for abt 2 hr.
+Complete the solve - fix parity and solve the 3x3 cube
+Refine the standard algorithm, make it not fail over 1/100
+update graphics/layout of application
+refactoring needs?

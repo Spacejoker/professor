@@ -111,8 +111,21 @@ class Simulation():
 		pygame.init() 
 		self.g = Graphics()
 		self.algo_file = 'standard.algo'
-	pass
-
+		self.c = Cube()
+		self.s = Stats()
+		self.algo = Imported_Algo(self.c, 'standard.algo', self.s)
+		self.inputHandler = {
+				'0' : self.scramble,
+				'1' : self.to_next_comment,
+				'j': self.s.persist.list_problems,
+				'q': self.next_move, #c.rotate([algo.next_move()])
+				'[': self.destroy_edges, #c.rotate(Scrambler.gen_edge_destroy().split(' '))
+				'k': self.load_state,
+				'7': self.load_edge_algo,
+				'9' : self.reset_cube,
+				'o' : self.recalc,
+				'e' : self.show_queued_moves,
+				'a' : self.algo.parse_algo}
 
 	def menu(self):
 		while self.mode == Mode.MENU:
@@ -121,17 +134,38 @@ class Simulation():
 
 			if event.type == pygame.KEYDOWN:
 				self.mode = Mode.SIMULATION
+	def recalc(self):
+		self.algo.load_state(self.s.persist)
+
+	def show_queued_moves(self):
+		print self.algo.queued_moves
+
+	def next_move(self):
+		self.c.rotate([algo.next_move()])
+
+	def destroy_edges(self):
+		self.c.rotate(Scrambler.gen_edge_destroy().split(' '))
+
+	def list_problems(self):
+		self.s.persist.list_problems()
+
+	def load_edge_algo(self):
+		self.algo_file = 'edge.algo'
+		self.reset_cube()
 	
+	def load_state():
+		self.algo.load_state(self.s.persist)
+
+	def scramble(self):
+		self.c.rotate(Scrambler.gen_scramble().split(' '))
+
 	#Main application loop
 	def loop(self):
-		self.c = Cube()
-		self.s = Stats()
 
 		prim = False
 		w = False
 		batch = False
 
-		self.algo = Imported_Algo(self.c, 'standard.algo', self.s)
 		font = pygame.font.SysFont("monospace", 15)
 		run_to_comment = False
 		self.reset = False
@@ -162,81 +196,31 @@ class Simulation():
 				#handles dvorak
 				keymap[event.scancode] = event.unicode
 				cmd = event.unicode
-
-				if w:
-					cmd = cmd.upper()
-					cmd += 'w'
-
-				if(prim):
-					cmd += 'p'
-
-				if event.unicode == 'y':
-					prim = not prim
-
-				if event.unicode == 'w':
-					w = not w
-
-				if event.unicode.upper() in Turns:	
-					print cmd
-					c.rotate([cmd])
-
-				if event.unicode == '1':
-					self.to_next_comment(c, algo, s)
-
-				if event.unicode == '2':
-					batch = True
-
-				if event.unicode == 'j':
-					print s.persist.list_problems()
-
-				if event.unicode == 'i':
-					algo.dump_state(s.persist)
-
-				if event.unicode == 'q':
-					c.rotate([algo.next_move()])
-
-				if event.unicode == '[':
-					c.rotate(Scrambler.gen_edge_destroy().split(' '))
-
-				if event.unicode == '0':
-					c.rotate(Scrambler.gen_scramble().split(' '))
-
-				if event.unicode == '`':
-					while(len(algo.queued_moves) > 0):
-						c.rotate(algo.next_move())
-
-				if event.unicode == 'k':
-					algo.load_state(s.persist)
-
-
-				if event.unicode == '7':
-					self.algo_file = 'edge.algo'
-					self.reset_cube()
-
-				if event.unicode == '9':
-					self.reset_cube()
-				#Debug controls
-				if event.unicode == 'o':
-					print "Recalculating moves needed"
-					print "Rules to obey:"
-					for r in algo.rules:
-						print r
-					algo.queued_moves.clear()
-					algo.make_queue()
-					print "result is: ", algo.queued_moves
-				if event.unicode == 'e':
-					print algo.queued_moves
-
-				if event.unicode == 'a':
-					algo.parse_algo()
-
-				if event.unicode == '.':
-					t = time.time()
-					algo.test_cube(True)
-					diff = time.time() - t
-
-				if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+				if event.unicode in self.inputHandler:
+					self.inputHandler[event.unicode]()
+				elif event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
 					self.running = False
+				elif event.unicode == '?':
+					print "Commands: \n", self.inputHandler
+				elif event.unicode.upper() in Turns:	
+					c.rotate([cmd])
+				else:
+					print "No mapping for key: ", event.unicode
+
+
+				#if w:
+					#cmd = cmd.upper()
+					#cmd += 'w'
+
+				#if(prim):
+					#cmd += 'p'
+
+				#if event.unicode == 'y':
+					#prim = not prim
+
+				#if event.unicode == 'w':
+					#w = not w
+
 
 		pygame.quit()
 
@@ -244,9 +228,13 @@ class Simulation():
 		self.c = Cube()
 		self.s.reset()
 		print 'loading: ' + self.algo_file
+		self.algo_file = 'standard.algo'
 		self.algo = Imported_Algo(self.c, self.algo_file, self.s)
 
-	def to_next_comment(self, c, algo, s):
+	def to_next_comment(self):
+		c = self.c
+		algo = self.algo
+		s = self.s
 		self.algo.parse_algo()
 		next_move = ' '
 		done = False

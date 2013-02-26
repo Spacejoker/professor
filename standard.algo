@@ -303,5 +303,6 @@ set_moves#up, u, dp, d, L L
 set_flip_algo#Lp Up L U F Up Fp
 req#+(Edge, 3x1x1, FR)|-(Build_Edge, Outer, Non_Oriented, FR, LF)|-(Edge, 2x1x1, FR)
 comment# Built edge 11 --------------------------------------------------------------------------
+req#+(Parity)
 comment#done
 
