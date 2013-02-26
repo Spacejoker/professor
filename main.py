@@ -9,6 +9,8 @@ from algo import Imported_Algo, Rule_Lookup
 import pymongo
 from graphics import *
 import datetime
+from helper import Formatter
+BATCH_SIZE = 10
 
 class Mode():
 	MENU = 1
@@ -29,30 +31,41 @@ class Persist():
 			#jprint i
 		self.result.save(data)
 
-	def dump_state(self, data):
-		problem_state = self.db.problem_state
-		problem_state.remove()
-		problem_state.save(data)
-		print "dumped state!"
-
 	def list_problems(self):
 		probs = self.db.problem_state.find()
-
-		for p in probs:
-			print p
+		for nr, p in enumerate(probs):
+			print "Problem nr ", nr, "=================================="
+			rules = p['rules']
+			for rule in map(Formatter.rule_to_string, rules):
+				if(rule != None):
+					print rule
+			print "Allowed sequences:", map(str, p['allowed_sequences'])
+			print "Scramble:", map(str,p['scramble'])
 
 	def get_first_problem(self):
 		probs = self.db.problem_state.find()
-		print "Rules:"
-		for rule in probs[0]['rules']:
-			print rule
-		print probs[0]['stored'], " pieces stored"
-		print probs[0]['mode'], " is the mode"
 		return probs[0]
 
 	def clear_problems(self):
 		self.db.problem_state.remove()
 
+	def remove_first_problem(self):
+		prob = self.db.problem_state.find()[0]
+		self.db.problem_state.remove({'scramble' : prob['scramble']})
+
+	def dump_state(self, algo):
+		chunk = { 
+				'all_commands' : algo.cube.all_commands,
+				'scramble' : algo.cube.scramble,
+				'rules' : algo.rules,
+				"date": datetime.datetime.utcnow(),
+				'mode' : algo.mode,
+				'flip_algo' : algo.flip_algo,
+				'allowed_sequences' : algo.allowed_sequences,
+				'stored' : algo.stored
+				}
+		self.db.problem_state.remove({'scramble' : algo.cube.scramble})
+		self.db.problem_state.save(chunk)
 class Stats():
 	def __init__(self):
 		self.nr_moves = 0
@@ -123,9 +136,11 @@ class Simulation():
 		self.c = Cube()
 		self.s = Stats()
 		self.algo = Imported_Algo(self.c, 'standard.algo', self.s)
+		self.batch = 0
 		self.inputHandler = {
 				'0' : self.scramble,
 				'1' : self.to_next_comment,
+				'2' : self.increment_batch,
 				'j': self.s.persist.list_problems,
 				'q': self.next_move, #c.rotate([algo.next_move()])
 				'[': self.destroy_edges, #c.rotate(Scrambler.gen_edge_destroy().split(' '))
@@ -138,8 +153,19 @@ class Simulation():
 				'o' : self.recalc,
 				'e' : self.show_queued_moves,
 				'a' : self.algo.parse_algo,
+				'c' : self.s.persist.clear_problems,
+				'g' : self.s.persist.remove_first_problem,
+				'x' : self.scramble_from_fst_problem
 				}
-	
+
+	def scramble_from_fst_problem(self):
+		prob = self.s.persist.get_first_problem()
+		self.scramble(map(str, prob['scramble']))
+
+	def increment_batch(self):
+		self.scramble()
+		self.batch += BATCH_SIZE
+
 	def show_rules(self):
 		print self.algo.rules
 
@@ -158,7 +184,7 @@ class Simulation():
 		scramble_3x3 = Scrambler.gen_3x3x3_scramble()
 		wr_scramble = "L2 Dp U L R B L R D D U B B Fp U Lp Rp Bp Fp D F Lp B B U U Rp Bp F F"
 		scramble = wr_scramble
-		self.c.rotate(scramble.split(" "))
+		self.scramble(scramble)
 
 	def show_queued_moves(self):
 		print self.algo.queued_moves
@@ -185,18 +211,20 @@ class Simulation():
 		self.algo_file = 'standard.algo'
 		self.reset_cube()
 
-	def load_state():
+	def load_state(self):
 		self.algo.load_state(self.s.persist)
 
-	def scramble(self):
-		self.c.rotate(Scrambler.gen_scramble().split(' '))
+	def scramble(self, scramble_seq=None):
+		if(scramble_seq == None):
+			scramble_seq = Scrambler.gen_scramble().split(' ')
+		self.c.rotate(scramble_seq)
+		self.c.scramble = scramble_seq 
 
 	#Main application loop
 	def loop(self):
 
 		prim = False
 		w = False
-		batch = False
 
 		font = pygame.font.SysFont("monospace", 15)
 		run_to_comment = False
@@ -212,12 +240,12 @@ class Simulation():
 			if self.reset:
 				print self.reset, " is the reset state"
 				self.reset_cube()
-				c.rotate(Scrambler.gen_scramble().split(' '))
 				self.reset = False
+				self.scramble()
 		
-			if batch:
+			if self.batch > 0 and not pygame.event.peek(pygame.KEYDOWN):
 				print algo.rules
-				self.to_next_comment(c, algo, s)
+				self.to_next_comment()
 				continue
 
 			g.draw_cube(c, self.algo, s)
@@ -252,7 +280,7 @@ class Simulation():
 
 				#if event.unicode == 'w':
 					#w = not w
-
+			pygame.event.clear()
 
 		pygame.quit()
 
@@ -277,6 +305,8 @@ class Simulation():
 			if next_move == 'fail':
 				print 'reseting cube due to error'
 				self.reset = True
+				self.batch -= 1
+				self.s.persist.dump_state(self.algo)
 				break
 
 			g.draw_cube(c, algo, s)
@@ -285,15 +315,17 @@ class Simulation():
 				if done:
 					print "Done with this auto-step, back to manual!"
 					break;
+
 				split = algo.algo_steps[0].split("#")
 				if split[0] == 'comment':
 					print "comment!", split[1]
 					s.save(split[1])
 					done = True
-				elif split[1] == 'done':
-					print 'reseting cube since the algo is complete'
-					self.reset = True
-					break
+					if split[1] == 'done':
+						self.batch -= 1
+						print 'reseting cube since the algo is complete'
+						self.reset = True
+						return
 				else:
 					algo.parse_algo()
 					g.draw_cube(c, algo, s)

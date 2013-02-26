@@ -5,12 +5,17 @@ set_flip_algo#R U Rp Up Fp U F
 req#+(Inner, 1x1, D, D)
 req#+(Inner, 2x1, D, Any)
 req#+(Inner, 2x1, D, U)|-(Inner, 2x1, D, Any)
+set_moves#U, Up, D, Dp, r2, l2, f2, b2
 req#+(Inner, 2x2, D, D)|-(Inner, 2x1, D, U)|-(Inner, 1x1, D, D)
+set_moves#r,f,l,u,d,b,U,D,R,F,L,B,rp,fp,lp,up,dp,bp,Dp,r U rp,rp U r, b U bp,bp U b,fp U f,F,R,L,B,Fp,Rp,Lp,Bp
 req#+(Inner, 2x1, D, Any)
 req#+(Inner, 3x2, D, D)|-(Inner, 2x1, D, Any)|-(Inner, 2x2, D, D)
+set_moves#r,f,l,u,d,b,U,D,R,F,L,B,rp,fp,lp,up,dp,bp,Dp
 req#+(Inner, 2x1, D, Any)
 req#+(Inner, 3x1, D, Any)|-(Inner, 2x1, D, Any)
-req#+(Inner, 3x3, D, D)|-(Inner, 3x1, D, Any)|-(Inner, 3x2, D, D)
+req#+(Inner, 3x1, D, F)|-(Inner, 3x1, D, Any)
+set_moves#F, Fp, F2, D, Dp, rp, l
+req#+(Inner, 3x3, D, D)|-(Inner, 3x1, D, F)|-(Inner, 3x2, D, D)
 set_moves#r U rp,rp U r, b U bp,bp U b,fp U f,F,R,L,B,Fp,Rp,Lp,Bp
 set_search_moves#U
 req#+(Inner, 1x1, U, U)
@@ -24,10 +29,13 @@ req#+(Inner, 2x1, U, Any)
 req#+(Inner, 2x1, U, F)|-(Inner, 2x1, U, Any)
 set_moves#r U rp,r Up rp,lp U l,lp Up l,Fp,F,U,Up # push blocks to top
 req#+(Inner, 3x2, U, U)|-(Inner, 2x1, U, F)|-(Inner, 2x2, U, U)
-set_moves#F,Fp,L,Lp,B,Bp,R,Rp,u,up,d,dp,r,l,f,b,R R, F F, B B, L L#block building for top layer
+set_moves#F,Fp,L,Lp,B,Bp,R,Rp,u,up,d,dp,U, Up, rp F F r#block building for top layer
 req#+(Inner, 1x1_corner, U, Any)
-req#+(Inner, 2x1, U, Any)
-req#+(Inner, 3x1, U, Any)|-(Inner, 2x1, U, Any)|-(Inner, 1x1_corner, U, Any)
+req#+(Inner, 2x1, U, Any)|-(Inner, 1x1_corner, U, Any)
+req#+(Inner, 1x1_corner, U, Any)
+req#+(Inner, 1x1_corner, U, L)|-(Inner, 1x1_corner, U, Any)
+req#+(Inner, 2x1, U, F)|-(Inner, 2x1, U, Any)
+req#+(Inner, 3x1, U, Any)|-(Inner, 2x1, U, F)|-(Inner, 1x1_corner, U, L)
 req#+(Inner, 3x1, U, F)|-(Inner, 3x1, U, Any)
 set_moves#r U U rp,lp U U l,F,U,Up# push 3x1 block to top
 req#+(Inner, 3x3, U, U)|-(Inner, 3x1, U, F)|-(Inner, 3x2, U, U)
@@ -262,8 +270,8 @@ req#+(Build_Edge, Outer, Oriented, FR, LF-BL-RB)|-(Build_Edge, Outer, Any, FR, L
 set_mode#build_edge
 set_moves#u,d,up,dp,u u,d d
 req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Oriented, FR, LF-BL-RB)
-set_moves#D, U, L, B, L L, B B, Lp Up L U F Up Fp, d, u
 set_mode#normal
+set_moves#D, U, L, B, L L, B B, Lp Up L U F Up Fp, d, u, dp, up, R U Rp Up Fp U F
 req#+(Build_Edge, Outer, Non_Oriented, FR, LF)
 set_mode#build_edge
 set_moves#up, u, dp, d
@@ -274,13 +282,13 @@ set_mode#normal
 req#+(Edge, 3x1x1, BL)|-(Edge, 3x1x1, FR)
 set_moves#r, rp, u, up, F F
 set_flip_algo#R U Rp Up Fp U F
-set_mode#normal
+set_mode#build_edge
 set_search_moves#L
-req#+(Build_Edge, Outer, Any, FR, LF-BL-RB)
+req#+(Build_Edge, Outer, Any, FR, LF)
 set_mode#build_edge
 set_moves#r, rp, u, up, F F
-req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Any, FR, LF-BL-RB)
-set_moves#D, U, L, B, L L, B B, Lp Up L U F Up Fp, d, u
+req#+(Edge, 2x1x1, FR)|-(Build_Edge, Outer, Any, FR, LF)
+set_moves#D, U, L, B, L L, B B, Lp Up L U F Up Fp, d, u, dp, up, R U Rp Up Fp U F
 set_mode#normal
 req#+(Build_Edge, Outer, Non_Oriented, FR, LF)
 set_mode#build_edge
@@ -290,7 +298,7 @@ req#+(Edge, 3x1x1, FR)|-(Build_Edge, Outer, Non_Oriented, FR, LF)|-(Edge, 2x1x1,
 req#+(Parity)
 set_search_moves#D
 set_flip_algo#R U Rp Up Fp U F
-set_moves#R, Rp, L, Lp, F, Fp, B, Bp, U, Up, D, Dp, R R, L L, F F, B B
+set_moves#R, Rp, L, Lp, F, Fp, B, Bp, U, Up, D, Dp, R R, L L, F F, B B, Rp F R, Bp R B, Lp B L, Fp L F
 set_mode#normal
 req#+(Cross, 1)
 req#+(Cross, 1)
@@ -301,7 +309,7 @@ req#+(Corner, DLF, ULF-UBL-URB-UFR, Any)
 req#+(Corner, DLF, ULF, Any)|-(Corner, DLF, ULF-UBL-URB-UFR, Any)
 set_moves#Lp U L U U
 req#+(Corner, DLF, ULF, L)|-(Corner, DLF, ULF, Any)
-set_moves#R, Rp, L, Lp, F, Fp, B, Bp, U, Up
+set_moves#R, Rp, L, Lp, F, Fp, B, Bp, U, Up, Up Lp Up L U2, L U2 Lp, Fp U F
 req#+(F2L_Edge, LF, UB, Any)
 set_moves#Lp Up L, Up F U U Fp U U F Up Fp
 req#+(Corner, DLF, DLF, D)|-(Corner, DLF, ULF, L)|-(F2L_Edge, LF, UB, Any)|+(F2L_Edge, LF, LF, L)
@@ -310,7 +318,7 @@ req#+(Corner, DBL, ULF-UBL-URB-UFR, Any)
 req#+(Corner, DBL, UBL, Any)|-(Corner, DBL, ULF-UBL-URB-UFR, Any)
 set_moves#L Up Lp U U
 req#+(Corner, DBL, UBL, L)|-(Corner, DBL, UBL, Any)
-set_moves#R, Rp, L, Lp, F, Fp, B, Bp, U, Up
+set_moves#R, Rp, L, Lp, F, Fp, B, Bp, U, Up, B Up Bp,Up Fp U F U, U L U Lp U2
 req#+(F2L_Edge, BL, UF, Any)
 set_moves#L U Lp, U Bp U U B U U Bp U B
 req#+(Corner, DBL, DBL, D)|-(Corner, DBL, UBL, L)|-(F2L_Edge, BL, UF, Any)|+(F2L_Edge, BL, BL, B)
@@ -319,7 +327,7 @@ req#+(Corner, DRB, ULF-UBL-URB-UFR, Any)
 req#+(Corner, DRB, URB, Any)|-(Corner, DRB, ULF-UBL-URB-UFR, Any)
 set_moves#Rp U R U U
 req#+(Corner, DRB, URB, R)|-(Corner, DRB, URB, Any)
-set_moves#R, Rp, L, Lp, F, Fp, B, Bp, U, Up
+set_moves#R, Rp, L, Lp, F, Fp, B, Bp, U, Up, Up Rp Up R U2, R U2 Rp, U Rp U R Up
 req#+(F2L_Edge, RB, UF, Any)
 set_moves#Rp Up R, R U U Rp U B Up Bp
 req#+(Corner, DRB, DRB, D)|-(Corner, DRB, URB, R)|-(F2L_Edge, RB, UF, Any)|+(F2L_Edge, RB, RB, R)
@@ -328,7 +336,7 @@ req#+(Corner, DFR, ULF-UBL-URB-UFR, Any)
 req#+(Corner, DFR, UFR, Any)|-(Corner, DFR, ULF-UBL-URB-UFR, Any)
 set_moves#R U U Rp Up
 req#+(Corner, DFR, UFR, R)|-(Corner, DFR, UFR, Any)
-set_moves#R, Rp F, Fp, U, Up, U U, U Fp U U F Up, U R U Rp U U
+set_moves#R, Rp F, Fp, U, Up, U U, U Fp U U F Up, U R U Rp U U, Up R U Rp U
 req#+(F2L_Edge, FR, UB, Any)
 set_moves#R U Rp, U Fp U U F U U Fp U F
 req#+(Corner, DFR, DFR, D)|-(Corner, DFR, UFR, R)|-(F2L_Edge, FR, UB, Any)|+(F2L_Edge, FR, FR, F)
@@ -340,4 +348,4 @@ set_moves#U, U U, Up, Rp F Rp B2 R Fp Rp B2 R2
 req#+(PLL_Corners, Any)
 set_moves#U, U U, Up, Rp U Rp Up Rp Up Rp U R U R2
 req#+(PLL, Any)|-(PLL_Corners, Any)
-comment#PLL done :)
+comment#done

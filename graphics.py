@@ -35,7 +35,7 @@ class Graphics():
 				break
 			if step.split("#")[0] == "comment":
 				label = self.font.render(str(num) + ": " + str(step.split("#")[1]), 1, (255, 0,0))
-				self.window.blit(label, (500,100 + num*20))
+		#		self.window.blit(label, (500,100 + num*20))
 				num += 1
 		
 		#display rules in a list
@@ -51,7 +51,7 @@ class Graphics():
 				display += str(rule)
 
 			label = self.font.render(display, 1, (255, 0,0))
-			self.window.blit(label, (800,120 + id*20))
+		#	self.window.blit(label, (800,120 + id*20))
 
 		label = self.font.render("Allowed: " + str(algo.allowed_sequences), 1, (255, 255,255))
 		self.window.blit(label, (400, 20))

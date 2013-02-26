@@ -82,3 +82,4 @@ Solve the cross
 Solve pairs
 OLL
 PLL
+automated running, dumping info when complete/fail

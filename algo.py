@@ -32,6 +32,22 @@ Rule_Lookup = {
 		5: 'inner_3x2',
 		6 : 'inner_1x1_corner'
 	}
+piece = {
+		'Outer' : Edge.outer,
+		'Center' : Edge.center
+		}
+Piece_Lookup = {}
+for key, value in piece.items():
+	Piece_Lookup[value] = key
+
+orientation = { 'Any' : Orientation.any,
+		'Oriented' : Orientation.oriented,
+		'Non_Oriented' : Orientation.non_oriented
+		}
+Orientation_Lookup = {}
+for key, value in orientation.items():
+	Orientation_Lookup[value] = key
+
 class Imported_Algo():
 
 	def __init__(self, cube, filename, stats):
@@ -87,8 +103,7 @@ class Imported_Algo():
 				self.search_moves = face
 			
 			elif split[0] == 'comment': 
-				print "at comment"
-				pass 
+				return ' '
 
 			elif split[0] == 'set_mode':
 				self.mode = split[1].strip()
@@ -156,15 +171,6 @@ class Imported_Algo():
 
 		elif parts[0] == 'Build_Edge':
 			#outer edge / center edge:
-			piece = {
-					'Outer' : Edge.outer,
-					'Center' : Edge.center
-					}
-			
-			orientation = { 'Any' : Orientation.any,
-					'Oriented' : Orientation.oriented,
-					'Non_Oriented' : Orientation.non_oriented
-					}
 			return (parts[0], piece[parts[1]], orientation[parts[2]], parts[3], parts[4].split('-'))
 		
 		elif parts[0] == 'Edge':
@@ -199,24 +205,12 @@ class Imported_Algo():
 		elif parts[0] == 'Pair':
 			self.pairs += 1
 
-	def dump_state(self, s):
-
-		chunk = { 
-				'scramble' : self.cube.all_commands,
-				'rules' : self.rules,
-				"date": datetime.datetime.utcnow(),
-				'mode' : self.mode,
-				'flip_algo' : self.flip_algo,
-				'search_moves' : self.search_moves,
-				'stored' : self.stored
-				}
-		s.dump_state(chunk)
 
 	def load_state(self, s):
 
 		prob = s.get_first_problem()
 
-		self.cube.rotate(prob['scramble'])
+		self.cube.rotate(prob['all_commands'])
 		self.rules = prob['rules']
 		self.flip_algo = prob['flip_algo']
 		self.mode = prob['mode']
@@ -262,7 +256,6 @@ class Imported_Algo():
 					s.extend(rev)
 					#print "evaluating: ", s
 				if cnt > 10000:
-					self.dump_state(self.stats.persist)
 					return 'fail'
 
 				c.rotate(s)
@@ -360,6 +353,7 @@ class Imported_Algo():
 							cnt += 1
 						if self.same_piece(fr_mid, bot, oriented=Orientation.oriented):
 							cnt += 1
+						#print "cnt is", cnt, "on place", cur_place
 						if rule[1] == '2x1x1' and cnt == 0:
 							return False
 						if rule[1] == '3x1x1' and cnt <= 1:
