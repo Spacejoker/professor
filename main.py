@@ -134,7 +134,7 @@ class Simulation():
 				'6': self.show_rules,
 				'7': self.load_edge_algo,
 				'8': self.load_3x3_algo,
-				'9' : self.reset_cube,
+				'9' : self.load_std_algo,
 				'o' : self.recalc,
 				'e' : self.show_queued_moves,
 				'a' : self.algo.parse_algo,
@@ -180,7 +180,11 @@ class Simulation():
 	def load_edge_algo(self):
 		self.algo_file = 'edge.algo'
 		self.reset_cube()
-	
+
+	def load_std_algo(self):
+		self.algo_file = 'standard.algo'
+		self.reset_cube()
+
 	def load_state():
 		self.algo.load_state(self.s.persist)
 
