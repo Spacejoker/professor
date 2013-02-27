@@ -94,9 +94,9 @@ class Simulation():
 		self.c = Cube()
 		self.s = Stats()
 		#self.algo = Imported_Algo(self.c, 'standard.algo')
+		self.persist = Persist()
 		self.reset_cube()
 		self.batch = 0
-		self.persist = Persist()
 
 		self.inputHandler = {
 				'0' : self.scramble,
@@ -281,6 +281,7 @@ class Simulation():
 		self.s.reset()
 
 		steps = deque()
+		
 		dbalgo = self.persist.get_algo('standard')
 		print dbalgo.keys()
 
