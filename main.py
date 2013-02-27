@@ -99,27 +99,24 @@ class Simulation():
 		self.inputHandler = {
 				'0' : self.scramble,
 				'1' : self.to_next_comment,
-				'2' : self.increment_batch,
-				'j': self.s.persist.list_problems,
 				'q': self.next_move, #c.rotate([algo.next_move()])
 				'[': self.destroy_edges, #c.rotate(Scrambler.gen_edge_destroy().split(' '))
 				']' : self.custom_scramble,
-				'k': self.load_state,
 				'6': self.show_rules,
-				'7': self.load_edge_algo,
-				'8': self.load_3x3_algo,
 				'9' : self.load_std_algo,
-				'o' : self.recalc,
-				'e' : self.show_queued_moves,
-				'a' : self.algo.parse_algo,
-				'c' : self.s.persist.clear_problems,
-				'g' : self.s.persist.remove_first_problem,
-				'x' : self.scramble_from_fst_problem,
+				'x' : self.scramble_from_fst_result,
 				'z' : self.solve_with_solver,
 				'-' : self.list_results,
 				's' : self.remove_results,
 				'/' : self.load_result_state,
 				}
+
+	def scramble_from_fst_result(self):
+		res = self.persist.list_results()[0]
+		#self.persist.get_result_by_id(
+		moves = res['scramble'].split(" ")
+		for m in moves:
+			self.c.rotate([m])
 
 	def scramble_from_fst_problem(self):
 		prob = self.s.persist.get_first_problem()
@@ -312,12 +309,10 @@ class Simulation():
 				split = algo.algo_steps[0].split("#")
 				if split[0] == 'comment':
 					print "comment!", split[1]
-					s.save(split[1])
 					done = True
 					if split[1] == 'done':
 						self.batch -= 1
 						print 'reseting cube since the algo is complete'
-						self.reset = True
 						return
 				else:
 					algo.parse_algo()

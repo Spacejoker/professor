@@ -21,8 +21,10 @@ class Persist():
 					print rule
 			print "Allowed sequences:", map(str, p['allowed_sequences'])
 			print "Scramble:", map(str,p['scramble'])
-
-	def list_results(self):
+	
+	def list_results(self, name=None):
+		if name != None:
+			return self.db.result.find({'name':name})
 		return self.db.result.find()
 
 	def save_result(self, res):
@@ -58,3 +60,25 @@ class Persist():
 				}
 		self.db.problem_state.remove({'scramble' : algo.cube.scramble})
 		self.db.problem_state.save(chunk)
+
+	def add_algo(self, algo):
+		if self.get_algo(algo['name']):
+			print "cannot save, algo exists"
+		else:
+			self.db.algo.save(algo)
+	
+	def get_algo(self, name):
+
+		params = {'name' : name}
+	        algos = self.db.algo.find(params)
+
+		if algos.count() > 0:
+			return algos[0]
+		else:
+			return None
+
+	def list_algos(self):
+		return self.db.algo.find()
+
+	def remove_algo(self, name):
+		self.db.algo.remove({'name' : name})

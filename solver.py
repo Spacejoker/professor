@@ -10,16 +10,18 @@ import time
 
 class Solver():
 	def __init__(self):
+		self.persist = Persist()
 		pass
 
 	def solve(self, algo_name, scramble):
 		c = Cube()	
-		filename = 'standard.algo'
-		file = open(filename, 'r')
+		
 		steps = deque()
-		for line in file.readlines():
-			steps.append(line[:-1]) #skip the newline
+		dbalgo = self.persist.get_algo(algo_name)
+		print dbalgo.keys()
 
+		for line in dbalgo['steps']:
+			steps.append(line) #skip the newline
 		algo = Imported_Algo(c, algo_steps=steps)
 
 		move_cnt = 0	
@@ -45,7 +47,7 @@ class Solver():
 					c.rotate([move])
 					solution.append(move)
 
-			split = algo.algo_steps[0].split("#")
+			split = algo.algo_steps[0]
 
 			if split[0] == 'comment':
 				if split[1] == 'done':

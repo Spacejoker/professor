@@ -67,11 +67,11 @@ flip that one correctly
 put them togehter and store in top layer
 
 Todo 2013-02-26:
-Start writing report, look at structure and such for abt 2 hr.
-Complete the solve - fix parity and solve the 3x3 cube
+done#Start writing report, look at structure and such for abt 2 hr.
+done#Complete the solve - fix parity and solve the 3x3 cube
 Refine the standard algorithm, make it not fail over 1/100
-update graphics/layout of application
-refactoring needs?
+done#update graphics/layout of application
+done#refactoring needs?
 
 
 //broken down:
@@ -95,13 +95,14 @@ introduce cool navigation system
 Todo 2013-02-27:
 done#Complete graphical overhaul
 Introduce navigation system that is more visual
-Save successful solves
+done#Save successful solves
 Add replay function (scramble + solve), with play/stop/change speed/go backwards buttons
 
 Todo 2013-02-27:
-Decouple peristance and algo-solving.
-Decouple gui entry and algo-calls, make a call like: solve(cube, algorithm-name) that returns the data.
-Create another cmd-line interface that can interact with the db (add/remove algos, print algos, modify scramble-lists etc)
+done#Decouple peristance and algo-solving.
+done#Decouple gui entry and algo-calls, make a call like: solve(cube, algorithm-name) that returns the data.
+done#Create another cmd-line interface that can interact with the db (add/remove algos, print algos, modify scramble-lists etc)
+Let algos be in db instead of text file
 Start working with several algorithms for just the first face, see what can be done easily and automatically
 expand to first two faces.
 expand to known areas of trouble.

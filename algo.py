@@ -95,8 +95,7 @@ class Imported_Algo():
 
 	#continue parsing the algorithm lines
 	def parse_algo(self):
-		next_line = self.algo_steps.popleft()
-		split = next_line.split('#')
+		split = self.algo_steps.popleft()
 
 		#handle setting up of allowed  moves
 		while split[0] in ['set_moves', 'set_search_moves', 'comment', 'set_mode', 'set_flip_algo']:
@@ -117,7 +116,7 @@ class Imported_Algo():
 			elif split[0] == 'set_flip_algo':
 				self.flip_algo = split[1].strip()
 
-			split = self.algo_steps.popleft().split('#') 
+			split = self.algo_steps.popleft()
 
 		if split[0] == 'done':
 			print 'algorithm done, you should be happy now'
