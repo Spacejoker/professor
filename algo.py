@@ -247,10 +247,12 @@ class Imported_Algo():
 
 			while len(que) > 0:
 				cnt = cnt + 1
+				self.search_cnt += 1
 				seq = que.popleft()
 				s = seq.split(" ")
 				if cnt % 1000 == 0:
-					print "performed", cnt, "seach steps"
+					#print "performed", cnt, "seach steps"
+					pass
 				if self.mode == 'build_edge':
 					rev = []
 					rev.extend(s)

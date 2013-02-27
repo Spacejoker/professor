@@ -27,8 +27,12 @@ class Persist():
 			return self.db.result.find({'name':name})
 		return self.db.result.find()
 
+	def get_result(self, name):
+		return self.db.result.find({'name':name})
+
 	def save_result(self, res):
-		self.db.result.remove({'scramble' : res['scramble'], 'name':res['name']}) # remove identical solve
+		remove = self.db.result.remove({'scramble' : res['scramble'], 'name':res['name']}) # remove identical solve
+		print remove
 		self.db.result.save(res)
 
 	def remove_results(self, name=None):
@@ -86,6 +90,7 @@ class Persist():
 			self.db.algo.remove()
 		else:
 			self.db.algo.remove({'name' : name})
+			self.remove_results(name)
 		self.db.algo.remove({'name' : None})
 
 	def add_scramble(self, scramble):
@@ -102,4 +107,3 @@ class Persist():
 			self.db.scramble.remove({'scramble_type':scramble_type})
 		else:
 			self.db.scramble.remove()
-
