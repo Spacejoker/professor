@@ -1,4 +1,4 @@
-import os
+import os, sys
 import random
 import pygame
 import time
@@ -10,6 +10,7 @@ import pymongo
 from graphics import *
 import datetime
 from helper import Formatter
+
 BATCH_SIZE = 10
 
 class Mode():
@@ -18,7 +19,7 @@ class Mode():
 
 class Constants():
 	WINDOW_WIDTH = 1200
-	WINDOW_HEIGHT = 630
+	WINDOW_HEIGHT = 800
 	STICKER_SIZE = 30
 
 class Persist():
@@ -34,6 +35,10 @@ class Persist():
 	def list_problems(self):
 		probs = self.db.problem_state.find()
 		for nr, p in enumerate(probs):
+			if nr > 5:	
+				print "=============================="
+				print "Got a total of ", self.db.problem_state.count(), "problems"
+				break
 			print "Problem nr ", nr, "=================================="
 			rules = p['rules']
 			for rule in map(Formatter.rule_to_string, rules):
@@ -220,6 +225,9 @@ class Simulation():
 		self.c.rotate(scramble_seq)
 		self.c.scramble = scramble_seq 
 
+	def init_menu(self):
+		pass
+
 	#Main application loop
 	def loop(self):
 
@@ -229,14 +237,15 @@ class Simulation():
 		font = pygame.font.SysFont("monospace", 15)
 		run_to_comment = False
 		self.reset = False
-
+	
+		self.init_menu()
+	
 		#handle input and draw graphics
 		while self.running: 
 			s = self.s
 			c = self.c
 			g = self.g
 			algo = self.algo
-
 			if self.reset:
 				print self.reset, " is the reset state"
 				self.reset_cube()

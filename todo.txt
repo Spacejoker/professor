@@ -83,3 +83,18 @@ Solve pairs
 OLL
 PLL
 automated running, dumping info when complete/fail
+store scramble+solution on completion
+
+
+make 3 different modes:
+introduce cool navigation system
+ - batch
+ - standard
+ - show algo
+
+Todo 2013-02-27:
+Complete graphical overhaul
+Introduce navigation system that is more visual
+Save successful solves
+Add replay function (scramble + solve), with play/stop/change speed/go backwards buttons
+

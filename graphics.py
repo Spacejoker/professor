@@ -10,11 +10,30 @@ faces = [Face_Data((153,0), (40,40,40)), Face_Data((153, 153), (255, 150, 0)), F
 #helper to be able to show all edge-sets for edge building
 text_color = (255, 220, 220)
 
+
+
 class Graphics():
 
 	def __init__(self):
 		self.window = pygame.display.set_mode((Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT)) 
 		self.font = pygame.font.SysFont("monospace", 15)
+		#load images
+		self.images = []
+		size = Constants.STICKER_SIZE
+		self.seen_sticker_pos = []
+		for i in range(0,6):
+			tmp = []
+			for j in range(0,25):
+				tmp.append((-1, 0))
+			self.seen_sticker_pos.append(tmp)
+
+		for color in ['black','orange','blue','yellow','green','red']:
+			cur_img = []
+			for num in range(0,3):
+				asurf = pygame.image.load(os.path.join('img', color + str(num) + '.png'))
+				asurf = pygame.transform.scale(asurf, (size-1, size-1))
+				cur_img.append(asurf)
+			self.images.append(cur_img)
 		
 
 	def draw_cube(self, cube, algo, stats):
@@ -26,7 +45,8 @@ class Graphics():
 				f = faces[side]
 				color = faces[sticker]
 				size = Constants.STICKER_SIZE
-				pygame.draw.rect(self.window, color.color, (f.position[0] + Helper.get_x(id)*size, f.position[1] + Helper.get_y(id)*size, size-1,size-1), 0)	
+				self.draw_face(sticker, f.position[0] + Helper.get_x(id)*size, f.position[1] + Helper.get_y(id)*size, side, id)
+
 		num = 1	
 
 		#display comments
@@ -84,9 +104,9 @@ class Graphics():
 
 			label = self.font.render(name, 1, (255,255,255))
 			self.window.blit(label ,(x, y))
-			self.draw_face(faces[stickers[1]].color, x + size/2, y + 20)
-			self.draw_face(faces[stickers[2]].color, x , y + 20 + size)
-			self.draw_face(faces[stickers[0]].color, x - size/2, y + 20)
+			self.draw_face(stickers[1], x + size/2, y + 20)
+			self.draw_face(stickers[2], x , y + 20 + size)
+			self.draw_face(stickers[0], x - size/2, y + 20)
 
 			x += size * 4
 
@@ -101,13 +121,23 @@ class Graphics():
 			for num, pair in enumerate(edges):
 				fst = cube.state[pair.left_face()][pair.left_sticker()]
 				snd = cube.state[pair.right_face()][pair.right_sticker()]
-				self.draw_face(faces[fst].color, edge_x, edge_y + num*size + 20)
-				self.draw_face(faces[snd].color, edge_x + size, edge_y + num*size + 20)
+				self.draw_face(fst, edge_x, edge_y + num*size + 20,pair.left_face(), pair.left_sticker())
+				self.draw_face(snd, edge_x + size, edge_y + num*size + 20, pair.right_face(), pair.right_sticker())
 			edge_x += 100
 
-	def draw_face(self, color, x, y):
+	def draw_face(self, color, x, y, face = 0, sticker_nr = 0):
 		size = Constants.STICKER_SIZE
-		pygame.draw.rect(self.window, color, (x, y, size-1, size-1), 0)
+		img = None
+		#handle so that we show the same picture if it has already been shown in this spot
+		img_cache = self.seen_sticker_pos[face][sticker_nr]
+		if img_cache[0] == color:
+			img = self.images[color][img_cache[1]]
+		else: 
+			num = random.randint(0,2)
+			self.seen_sticker_pos[face][sticker_nr] = (color, num)
+			img = self.images[color][num]
+		self.window.blit(img, (x, y, size, size))
+		#pygame.draw.rect(self.window, color, (x, y, size-1, size-1), 0)
 
 	def draw_menu(self):
 		label = self.font.render("The professor's cube!", 1, (255,255,255))
