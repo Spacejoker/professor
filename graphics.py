@@ -35,10 +35,12 @@ class Graphics():
 				cur_img.append(asurf)
 			self.images.append(cur_img)
 		
+		self.bg = pygame.image.load(os.path.join('img', 'bg.png'))
+		self.window.blit(self.bg, (0,0))
 
 	def draw_cube(self, cube, algo, stats):
 
-		pygame.draw.rect(self.window, (0,0,0), (0,0,Constants.WINDOW_WIDTH,Constants.WINDOW_HEIGHT), 0)
+		self.window.blit(self.bg, (0,0))
 
 		for side in range(0, len(cube.state)):
 			for id, sticker in enumerate(cube.state[side]):
