@@ -18,7 +18,7 @@ class Mode():
 	SIMULATION = 2
 
 class Constants():
-	WINDOW_WIDTH = 1200
+	WINDOW_WIDTH = 1280
 	WINDOW_HEIGHT = 800
 	STICKER_SIZE = 30
 

@@ -36,18 +36,18 @@ class Graphics():
 			self.images.append(cur_img)
 		
 		self.bg = pygame.image.load(os.path.join('img', 'bg.png'))
-		self.window.blit(self.bg, (0,0))
 
 	def draw_cube(self, cube, algo, stats):
 
 		self.window.blit(self.bg, (0,0))
-
+		xoffset = 58
+		yoffset = 74
 		for side in range(0, len(cube.state)):
 			for id, sticker in enumerate(cube.state[side]):
 				f = faces[side]
 				color = faces[sticker]
 				size = Constants.STICKER_SIZE
-				self.draw_face(sticker, f.position[0] + Helper.get_x(id)*size, f.position[1] + Helper.get_y(id)*size, side, id)
+				self.draw_face(sticker, f.position[0] + Helper.get_x(id)*size + xoffset, f.position[1] + Helper.get_y(id)*size + yoffset, side, id)
 
 		num = 1	
 
@@ -83,9 +83,9 @@ class Graphics():
 		label = self.font.render("Nr search steps: " + str(stats.nr_search_steps), 1, (255,255,255))
 		self.window.blit(label ,(600, 600))
 
-		self.draw_edges(['FR', 'LF', 'BL', 'RB'], 600, 250, cube, size)
-		self.draw_edges(['UF', 'UL', 'UB', 'UR'], 600, 370, cube, size)
-		self.draw_edges(['DF', 'DL', 'DB', 'DR'], 600, 490, cube, size)
+		self.draw_edges(['FR', 'LF', 'BL', 'RB'], 604, 75, cube, size)
+		self.draw_edges(['UF', 'UL', 'UB', 'UR'], 604, 75+120, cube, size)
+		self.draw_edges(['DF', 'DL', 'DB', 'DR'], 604, 75+240, cube, size)
 
 		self.draw_corners(cube, size)
 
@@ -94,14 +94,15 @@ class Graphics():
 	def draw_corners(self, cube, size):
 
 		c = cube.create_corner_map()
-		x = 700
-		y = 50
+		x0 = 1030
+		x = x0
+		y = 75
 		cnt = 0
 		for name, stickers in c.items():
-			if cnt >= 4:
+			if cnt >= 2:
 				cnt = 0
 				y += 2*size + 20
-				x = 700
+				x = x0
 			cnt += 1
 
 			label = self.font.render(name, 1, (255,255,255))
