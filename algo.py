@@ -102,7 +102,12 @@ class Imported_Algo():
 		while split[0] in ['set_moves', 'set_search_moves', 'comment', 'set_mode', 'set_flip_algo']:
 			if split[0] == 'set_moves':
 				new_seq = split[1].split(',')
-				self.allowed_sequences = new_seq
+				self.allowed_sequences = []
+				
+				for seq in new_seq:
+					tmp = seq.strip().split(" ")
+					self.allowed_sequences.append(tmp)
+					
 
 			elif split[0] == 'set_search_moves':
 				face = split[1].strip()
@@ -237,7 +242,7 @@ class Imported_Algo():
 		flip_algo = self.flip_algo #'R U Rp Up Fp U F'
 		if self.test_cube():
 			return
-		
+		t0 = time.time()		
 		while True:
 			que = deque()
 			done = False
@@ -248,8 +253,8 @@ class Imported_Algo():
 			while len(que) > 0:
 				cnt = cnt + 1
 				self.search_cnt += 1
-				seq = que.popleft()
-				s = seq.split(" ")
+				s = que.popleft()
+
 				if cnt % 1000 == 0:
 					#print "performed", cnt, "seach steps"
 					pass
@@ -262,6 +267,7 @@ class Imported_Algo():
 					s.extend(rev)
 					#print "evaluating: ", s
 				if cnt > SEARCH_LIMIT:
+					print time.time() - t0
 					return 'fail'
 
 				c.rotate(s)
@@ -281,8 +287,12 @@ class Imported_Algo():
 					return
 
 				#continue the bfs
+				
 				for m in mods:
-					que.append( seq + ' ' + m)
+					tmp = []
+					tmp.extend(s)
+					tmp.extend(m)
+					que.append( tmp )
 
 			#the search found nothing, now fall back on the search-moves:
 			if self.mode == 'inner':

@@ -184,9 +184,12 @@ class Runner():
 					for move in line[1].split(","):
 						if random.random() > keep_limit:
 							cmd_list.append(move)#  += "," + move
-					cands = 'r,f,l,u,d,b,U,D,R,F,L,B,rp,fp,lp,up,dp,bp,Dp,r U rp,rp U r, b U bp,bp U b,fp U f,F,R,L,B,Fp,Rp,Lp,Bp'
+						else:
+							print "removed command:", move
+					cands = 'r,f,l,u,d,b,U,D,R,F,L,B,rp,fp,lp,up,dp,bp,Dp,r2,f2,l2,u2,d2,b2,U2,D2,R2,F2,L2,B2,r U rp,rp U r, b U bp,bp U b,fp U f,F,R,L,B,Fp,Rp,Lp,Bp'
 					for move in cands.split(','):
 						if random.random() > limit and move not in cmd_list:
+							print "added command:",move
 							cmd_list.append(move)
 					random.shuffle(cmd_list)	
 					for c in cmd_list:
