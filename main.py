@@ -6,10 +6,11 @@ import itertools
 from pygame.locals import *
 from cube import *
 from algo import Imported_Algo, Rule_Lookup
-import pymongo
 from graphics import *
 import datetime
 from helper import Formatter
+from persist import Persist
+from solver import Solver
 
 BATCH_SIZE = 10
 
@@ -22,55 +23,8 @@ class Constants():
 	WINDOW_HEIGHT = 800
 	STICKER_SIZE = 30
 
-class Persist():
-	def __init__(self):
-		conn = pymongo.Connection('localhost', 27017)
-		self.db = conn['cube']	
-		self.result = self.db.result
-	def save(self, data):
-		#for i in self.result.find():
-			#jprint i
-		self.result.save(data)
 
-	def list_problems(self):
-		probs = self.db.problem_state.find()
-		for nr, p in enumerate(probs):
-			if nr > 5:	
-				print "=============================="
-				print "Got a total of ", self.db.problem_state.count(), "problems"
-				break
-			print "Problem nr ", nr, "=================================="
-			rules = p['rules']
-			for rule in map(Formatter.rule_to_string, rules):
-				if(rule != None):
-					print rule
-			print "Allowed sequences:", map(str, p['allowed_sequences'])
-			print "Scramble:", map(str,p['scramble'])
 
-	def get_first_problem(self):
-		probs = self.db.problem_state.find()
-		return probs[0]
-
-	def clear_problems(self):
-		self.db.problem_state.remove()
-
-	def remove_first_problem(self):
-		prob = self.db.problem_state.find()[0]
-		self.db.problem_state.remove({'scramble' : prob['scramble']})
-
-	def dump_state(self, algo):
-		chunk = { 
-				'all_commands' : algo.cube.all_commands,
-				'scramble' : algo.cube.scramble,
-				'rules' : algo.rules,
-				"date": datetime.datetime.utcnow(),
-				'mode' : algo.mode,
-				'flip_algo' : algo.flip_algo,
-				'allowed_sequences' : algo.allowed_sequences,
-				'stored' : algo.stored
-				}
-		self.db.problem_state.remove({'scramble' : algo.cube.scramble})
-		self.db.problem_state.save(chunk)
 class Stats():
 	def __init__(self):
 		self.nr_moves = 0
@@ -88,6 +42,7 @@ class Stats():
 				'nr_moves' : self.nr_moves,
 				'nr_search_steps' : self.nr_search_steps }
 		self.persist.save(chunk)
+
 class Scrambler():
 	@staticmethod	
 	def gen_scramble(export = False):
@@ -106,7 +61,6 @@ class Scrambler():
 			f = open('scramble.txt', 'w')
 			f.write(scramble)
 			f.close()
-		print scramble
 		return scramble
 
 	@staticmethod
@@ -115,7 +69,6 @@ class Scrambler():
 		for x in range(0, 60):
 			for y in range(0,20):
 				tot += Turns[random.randint(0,5)] + " "
-		print tot
 		return tot
 
 	@staticmethod
@@ -128,7 +81,6 @@ class Scrambler():
 			tot += setup + " " + move + " " + undo + " "
 			for y in range(0,20):
 				tot += Turns[random.randint(0,5)] + " "
-		print tot
 		return tot
 
 class Simulation():
@@ -140,7 +92,7 @@ class Simulation():
 		self.algo_file = 'standard.algo'
 		self.c = Cube()
 		self.s = Stats()
-		self.algo = Imported_Algo(self.c, 'standard.algo', self.s)
+		self.algo = Imported_Algo(self.c, 'standard.algo')
 		self.batch = 0
 		self.inputHandler = {
 				'0' : self.scramble,
@@ -160,7 +112,8 @@ class Simulation():
 				'a' : self.algo.parse_algo,
 				'c' : self.s.persist.clear_problems,
 				'g' : self.s.persist.remove_first_problem,
-				'x' : self.scramble_from_fst_problem
+				'x' : self.scramble_from_fst_problem,
+				'z' : self.solve_with_solver,
 				}
 
 	def scramble_from_fst_problem(self):
@@ -174,6 +127,12 @@ class Simulation():
 	def show_rules(self):
 		print self.algo.rules
 
+	def solve_with_solver(self):
+		solver = Solver()
+		wr_scramble = "L2 Dp U L R B L R D D U B B Fp U Lp Rp Bp Fp D F Lp B B U U Rp Bp F F"
+		result = solver.solve('standard.algo', wr_scramble)
+		print result
+	
 	def menu(self):
 		while self.mode == Mode.MENU:
 			self.g.draw_menu()
@@ -296,7 +255,7 @@ class Simulation():
 	def reset_cube(self):
 		self.c = Cube()
 		self.s.reset()
-		self.algo = Imported_Algo(self.c, self.algo_file, self.s)
+		self.algo = Imported_Algo(self.c, self.algo_file)
 
 	def to_next_comment(self):
 		c = self.c

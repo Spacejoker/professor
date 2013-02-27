@@ -93,8 +93,16 @@ introduce cool navigation system
  - show algo
 
 Todo 2013-02-27:
-Complete graphical overhaul
+done#Complete graphical overhaul
 Introduce navigation system that is more visual
 Save successful solves
 Add replay function (scramble + solve), with play/stop/change speed/go backwards buttons
+
+Todo 2013-02-27:
+Decouple peristance and algo-solving.
+Decouple gui entry and algo-calls, make a call like: solve(cube, algorithm-name) that returns the data.
+Create another cmd-line interface that can interact with the db (add/remove algos, print algos, modify scramble-lists etc)
+Start working with several algorithms for just the first face, see what can be done easily and automatically
+expand to first two faces.
+expand to known areas of trouble.
 

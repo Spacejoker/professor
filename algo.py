@@ -50,15 +50,20 @@ for key, value in orientation.items():
 
 class Imported_Algo():
 
-	def __init__(self, cube, filename, stats):
+	def __init__(self, cube, filename=None, algo_steps=None):
 		self.cube = cube
-		self.stats = stats
-		file = open(filename, 'r')
-		self.algo_steps = deque()
-		for line in file.readlines():
-			self.algo_steps.append(line[:-1]) #skip the newline
+		
+		self.algo_steps = deque()#steps in the algo
+
+		if algo_steps != None:
+			for a in algo_steps:
+				self.algo_steps.append(a)
+		else:
+			file = open(filename, 'r')
+			for line in file.readlines():
+				self.algo_steps.append(line[:-1]) #skip the newline
 		self.allowed_sequences = []
-		self.rules = []
+		self.rules = []#active rules
 		self.queued_moves = deque()
 	
 		#build patterns to recognize
@@ -90,7 +95,6 @@ class Imported_Algo():
 	def parse_algo(self):
 		next_line = self.algo_steps.popleft()
 		split = next_line.split('#')
-		self.stats.current_nr_search_moves = 0
 
 		#handle setting up of allowed  moves
 		while split[0] in ['set_moves', 'set_search_moves', 'comment', 'set_mode', 'set_flip_algo']:
@@ -272,7 +276,6 @@ class Imported_Algo():
 				if done == True :
 					for c in s:
 						self.queued_moves.append(c)
-					self.stats.nr_search_steps += cnt
 					return
 
 				#continue the bfs
@@ -287,7 +290,6 @@ class Imported_Algo():
 				self.queued_moves.append(move)
 			elif self.mode == 'edge':
 				self.queued_moves.append('L L')
-			self.stats.nr_search_steps += cnt
 			return True
 	
 	#handles inner faces, not for edges or corners
