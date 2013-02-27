@@ -6,11 +6,7 @@ class Persist():
 		conn = pymongo.Connection('localhost', 27017)
 		self.db = conn['cube']	
 		self.result = self.db.result
-	def save(self, data):
-		#for i in self.result.find():
-			#jprint i
-		self.result.save(data)
-
+	
 	def list_problems(self):
 		probs = self.db.problem_state.find()
 		for nr, p in enumerate(probs):
@@ -25,6 +21,18 @@ class Persist():
 					print rule
 			print "Allowed sequences:", map(str, p['allowed_sequences'])
 			print "Scramble:", map(str,p['scramble'])
+
+	def list_results(self):
+		return self.db.result.find()
+
+	def save_result(self, res):
+		self.db.result.save(res)
+
+	def remove_results(self, all=False):
+		if all:
+			self.db.result.remove()
+		else:
+			print "TODO, remove first"
 
 	def get_first_problem(self):
 		probs = self.db.problem_state.find()

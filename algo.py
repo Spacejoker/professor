@@ -4,6 +4,8 @@ import random
 from copy import copy, deepcopy
 import time, datetime
 
+SEARCH_LIMIT = 10000
+
 #enum types for readability
 class Orientation:
 	any = 0
@@ -125,9 +127,7 @@ class Imported_Algo():
 		commands = split[1].split('|')
 		for cmd in commands:
 			c = cmd[:-1].split('(')
-			print c
 			rule = self.parse_rule(c[1])
-			print 'parsed rule:', rule
 			if c[0] == "+":
 				if rule != None and rule[0] != "Stored_Edge":
 					self.rules.append(rule)
@@ -259,7 +259,7 @@ class Imported_Algo():
 					s.extend(flip_algo.split(' '))
 					s.extend(rev)
 					#print "evaluating: ", s
-				if cnt > 10000:
+				if cnt > SEARCH_LIMIT:
 					return 'fail'
 
 				c.rotate(s)

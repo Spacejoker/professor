@@ -94,6 +94,8 @@ class Simulation():
 		self.s = Stats()
 		self.algo = Imported_Algo(self.c, 'standard.algo')
 		self.batch = 0
+		self.persist = Persist()
+
 		self.inputHandler = {
 				'0' : self.scramble,
 				'1' : self.to_next_comment,
@@ -114,6 +116,9 @@ class Simulation():
 				'g' : self.s.persist.remove_first_problem,
 				'x' : self.scramble_from_fst_problem,
 				'z' : self.solve_with_solver,
+				'-' : self.list_results,
+				's' : self.remove_results,
+				'/' : self.load_result_state,
 				}
 
 	def scramble_from_fst_problem(self):
@@ -127,11 +132,20 @@ class Simulation():
 	def show_rules(self):
 		print self.algo.rules
 
+	def load_result_state(self):
+		res = self.persist.list_results()[0]
+		moves = res['scramble'].split(" ")
+		moves.extend(map(str,res['moves']))
+		for m in moves:
+			self.c.rotate([m])
+
 	def solve_with_solver(self):
 		solver = Solver()
-		wr_scramble = "L2 Dp U L R B L R D D U B B Fp U Lp Rp Bp Fp D F Lp B B U U Rp Bp F F"
-		result = solver.solve('standard.algo', wr_scramble)
+		scramble = Scrambler.gen_scramble()
+		result = solver.solve('standard.algo', scramble)
 		print result
+
+		self.persist.save_result(result)
 	
 	def menu(self):
 		while self.mode == Mode.MENU:
@@ -159,6 +173,17 @@ class Simulation():
 
 	def destroy_edges(self):
 		self.c.rotate(Scrambler.gen_edge_destroy().split(' '))
+
+	def list_results(self):
+		res = self.persist.list_results()
+		for r in res:
+			print r
+
+	def save_result(self, res):
+		self.persist.save_result(res)
+
+	def remove_results(self, all=False):
+		self.persist.remove_results(all=True)
 
 	def list_problems(self):
 		self.s.persist.list_problems()

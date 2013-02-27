@@ -6,6 +6,7 @@ from algo import Imported_Algo, Rule_Lookup
 import datetime
 from helper import Formatter
 from persist import Persist
+import time
 
 class Solver():
 	def __init__(self):
@@ -28,6 +29,7 @@ class Solver():
 
 		done = False
 		success = False
+		t0 = time.time()
 
 		while True:
 
@@ -40,13 +42,16 @@ class Solver():
 
 				if move != None and move != ' ' and move != '':
 					move_cnt += 1
-					c.rotate(move)
+					c.rotate([move])
 					solution.append(move)
 
 			split = algo.algo_steps[0].split("#")
 
-			if split[0] == 'comment' and split[1] == 'done':
-				done = True
+			if split[0] == 'comment':
+				if split[1] == 'done':
+					done = True
+					success = True
+				print "Comment:", split[1]
 			
 			if done:
 				break
@@ -57,7 +62,9 @@ class Solver():
 			'move_cnt' : move_cnt,
 			'success' : success,
 			'rules' : algo.rules,
-			'moves' : solution}
+			'moves' : solution,
+			'name' : algo_name,
+			'time' : time.time() - t0}
 
 		return result
 
