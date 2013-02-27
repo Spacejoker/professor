@@ -68,9 +68,9 @@ class Persist():
 
 	def add_algo(self, algo):
 		if self.get_algo(algo['name']):
-			print "cannot save, algo exists"
-		else:
-			self.db.algo.save(algo)
+			self.db.algo.remove({'name':algo['name']})
+			print "Overwriting algo"
+		self.db.algo.save(algo)
 	
 	def get_algo(self, name):
 
@@ -87,11 +87,10 @@ class Persist():
 
 	def remove_algo(self, name=None):
 		if name == None:
-			self.db.algo.remove()
+			print "Must supply name, nothing removed"
 		else:
 			self.db.algo.remove({'name' : name})
 			self.remove_results(name)
-		self.db.algo.remove({'name' : None})
 
 	def add_scramble(self, scramble):
 		self.db.scramble.save(scramble)
@@ -107,3 +106,6 @@ class Persist():
 			self.db.scramble.remove({'scramble_type':scramble_type})
 		else:
 			self.db.scramble.remove()
+	
+	def find_algo_category(self, category):
+		return self.db.algo.find({'category' : category})

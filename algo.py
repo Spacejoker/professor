@@ -342,6 +342,7 @@ class Imported_Algo():
 
 					if not found:
 						return False
+
 			if rule[0] == 'Edge':
 				if rule[1] in ['2x1x1', '3x1x1']:
 					for cur_place in rule[2]:
