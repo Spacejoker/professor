@@ -80,5 +80,24 @@ class Persist():
 	def list_algos(self):
 		return self.db.algo.find()
 
-	def remove_algo(self, name):
-		self.db.algo.remove({'name' : name})
+	def remove_algo(self, name=None):
+		if Name == None:
+			self.db.scramble.remove()
+		else:
+			self.db.scramble.remove({'name' : name})
+
+	def add_scramble(self, scramble):
+		self.db.scramble.save(scramble)
+
+	def get_scrambles(self, scramble_type=None):
+		if scramble_type == None:
+			return self.db.scramble.find()
+		scrambles = self.db.scramble.find({'scramble_type':scramble_type})
+		return scrambles
+
+	def remove_scrambles(self, scramble_type=None):
+		if scramble_type != None:
+			self.db.scramble.remove({'scramble_type':scramble_type})
+		else:
+			self.db.scramble.remove()
+

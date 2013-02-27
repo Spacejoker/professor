@@ -20,6 +20,7 @@ def menu():
 		print "Enter command: "
 		s = raw_input()
 		s = s.split(" ")
+
 		if s[0] == 'run':
 			scrambles = []
 			if len(s) > 2:
@@ -30,7 +31,10 @@ def menu():
 					for i in range(0,num_times):
 						scrambles.append(Scrambler.gen_scramble())
 				if s[2] == 'db':
-					scrambles = persist.get_scrambles()
+					tmp = persist.get_scrambles(scramble_type=s[3])
+					for scr in tmp:
+						scram = scr['scramble']
+						scrambles.append(scram)
 			for scram in scrambles:
 				run_algo(s[1], scram)
 
@@ -81,6 +85,22 @@ def menu():
 			print "Total stats for ", name,":"
 			print "Succes %:",(success_cnt)/(tot_cnt+0.0)*100.0, "(",success_cnt,"/",tot_cnt,")"
 			print "Avg moves",tot_success_moves/success_cnt
+
+		if s[0] == 'addsc':
+			scramble_type = s[1]
+			cnt = int(s[2])
+			for i in range(0,cnt):
+				persist.add_scramble({'scramble_type' : scramble_type,
+							'scramble' : Scrambler.gen_scramble()})
+		if s[0] == 'listsc':
+			scramble_type = s[1]
+			#for s in persist.get_scrambles(scramble_type=scramble_type):
+			for s in persist.get_scrambles():
+				print s
+
+		if s[0] == 'col':
+			print persist.db.collection_names()
+			#persist.db.problem_state.drop()
 if __name__ == '__main__':
 	menu()
 
