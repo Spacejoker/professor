@@ -66,7 +66,8 @@ class Solver():
 			'rules' : algo.rules,
 			'moves' : solution,
 			'name' : algo_name,
-			'time' : time.time() - t0}
+			'time' : time.time() - t0,
+			'search_cnt' : algo.search_cnt}
 
 		return result
 

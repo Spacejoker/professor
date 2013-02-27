@@ -28,13 +28,14 @@ class Persist():
 		return self.db.result.find()
 
 	def save_result(self, res):
+		self.db.result.remove({'scramble' : res['scramble'], 'name':res['name']}) # remove identical solve
 		self.db.result.save(res)
 
-	def remove_results(self, all=False):
-		if all:
+	def remove_results(self, name=None):
+		if name == None:
 			self.db.result.remove()
 		else:
-			print "TODO, remove first"
+			self.db.result.remove({'name':name})
 
 	def get_first_problem(self):
 		probs = self.db.problem_state.find()
@@ -81,10 +82,11 @@ class Persist():
 		return self.db.algo.find()
 
 	def remove_algo(self, name=None):
-		if Name == None:
-			self.db.scramble.remove()
+		if name == None:
+			self.db.algo.remove()
 		else:
-			self.db.scramble.remove({'name' : name})
+			self.db.algo.remove({'name' : name})
+		self.db.algo.remove({'name' : None})
 
 	def add_scramble(self, scramble):
 		self.db.scramble.save(scramble)

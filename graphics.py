@@ -55,10 +55,10 @@ class Graphics():
 		for step in algo.algo_steps:
 			if num > 7:
 				break
-			if step.split("#")[0] == "comment":
-				label = self.font.render(str(num) + ": " + str(step.split("#")[1]), 1, (255, 0,0))
+			#if step.split("#")[0] == "comment":
+				#label = self.font.render(str(num) + ": " + str(step.split("#")[1]), 1, (255, 0,0))
 		#		self.window.blit(label, (500,100 + num*20))
-				num += 1
+				#num += 1
 		
 		#display rules in a list
 		for id, rule in enumerate(algo.rules):

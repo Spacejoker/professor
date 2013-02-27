@@ -1,0 +1,24 @@
+set_moves#r,f,l,u,d,b,U,D,R,F,L,B,rp,fp,lp,up,dp,bp,Dp
+set_search_moves#D
+set_mode#inner
+set_flip_algo#R U Rp Up Fp U F
+req#+(Inner, 1x1, D, D)
+set_moves#r,f,l,u,d,b,U,D,R,F,L,B,rp,fp,lp,up,dp,bp,Dp
+req#+(Inner, 2x1, D, Any)
+set_moves#r,f,l,u,d,b,U,D,R,F,L,B,rp,fp,lp,up,dp,bp,Dp
+req#+(Inner, 2x1, D, U)|-(Inner, 2x1, D, Any)
+set_moves#U, Up, D, Dp, r2, l2, f2, b2
+req#+(Inner, 2x2, D, D)|-(Inner, 2x1, D, U)|-(Inner, 1x1, D, D)
+set_moves#r,f,l,u,d,b,U,D,R,F,L,B,rp,fp,lp,up,dp,bp,Dp,r U rp,rp U r, b U bp,bp U b,fp U f,F,R,L,B,Fp,Rp,Lp,Bp
+req#+(Inner, 2x1, D, Any)
+set_moves#r,f,l,u,d,b,U,D,R,F,L,B,rp,fp,lp,up,dp,bp,Dp,r U rp,rp U r, b U bp,bp U b,fp U f,F,R,L,B,Fp,Rp,Lp,Bp
+req#+(Inner, 3x2, D, D)|-(Inner, 2x1, D, Any)|-(Inner, 2x2, D, D)
+set_moves#r,f,l,u,d,b,U,D,R,F,L,B,rp,fp,lp,up,dp,bp,Dp
+req#+(Inner, 2x1, D, Any)
+set_moves#r,f,l,u,d,b,U,D,R,F,L,B,rp,fp,lp,up,dp,bp,Dp
+req#+(Inner, 3x1, D, Any)|-(Inner, 2x1, D, Any)
+set_moves#r,f,l,u,d,b,U,D,R,F,L,B,rp,fp,lp,up,dp,bp,Dp
+req#+(Inner, 3x1, D, F)|-(Inner, 3x1, D, Any)
+set_moves#F, Fp, F2, D, Dp, rp, l
+req#+(Inner, 3x3, D, D)|-(Inner, 3x1, D, F)|-(Inner, 3x2, D, D)
+comment#done

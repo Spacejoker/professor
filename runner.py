@@ -20,7 +20,19 @@ def menu():
 		print "Enter command: "
 		s = raw_input()
 		s = s.split(" ")
-
+		if s[0] == 'help':
+			print ""
+			print "HELP"
+			print "run algo random/db scramble_type"
+			print "add algoname filename"
+			print "list"
+			print "show algoname"
+			print "rm algoname"
+			print "rmstats algoname"
+			print "stats algoname"
+			print "addsc type count"
+			print "listsc type"
+			print ""
 		if s[0] == 'run':
 			scrambles = []
 			if len(s) > 2:
@@ -68,23 +80,35 @@ def menu():
 
 		if s[0] == 'rm':
 			persist.remove_algo(s[1])
-		
+
+		if s[0] == 'rmstats':
+			name = s[1]
+			persist.remove_results(name)
+
 		if s[0] == 'stats':
 			name = s[1]
 			algos = persist.list_results(name=name)
 			success_cnt = 0
 			fail_cnt = 0
 			tot_success_moves = 0
+			search_cnt = 0
 			for algo in algos:
 				if algo['success']:
 					success_cnt += 1
 					tot_success_moves += algo['move_cnt']
+					search_cnt += algo['search_cnt']
 				else:
 					fail_cnt += 1
 			tot_cnt = success_cnt + fail_cnt
-			print "Total stats for ", name,":"
-			print "Succes %:",(success_cnt)/(tot_cnt+0.0)*100.0, "(",success_cnt,"/",tot_cnt,")"
-			print "Avg moves",tot_success_moves/success_cnt
+			if tot_cnt > 0:
+				print "Total stats for ", name,":"
+				print "==========================="
+				print "Succes %:",(success_cnt)/(tot_cnt+0.0)*100.0, "(",success_cnt,"/",tot_cnt,")"
+				print "Avg moves:",tot_success_moves/success_cnt
+				print "Search count:", search_cnt
+				print ""
+			else:
+				print "No data for ", name
 
 		if s[0] == 'addsc':
 			scramble_type = s[1]
@@ -93,10 +117,12 @@ def menu():
 				persist.add_scramble({'scramble_type' : scramble_type,
 							'scramble' : Scrambler.gen_scramble()})
 		if s[0] == 'listsc':
-			scramble_type = s[1]
+			scramble_type = 'full'
+			if len(s) > 1:
+				scramble_type = s[1]
 			#for s in persist.get_scrambles(scramble_type=scramble_type):
-			for s in persist.get_scrambles():
-				print s
+			for scram in persist.get_scrambles():
+				print scram
 
 		if s[0] == 'col':
 			print persist.db.collection_names()

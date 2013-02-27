@@ -89,6 +89,7 @@ class Imported_Algo():
 		self.stored = 0 #stored edges when building them
 		self.cross = 0 #bottom cross for 3x3 solve
 		self.pairs = 0
+		self.search_cnt = 0
 
 	def get_remaining_steps(self):
 		return self.algo_steps

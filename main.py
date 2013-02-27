@@ -3,6 +3,7 @@ import random
 import pygame
 import time
 import itertools
+from collections import deque
 from pygame.locals import *
 from cube import *
 from algo import Imported_Algo, Rule_Lookup
@@ -92,7 +93,8 @@ class Simulation():
 		self.algo_file = 'standard.algo'
 		self.c = Cube()
 		self.s = Stats()
-		self.algo = Imported_Algo(self.c, 'standard.algo')
+		#self.algo = Imported_Algo(self.c, 'standard.algo')
+		self.reset_cube()
 		self.batch = 0
 		self.persist = Persist()
 
@@ -277,7 +279,15 @@ class Simulation():
 	def reset_cube(self):
 		self.c = Cube()
 		self.s.reset()
-		self.algo = Imported_Algo(self.c, self.algo_file)
+
+		steps = deque()
+		dbalgo = self.persist.get_algo('standard')
+		print dbalgo.keys()
+
+		for line in dbalgo['steps']:
+			steps.append(line) #skip the newline
+		self.algo = Imported_Algo(self.c, algo_steps=steps)
+
 
 	def to_next_comment(self):
 		c = self.c
@@ -306,7 +316,7 @@ class Simulation():
 					print "Done with this auto-step, back to manual!"
 					break;
 
-				split = algo.algo_steps[0].split("#")
+				split = algo.algo_steps[0]
 				if split[0] == 'comment':
 					print "comment!", split[1]
 					done = True
