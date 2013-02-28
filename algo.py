@@ -129,6 +129,7 @@ class Imported_Algo():
 			return ' '
 
 		#handle a change of requirements
+		print split
 		commands = split[1].split('|')
 		for cmd in commands:
 			c = cmd[:-1].split('(')

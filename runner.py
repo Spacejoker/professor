@@ -3,7 +3,7 @@ from persist import Persist
 from main import Scrambler
 import random, string
 import time
-REQ_SUCCESS = 0.9
+REQ_SUCCESS = 0.97
 
 class Runner():
 	def __init__(self):
@@ -31,10 +31,15 @@ class Runner():
 				print "rmsc (type)"
 				print "catrun category scramble_type" 
 				print "catstats category"
+				print "dump algoname"
+				print "import filename"
 				print ""
 
 			if s[0] == 'run':
-				self.run_algo_command(s)
+				name = s[1]
+				mode = s[2]
+				scramble_type = s[3]
+				self.run_algo_command(name,mode,scramble_type,scramble_type)
 
 			if s[0] == 'add':
 				name = s[1]
@@ -151,6 +156,24 @@ class Runner():
 				self.persist.remove_algo(s[1])
 				self.persist.add_algo(algo)
 
+			if s[0] == 'dump':
+				algo = self.persist.get_algo(s[1])
+				f = open(s[1] + '-dump.algo', 'w')
+				for key, value in algo.items():
+					if key == '_id':
+						continue
+					f.write(key + "#" + str(value) + "\n")
+				f.close()
+			
+			if s[0] == 'import':
+				f = open(s[1], 'r')
+				algo = {}
+				for line in f:
+					split = line[:-1].split('#')
+					algo[split[0]] = split[1]
+					print line
+				f.close()
+				self.persist.add_algo(algo)
 	def stats(self, name):
 		res = self.get_algo_result(name)
 		success_cnt = res['success_cnt']
@@ -164,6 +187,7 @@ class Runner():
 			print "Succes %:",(success_cnt)/(tot_cnt+0.0)*100.0, "(",success_cnt,"/",tot_cnt,")"
 			print "Avg moves:",tot_success_moves/success_cnt
 			print "Search count:", search_cnt
+			print "Avg time:", res['avg_time']
 			print ""
 		else:
 			print "No successful data for ", name
@@ -184,12 +208,10 @@ class Runner():
 					for move in line[1].split(","):
 						if random.random() > keep_limit:
 							cmd_list.append(move)#  += "," + move
-						else:
-							print "removed command:", move
+
 					cands = 'r,f,l,u,d,b,U,D,R,F,L,B,rp,fp,lp,up,dp,bp,Dp,r2,f2,l2,u2,d2,b2,U2,D2,R2,F2,L2,B2,r U rp,rp U r, b U bp,bp U b,fp U f,F,R,L,B,Fp,Rp,Lp,Bp'
 					for move in cands.split(','):
 						if random.random() > limit and move not in cmd_list:
-							print "added command:",move
 							cmd_list.append(move)
 					random.shuffle(cmd_list)	
 					for c in cmd_list:
@@ -227,6 +249,7 @@ class Runner():
 
 	def run_algo_command(self, name, mode, num_times, scramble_type, break_early=False):
 		scrambles = []
+		print scramble_type
 		if mode == 'random':
 			num_times = 1
 			for i in range(0,num_times):
@@ -246,7 +269,8 @@ class Runner():
 				fail_cnt += 1
 			if break_early and fail_cnt / len(scrambles) > 1 - REQ_SUCCESS + 0.01: #epsilon
 				return 0
-
+		if success_cnt == 0:
+			return 0.0
 		success_rate = (success_cnt)/(success_cnt + fail_cnt)
 		return success_rate
 
@@ -256,23 +280,29 @@ class Runner():
 		fail_cnt = 0
 		tot_success_moves = 0
 		search_cnt = 0
+		tot_time = 0
 		for algo in algos:
 			if algo['success']:
 				success_cnt += 1
 				tot_success_moves += algo['move_cnt']
 				search_cnt += algo['search_cnt']
+				tot_time += algo['time']
 			else:
 				fail_cnt += 1
 
 		tot_cnt = success_cnt + fail_cnt
+		avg_time = 0
 		if tot_cnt > 0:
 			search_cnt /= tot_cnt
+			avg_time = tot_time / tot_cnt
+
 
 		ret = {'success_cnt' : success_cnt,
 				'fail_cnt' : fail_cnt,
 				'tot_success_moves' : tot_success_moves,
 				'search_cnt' : search_cnt,
-				'tot_cnt' : tot_cnt}
+				'tot_cnt' : tot_cnt,
+				'avg_time' : avg_time}
 		return ret
 
 if __name__ == '__main__':
