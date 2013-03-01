@@ -129,7 +129,6 @@ class Imported_Algo():
 			return ' '
 
 		#handle a change of requirements
-		print split
 		commands = split[1].split('|')
 		for cmd in commands:
 			c = cmd[:-1].split('(')
@@ -161,6 +160,7 @@ class Imported_Algo():
 			return None
 
 	def parse_rule(self, rule):
+		print rule
 		parts = rule.split(',')
 		parts = map(lambda x: x.strip(), parts)
 		
@@ -275,6 +275,19 @@ class Imported_Algo():
 
 				if self.test_cube(): 
 					done = True
+			
+				#if still in inner-mode, see which moves that will affect the interesting color
+				next_mods = []
+				next_mods.extend(mods)
+				if self.mode == 'inner':
+					next_mods = []
+					for m in mods:
+						colors = c.inner_colors_modified(m)
+						if self.search_moves in colors:
+							next_mods.append(m)
+				else:
+					print 'mode is', self.mode
+
 				#undo what we did to the mutable cube, then revert tho sequence to the correct one
 				self.rev_seq(s)
 
@@ -289,7 +302,7 @@ class Imported_Algo():
 
 				#continue the bfs
 				
-				for m in mods:
+				for m in next_mods:
 					tmp = []
 					tmp.extend(s)
 					tmp.extend(m)

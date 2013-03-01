@@ -1,5 +1,5 @@
 import itertools
-
+from sets import Set
 #Provide a mapping from notation to code
 Turns = ['D', 'B', 'L', 'U', 'R', 'F']
 class Face: #enum
@@ -222,16 +222,18 @@ class Cube():
 		self.all_commands = []	
 
 	def rotate(self, commands):
-
+		#self.inner_colors_modified(commands)
 		for c in commands:
+			chain = self.gen_chain(c)
+			if chain != []:
+				self.apply_chain(chain)
+
+	def gen_chain(self, c):
+
 			c = str(c)
 			if c == ' ' or len(c) == 0:
-				continue
+				return []
 			#store all commands that have had effect on the cube
-			if len(self.all_commands) > 0 and (self.all_commands[-1] == c + 'p' or self.all_commands[-1] + 'p' == c):
-				self.all_commands = self.all_commands[:-1]
-			else:
-				self.all_commands.append(c)
 
 			backwards = False
 			if(c[-1:] == 'p'):
@@ -251,12 +253,22 @@ class Cube():
 			if double:
 				chain.extend( Chain_Generator.get_chain(c) )
 			if chain == None:
-				continue
+				return []
 			if(backwards):
 				for ch in chain:
 					ch.reverse()
-			self.apply_chain(chain)
-
+			return chain
+	def inner_colors_modified(self, commands):
+		s = []
+		for c in commands:
+			chain = self.gen_chain(c)
+			for sub_chain in chain:
+				for item in sub_chain:
+					if item[1] in [6,7,8,11,13,16,17,18]:
+						sticker  = self.state[item[0]][item[1]]
+						if sticker not in s:
+							s.append(sticker)
+		return s
 	def apply_chain(self, chain):
 
 		for c in chain:
