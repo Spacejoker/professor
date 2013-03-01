@@ -141,9 +141,14 @@ class Simulation():
 	def solve_with_solver(self):
 		solver = Solver()
 		scramble = Scrambler.gen_scramble()
-		result = solver.solve('standard.algo', scramble)
-		print result
-
+		result = solver.solve('cen', scramble)
+		self.c.rotate(result['scramble'].split(" "))
+		for m in result['moves']:
+			print "move:", m
+			self.c.rotate([m])
+			self.g.draw_cube(self.c, self.algo, self.s)
+			event = pygame.event.wait()
+		
 		self.persist.save_result(result)
 	
 	def menu(self):

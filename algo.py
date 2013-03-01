@@ -316,7 +316,7 @@ class Imported_Algo():
 				self.queued_moves.append(move)
 			elif self.mode == 'edge':
 				self.queued_moves.append('L L')
-			return True
+			return 'fail'
 	
 	#handles inner faces, not for edges or corners
 	def get_faces_with_inner_color(self, color):

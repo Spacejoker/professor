@@ -18,9 +18,9 @@ class Solver():
 		
 		steps = deque()
 		dbalgo = self.persist.get_algo(algo_name)
-		print dbalgo.keys()
 
 		for line in dbalgo['steps']:
+			print line
 			steps.append(line) #skip the newline
 		algo = Imported_Algo(c, algo_steps=steps)
 
