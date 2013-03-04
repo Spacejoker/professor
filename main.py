@@ -112,7 +112,21 @@ class Simulation():
 				's' : self.remove_results,
 				'/' : self.load_result_state,
 				'a' : self.step_one,
+				'o' : self.step_to_end,
+				'e' : self.step_slowly
 				}
+	def step_slowly(self):
+		self.step_to_end(delay=0.1)
+	
+	def step_to_end(self, delay=0):
+		while len(self.move_queue) > 0:
+			n = self.move_queue.popleft()
+			self.c.rotate(n)
+			if delay > 0:
+				self.g.draw_cube(self.c)
+				time.sleep(delay)
+
+		self.g.draw_cube(self.c)
 
 	def step_one(self):
 		if self.move_queue == None or len(self.move_queue) == 0:
