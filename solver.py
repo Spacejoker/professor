@@ -16,13 +16,9 @@ class Solver():
 	def solve(self, algo_name, scramble):
 		c = Cube()	
 		
-		steps = deque()
 		dbalgo = self.persist.get_algo(algo_name)
 
-		for line in dbalgo['steps']:
-			print line
-			steps.append(line) #skip the newline
-		algo = Imported_Algo(c, algo_steps=steps)
+		algo = Imported_Algo(c, dbalgo)
 
 		move_cnt = 0	
 		solution = []
@@ -46,14 +42,15 @@ class Solver():
 					move_cnt += 1
 					c.rotate([move])
 					solution.append(move)
+			if len(algo.algo_steps) == 0:
+				done = True
+				success = True
 
-			split = algo.algo_steps[0]
+			else:	
+				step = algo.algo_steps[0]
 
-			if split[0] == 'comment':
-				if split[1] == 'done':
-					done = True
-					success = True
-				print "Comment:", split[1]
+				if step['type'] == 'comment':
+					print "Comment:", step['value']
 			
 			if done:
 				break

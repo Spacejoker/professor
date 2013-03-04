@@ -52,17 +52,11 @@ for key, value in orientation.items():
 
 class Imported_Algo():
 
-	def __init__(self, cube, filename, algo_steps=None):
+	def __init__(self, cube, algo_json):
 		self.cube = cube
-		
-		self.algo_steps = deque()#steps in the algo
-
-		if algo_steps != None:
-			for a in algo_steps:
-				self.algo_steps.append(a)
-		else:
-			raise "Incorrect creation of Imported Algo"
-
+		self.algo_steps = deque()
+		for step in algo_json['commands']:
+			self.algo_steps.append(step)	
 		self.allowed_sequences = []
 		self.rules = []#active rules
 		self.queued_moves = deque()
@@ -95,52 +89,54 @@ class Imported_Algo():
 
 	#continue parsing the algorithm lines
 	def parse_algo(self):
-		split = self.algo_steps.popleft()
+		while True:
+			step = self.algo_steps.popleft()
+			print step
+			type = step['type']
 
-		#handle setting up of allowed  moves
-		while split[0] in ['set_moves', 'set_search_moves', 'comment', 'set_mode', 'set_flip_algo']:
-			if split[0] == 'set_moves':
-				new_seq = split[1].split(',')
+			if type == 'solve':
+				print 'now time to solve'
+				break
+			
+			if type == 'comment':
+				break
+			
+			if type == 'set_moves':
 				self.allowed_sequences = []
-				
-				for seq in new_seq:
+				for seq in step['sequence'].split(','):
 					tmp = seq.strip().split(" ")
 					self.allowed_sequences.append(tmp)
-					
-
-			elif split[0] == 'set_search_moves':
-				face = split[1].strip()
-				self.search_moves = face
+		
+			elif type == 'set_search_moves':
+				self.search_moves = step['value']
+		
 			
-			elif split[0] == 'comment': 
-				return ' '
-
-			elif split[0] == 'set_mode':
-				self.mode = split[1].strip()
+			elif type == 'set_mode':
+				self.mode = step['value']
 			
-			elif split[0] == 'set_flip_algo':
-				self.flip_algo = split[1].strip()
+			elif type == 'set_flip_algo':
+				self.flip_algo = step['sequence']
 
-			split = self.algo_steps.popleft()
-
-		if split[0] == 'done':
-			print 'algorithm done, you should be happy now'
-			return ' '
-
+			elif type == 'req':
+				if step['operation'] == 'add':
+					self.rules.append(step['rule'])
+				elif step['operation'] == 'remove':
+					self.rules = [x for x in self.rules if x['rule_id'] != step['rule_id']]
+	#{ "type" : "req", "operation" : "add", "rule" : {"step" : "inner", "block": "inner_1x1", "color" : "D", "target" : "D", rule_id : "1"}},
 		#handle a change of requirements
-		commands = split[1].split('|')
-		for cmd in commands:
-			c = cmd[:-1].split('(')
-			rule = self.parse_rule(c[1])
-			if c[0] == "+":
-				if rule != None and rule[0] != "Stored_Edge":
-					self.rules.append(rule)
-			elif c[0] == '-':
-				try:
-					self.rules.remove(rule)
-				except:
-					raise NameError("Rule is incorrect, cannot remove:" + str(rule))
-
+		#commands = split[1].split('|')
+		#for cmd in commands:
+			#c = cmd[:-1].split('(')
+			#rule = self.parse_rule(c[1])
+			#if c[0] == "+":
+				#if rule != None and rule[0] != "Stored_Edge":
+					#self.rules.append(rule)
+			#elif c[0] == '-':
+				#try:
+					#self.rules.remove(rule)
+				#except:
+					#raise NameError("Rule is incorrect, cannot remove:" + str(rule))
+#
 
 	def next_move(self):
 		#if we have a prepared move in stock just feed that one
@@ -278,14 +274,14 @@ class Imported_Algo():
 				#if still in inner-mode, see which moves that will affect the interesting color
 				next_mods = []
 				next_mods.extend(mods)
-				if self.mode == 'inner':
-					next_mods = []
-					for m in mods:
-						colors = c.inner_colors_modified(m)
-						if self.search_moves in colors:
-							next_mods.append(m)
-				else:
-					print 'mode is', self.mode
+#				if self.mode == 'inner':
+#					next_mods = []
+#					for m in mods:
+#						colors = c.inner_colors_modified(m)
+#						if self.search_moves in colors:
+#							next_mods.append(m)
+#				else:
+#					print 'mode is', self.mode
 
 				#undo what we did to the mutable cube, then revert tho sequence to the correct one
 				self.rev_seq(s)
@@ -349,7 +345,7 @@ class Imported_Algo():
 		#edge building rules:
 		for rule in self.rules:
 			c = self.cube
-			if rule[0].strip() == 'Build_Edge':
+			if rule['step_type'] == 'Build_Edge':
 				if rule[1] == Edge.outer:
 					#and r[2] == Orientation.oriented:
 					fr_mid = edge_pieces[rule[3]][1]
@@ -366,7 +362,7 @@ class Imported_Algo():
 					if not found:
 						return False
 
-			if rule[0] == 'Edge':
+			if rule['step_type'] == 'Edge':
 				if rule[1] in ['2x1x1', '3x1x1']:
 					for cur_place in rule[2]:
 
@@ -386,7 +382,7 @@ class Imported_Algo():
 							return False
 						if rule[1] == '3x1x1' and cnt <= 1:
 							return False
-			if rule[0] == 'Corner':
+			if rule['step_type'] == 'Corner':
 				cur_pos = self.cube.get_corner_position(rule[1])
 				if cur_pos not in rule[2]:
 					return False
@@ -400,7 +396,7 @@ class Imported_Algo():
 
 					if idx_face != Face_Lookup[rule[1][0]]:
 						return False
-			if rule[0] == 'F2L_Edge':
+			if rule['step_type'] == 'F2L_Edge':
 				cur_pos = self.cube.get_f2l_edge_position(rule[1])
 				if cur_pos not in rule[2]:
 					return False
@@ -414,25 +410,25 @@ class Imported_Algo():
 
 					if idx_face != Face_Lookup[rule[1][0]]:
 						return False
-			if rule[0] == 'OLL_Cross':
+			if rule['step_type'] == 'OLL_Cross':
 				print "Testing oll cross"
 				for pos in range(1, 24):
 					if pos == 4 or pos == 20:
 						continue
 					if self.cube.state[Face.U][pos] != Face.U:
 						return False
-			if rule[0] == 'OLL':
+			if rule['step_type'] == 'OLL':
 				for pos in range(0, 25):
 					if self.cube.state[Face.U][pos] != Face.U:
 						return False
 			corner_faces = [(Face.F, 0),(Face.F,4),(Face.L,4),(Face.L,24),(Face.B,20),(Face.B,24),(Face.R,0),(Face.R,20)]
-			if rule[0] == 'PLL_Corners':
+			if rule['step_type'] == 'PLL_Corners':
 				state = self.cube.state
 				for i in corner_faces:
 					if state[i[0]][i[1]] != i[0]:
 						return False
 
-			if rule[0] == 'PLL':
+			if rule['step_type'] == 'PLL':
 				state = self.cube.state
 				mid_pieces = [(Face.F, 2), (Face.L, 14), (Face.B, 22), (Face.R, 10)]
 				corner_faces.extend(mid_pieces)
@@ -525,14 +521,14 @@ class Imported_Algo():
 			print "Color: ", color, ", num_blocks: ", num_blocks
 
 		for r in self.rules:
-			if r[0] == 'Inner':
+			if r['step_type'] == 'Inner':
 				req_face = Face_Lookup[r[2]]
 				
-				if r[2] != color:
+				if r['color'] != color:
 					continue
 				
-				block_type = r[1]
-				needs_face = r[3]
+				block_type = r['block']
+				needs_face = r['target_color']
 				if needs_face != None:
 					if( num_blocks[block_type][needs_face] > 0):
 						num_blocks[block_type][needs_face] -= 1

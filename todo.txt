@@ -116,3 +116,6 @@ Make a template, allow for in out/db.
 save json-algo to db
 retrieve it from db
 dump back to file
+create format for the rules - give them IDs?
+read the new format when creating up a new Imported_algo with solver
+solve a few steps with the new algo structure
