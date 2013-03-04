@@ -30,6 +30,15 @@ class Persist():
 	def get_result(self, name):
 		return self.db.result.find({'name':name})
 
+	def get_latest_solve(self):
+		latest = self.db.latest.find()[0]
+		print "Latest", latest
+		return latest
+
+	def save_latest_solve(self, res):
+		self.db.latest.remove()
+		self.db.latest.save({'scramble' : res['scramble'], 'moves' : res['moves']})
+
 	def save_result(self, res):
 		remove = self.db.result.remove({'scramble' : res['scramble'], 'name':res['name']}) # remove identical solve
 		print remove

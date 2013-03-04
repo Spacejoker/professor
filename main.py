@@ -100,7 +100,7 @@ class Simulation():
 
 		self.inputHandler = {
 				'0' : self.scramble,
-				'1' : self.to_next_comment,
+				#'1' : self.to_next_comment,
 				'q': self.next_move, #c.rotate([algo.next_move()])
 				'[': self.destroy_edges, #c.rotate(Scrambler.gen_edge_destroy().split(' '))
 				']' : self.custom_scramble,
@@ -114,15 +114,18 @@ class Simulation():
 				}
 
 	def scramble_from_fst_result(self):
-		res = self.persist.list_results()[0]
+		print "Janne"
+		res = self.persist.get_latest_solve()
 		#self.persist.get_result_by_id(
-		moves = res['scramble'].split(" ")
-		for m in moves:
+		scram = res['scramble'].split(" ")
+		for m in scram:
 			self.c.rotate([m])
+		print res['moves']
 
 	def scramble_from_fst_problem(self):
 		prob = self.s.persist.get_first_problem()
 		self.scramble(map(str, prob['scramble']))
+
 
 	def increment_batch(self):
 		self.scramble()
@@ -233,7 +236,7 @@ class Simulation():
 			s = self.s
 			c = self.c
 			g = self.g
-			algo = self.algo
+			#algo = self.algo
 			if self.reset:
 				print self.reset, " is the reset state"
 				self.reset_cube()
@@ -245,7 +248,7 @@ class Simulation():
 				self.to_next_comment()
 				continue
 
-			g.draw_cube(c, self.algo, s)
+			g.draw_cube(c)
 			keymap = {}
 			event = pygame.event.wait()
 
@@ -287,56 +290,56 @@ class Simulation():
 
 		steps = deque()
 		
-		dbalgo = self.persist.get_algo('standard')
-		print dbalgo.keys()
+		#dbalgo = self.persist.get_algo('standard')
+		#print dbalgo.keys()
 
-		for line in dbalgo['steps']:
-			steps.append(line) #skip the newline
-		self.algo = Imported_Algo(self.c, algo_steps=steps)
+		#for line in dbalgo['steps']:
+	#		steps.append(line) #skip the newline
+	#	self.algo = Imported_Algo(self.c, algo_steps=steps)
 
 
-	def to_next_comment(self):
-		c = self.c
-		algo = self.algo
-		s = self.s
-		self.algo.parse_algo()
-		next_move = ' '
-		done = False
-		g = self.g
-		prim = False
-
-		while True:
-			c.rotate([next_move])
-			next_move = algo.next_move()
-			if next_move == 'fail':
-				print 'reseting cube due to error'
-				self.reset = True
-				self.batch -= 1
-				self.s.persist.dump_state(self.algo)
-				break
-
-			g.draw_cube(c, algo, s)
-			
-			if next_move == None or next_move == ' ' or next_move == '' and (algo.queued_moves) == 0:
-				if done:
-					print "Done with this auto-step, back to manual!"
-					break;
-
-				split = algo.algo_steps[0]
-				if split[0] == 'comment':
-					print "comment!", split[1]
-					done = True
-					if split[1] == 'done':
-						self.batch -= 1
-						print 'reseting cube since the algo is complete'
-						return
-				else:
-					algo.parse_algo()
-					g.draw_cube(c, algo, s)
-			else :
-				s.nr_moves += 1
-				if prim:
-					time.sleep(0.1)
+	#def to_next_comment(self):
+		#c = self.c
+		#algo = self.algo
+		#s = self.s
+		#self.algo.parse_algo()
+		#next_move = ' '
+		#done = False
+		#g = self.g
+		#prim = False
+#
+		#while True:
+			#c.rotate([next_move])
+			#next_move = algo.next_move()
+			#if next_move == 'fail':
+				#print 'reseting cube due to error'
+				#self.reset = True
+				#self.batch -= 1
+				#self.s.persist.dump_state(self.algo)
+				#break
+#
+			#g.draw_cube(c, algo, s)
+			#
+			#if next_move == None or next_move == ' ' or next_move == '' and (algo.queued_moves) == 0:
+				#if done:
+					#print "Done with this auto-step, back to manual!"
+					#break;
+#
+				#split = algo.algo_steps[0]
+				#if split[0] == 'comment':
+					#print "comment!", split[1]
+					#done = True
+					#if split[1] == 'done':
+						#self.batch -= 1
+						#print 'reseting cube since the algo is complete'
+						#return
+				#else:
+					#algo.parse_algo()
+					#g.draw_cube(c, algo, s)
+			#else :
+				#s.nr_moves += 1
+				#if prim:
+					#time.sleep(0.1)
 
 if __name__ == '__main__':
 	sim = Simulation()

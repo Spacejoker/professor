@@ -237,6 +237,7 @@ class Runner():
 		print "Run complete, result:",result['success']
 
 		self.persist.save_result(result)
+		self.persist.save_latest_solve(result)
 		return result['success']
 
 	def run_algo_command(self, name, mode, num_times, scramble_type, break_early=False):

@@ -42,6 +42,7 @@ class Solver():
 					move_cnt += 1
 					c.rotate([move])
 					solution.append(move)
+
 			if len(algo.algo_steps) == 0:
 				done = True
 				success = True
@@ -65,6 +66,6 @@ class Solver():
 			'name' : algo_name,
 			'time' : time.time() - t0,
 			'search_cnt' : algo.search_cnt}
-
+		
 		return result
 

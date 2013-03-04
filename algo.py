@@ -34,6 +34,9 @@ Rule_Lookup = {
 		5: 'inner_3x2',
 		6 : 'inner_1x1_corner'
 	}
+Rule_Lookup_Reversed = {}
+for key, value in Rule_Lookup.items():
+	Rule_Lookup_Reversed[value] = key
 piece = {
 		'Outer' : Edge.outer,
 		'Center' : Edge.center
@@ -96,6 +99,8 @@ class Imported_Algo():
 
 			if type == 'solve':
 				print 'now time to solve'
+				self.make_queue()
+				print "queue", self.queued_moves
 				break
 			
 			if type == 'comment':
@@ -118,9 +123,13 @@ class Imported_Algo():
 				self.flip_algo = step['sequence']
 
 			elif type == 'req':
+				print "ok:" 
+				print step
 				if step['operation'] == 'add':
+					print "b"
 					self.rules.append(step['rule'])
 				elif step['operation'] == 'remove':
+					print 'c'
 					self.rules = [x for x in self.rules if x['rule_id'] != step['rule_id']]
 	#{ "type" : "req", "operation" : "add", "rule" : {"step" : "inner", "block": "inner_1x1", "color" : "D", "target" : "D", rule_id : "1"}},
 		#handle a change of requirements
@@ -155,6 +164,7 @@ class Imported_Algo():
 			return None
 
 	def parse_rule(self, rule):
+		print "PROBLEM PARSE RULE"
 		print rule
 		parts = rule.split(',')
 		parts = map(lambda x: x.strip(), parts)
@@ -233,12 +243,13 @@ class Imported_Algo():
 				s[i] = m + 'p'
 
 	def make_queue(self):
+		print "in here"
 		mods = self.allowed_sequences
 		c = self.cube
 		flip_algo = self.flip_algo #'R U Rp Up Fp U F'
 		if self.test_cube():
 			return
-		t0 = time.time()		
+		t0 = time.time()
 		while True:
 			que = deque()
 			done = False
@@ -341,7 +352,7 @@ class Imported_Algo():
 			ok = self.test_color(color, p)
 			if not ok:
 				return False
-
+		print "Rules", self.rules
 		#edge building rules:
 		for rule in self.rules:
 			c = self.cube
@@ -488,6 +499,7 @@ class Imported_Algo():
 		#for each face, examine what patterns they have in each color
 		#TODO: handle pattern recognizion for each color
 
+	#handles tests of the inner 3x3
 	def test_color(self, color, p):
 		num_blocks = []
 		for i in range(0,7):
@@ -521,14 +533,14 @@ class Imported_Algo():
 			print "Color: ", color, ", num_blocks: ", num_blocks
 
 		for r in self.rules:
-			if r['step_type'] == 'Inner':
-				req_face = Face_Lookup[r[2]]
+			if r['step_type'] == 'inner':
+				req_face = Face_Lookup[r['target_color']]
 				
 				if r['color'] != color:
 					continue
-				
-				block_type = r['block']
-				needs_face = r['target_color']
+					
+				block_type = Rule_Lookup_Reversed[r['block']]
+				needs_face = Face_Lookup[r['target_color']]
 				if needs_face != None:
 					if( num_blocks[block_type][needs_face] > 0):
 						num_blocks[block_type][needs_face] -= 1

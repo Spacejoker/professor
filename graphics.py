@@ -37,7 +37,7 @@ class Graphics():
 		
 		self.bg = pygame.image.load(os.path.join('img', 'bg.png'))
 
-	def draw_cube(self, cube, algo, stats):
+	def draw_cube(self, cube):
 
 		self.window.blit(self.bg, (0,0))
 		xoffset = 58
@@ -52,36 +52,36 @@ class Graphics():
 		num = 1	
 
 		#display comments
-		for step in algo.algo_steps:
-			if num > 7:
-				break
-			#if step.split("#")[0] == "comment":
+		#for step in algo.algo_steps:
+			#if num > 7:
+				#break
+			##if step.split("#")[0] == "comment":
 				#label = self.font.render(str(num) + ": " + str(step.split("#")[1]), 1, (255, 0,0))
 		#		self.window.blit(label, (500,100 + num*20))
 				#num += 1
 		
 		#display rules in a list
-		for id, rule in enumerate(algo.rules):
-			display = ""
-			if rule[0] == 'Inner':
-				display = Rule_Lookup[rule[1]] + ", sticker " + str(rule[2]) + " on "
-				if rule[3] != None:
-					display += "face  " + str(Turns[rule[3]])
-				else:
-					display += " any face"
-			if rule[0] == 'Edge':
-				display += str(rule)
-
-			label = self.font.render(display, 1, (255, 0,0))
+		#for id, rule in enumerate(algo.rules):
+			#display = ""
+			#if rule[0] == 'Inner':
+				#display = Rule_Lookup[rule[1]] + ", sticker " + str(rule[2]) + " on "
+				#if rule[3] != None:
+					#display += "face  " + str(Turns[rule[3]])
+				#else:
+					#display += " any face"
+			#if rule[0] == 'Edge':
+				#display += str(rule)
+#
+			#label = self.font.render(display, 1, (255, 0,0))
 		#	self.window.blit(label, (800,120 + id*20))
 
-		label = self.font.render("Allowed: " + str(algo.allowed_sequences), 1, (255, 255,255))
-		self.window.blit(label, (400, 20))
-		label = self.font.render("Nr moves: " + str(stats.nr_moves), 1, (255,255,255))
-		self.window.blit(label ,(900, 600))
+		#label = self.font.render("Allowed: " + str(algo.allowed_sequences), 1, (255, 255,255))
+		#self.window.blit(label, (400, 20))
+		#label = self.font.render("Nr moves: " + str(stats.nr_moves), 1, (255,255,255))
+		#self.window.blit(label ,(900, 600))
 
-		label = self.font.render("Nr search steps: " + str(stats.nr_search_steps), 1, (255,255,255))
-		self.window.blit(label ,(600, 600))
+		#label = self.font.render("Nr search steps: " + str(stats.nr_search_steps), 1, (255,255,255))
+		#self.window.blit(label ,(600, 600))
 
 		self.draw_edges(['FR', 'LF', 'BL', 'RB'], 604, 75, cube, size)
 		self.draw_edges(['UF', 'UL', 'UB', 'UR'], 604, 75+120, cube, size)
