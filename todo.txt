@@ -107,3 +107,12 @@ Start working with several algorithms for just the first face, see what can be d
 expand to first two faces.
 expand to known areas of trouble.
 
+
+Todo 2013-03-04:
+Refactor rules to be a class and make it work json-style. 
+Make a template, allow for in out/db.
+
+//broken down:
+save json-algo to db
+retrieve it from db
+dump back to file

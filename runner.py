@@ -3,6 +3,8 @@ from persist import Persist
 from main import Scrambler
 import random, string
 import time
+import json
+from rule import Algo_Parser
 REQ_SUCCESS = 0.97
 
 class Runner():
@@ -17,9 +19,10 @@ class Runner():
 			s = s.split(" ")
 			if s[0] == 'help':
 				print ""
-				print "HELP"
+				print "HELP:"
 				print "run algo random/db scramble_type"
-				print "add algoname filename category"
+				print "add filename"
+				print "dump algoname"
 				print "list"
 				print "show algoname"
 				print "rm algoname"
@@ -31,7 +34,6 @@ class Runner():
 				print "rmsc (type)"
 				print "catrun category scramble_type" 
 				print "catstats category"
-				print "dump algoname"
 				print "import filename"
 				print ""
 
@@ -42,18 +44,7 @@ class Runner():
 				self.run_algo_command(name,mode,scramble_type,scramble_type)
 
 			if s[0] == 'add':
-				name = s[1]
-				filename = s[2]
-				category = s[3]
-				steps = []
-				for line in open(filename,'r').readlines():
-					next_line = line[:-1]#self.algo_steps.popleft()
-					split = next_line.split('#')
-					steps.append(split)
-
-				algo = { 'name' : name,
-						'steps' : steps,
-						'category' : category}
+				algo = Algo_Parser.parse_algo(s[1])
 				self.persist.add_algo(algo)
 
 			if s[0] == 'list':
@@ -72,6 +63,9 @@ class Runner():
 				print "Algo ", s[1], "described:"
 				for key, value in res.items():
 					print key,":",value
+					if str(key) == 'steps':
+						for item in value:
+							print map(str, item)
 				print ""
 
 			if s[0] == 'rm':
@@ -158,11 +152,9 @@ class Runner():
 
 			if s[0] == 'dump':
 				algo = self.persist.get_algo(s[1])
+				algo.pop("_id", None)
 				f = open(s[1] + '-dump.algo', 'w')
-				for key, value in algo.items():
-					if key == '_id':
-						continue
-					f.write(key + "#" + str(value) + "\n")
+				json.dump(algo, f)
 				f.close()
 			
 			if s[0] == 'import':

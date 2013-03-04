@@ -52,7 +52,7 @@ for key, value in orientation.items():
 
 class Imported_Algo():
 
-	def __init__(self, cube, filename=None, algo_steps=None):
+	def __init__(self, cube, filename, algo_steps=None):
 		self.cube = cube
 		
 		self.algo_steps = deque()#steps in the algo
@@ -61,9 +61,8 @@ class Imported_Algo():
 			for a in algo_steps:
 				self.algo_steps.append(a)
 		else:
-			file = open(filename, 'r')
-			for line in file.readlines():
-				self.algo_steps.append(line[:-1]) #skip the newline
+			raise "Incorrect creation of Imported Algo"
+
 		self.allowed_sequences = []
 		self.rules = []#active rules
 		self.queued_moves = deque()
