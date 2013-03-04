@@ -124,14 +124,12 @@ class Simulation():
 		res = self.persist.get_latest_solve()
 		#self.persist.get_result_by_id(
 		scram = res['scramble']
-		print scram
 		for m in scram:
 			self.c.rotate([m])
 		p = map(str,res['scramble'])
 		s = ""
 		for i in p:
 			s += i + ","
-		print s
 		self.move_queue = deque()
 		moves = map(str, res['moves'])
 		for m in moves:
@@ -162,7 +160,6 @@ class Simulation():
 		result = solver.solve('cen', scramble)
 		self.c.rotate(result['scramble'].split(" "))
 		for m in result['moves']:
-			print "move:", m
 			self.c.rotate([m])
 			self.g.draw_cube(self.c, self.algo, self.s)
 			event = pygame.event.wait()

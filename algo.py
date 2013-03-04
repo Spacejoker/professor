@@ -94,13 +94,10 @@ class Imported_Algo():
 	def parse_algo(self):
 		while True:
 			step = self.algo_steps.popleft()
-			print step
 			type = step['type']
 
 			if type == 'solve':
-				print 'now time to solve'
 				self.make_queue()
-				print "queue", self.queued_moves
 				break
 			
 			if type == 'comment':
@@ -123,13 +120,9 @@ class Imported_Algo():
 				self.flip_algo = step['sequence']
 
 			elif type == 'req':
-				print "ok:" 
-				print step
 				if step['operation'] == 'add':
-					print "b"
 					self.rules.append(step['rule'])
 				elif step['operation'] == 'remove':
-					print 'c'
 					self.rules = [x for x in self.rules if x['rule_id'] != step['rule_id']]
 	#{ "type" : "req", "operation" : "add", "rule" : {"step" : "inner", "block": "inner_1x1", "color" : "D", "target" : "D", rule_id : "1"}},
 		#handle a change of requirements
@@ -164,8 +157,6 @@ class Imported_Algo():
 			return None
 
 	def parse_rule(self, rule):
-		print "PROBLEM PARSE RULE"
-		print rule
 		parts = rule.split(',')
 		parts = map(lambda x: x.strip(), parts)
 		
@@ -243,7 +234,6 @@ class Imported_Algo():
 				s[i] = m + 'p'
 
 	def make_queue(self):
-		print "in here"
 		mods = self.allowed_sequences
 		c = self.cube
 		flip_algo = self.flip_algo #'R U Rp Up Fp U F'
@@ -279,7 +269,6 @@ class Imported_Algo():
 
 				c.rotate(s)
 	
-				print "current s:", s
 				if self.test_cube(): 
 					done = True
 			
@@ -347,7 +336,6 @@ class Imported_Algo():
 			ok = self.test_color(color, p)
 			if not ok:
 				return False
-		print "Rules", self.rules
 		#edge building rules:
 		for rule in self.rules:
 			c = self.cube
@@ -536,15 +524,8 @@ class Imported_Algo():
 					
 				block_type = Rule_Lookup_Reversed[r['block']]
 				needs_face = Face_Lookup[r['target_color']]
-				print "blocktype:",block_type,"needs_face:",needs_face
-				print "apparently we got:", num_blocks[Block.inner_1x1][Face_Lookup['D']]
-				
-				print "bottom state:"
-				for c in self.inner_1x1:
-					print self.cube.state[0][c[0]]
 
 				if needs_face != None:
-					print "needs face:", needs_face
 					if( num_blocks[block_type][needs_face] > 0):
 						num_blocks[block_type][needs_face] -= 1
 					else:

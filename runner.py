@@ -234,7 +234,7 @@ class Runner():
 		print "Starting run"
 		solver = Solver()
 		result = solver.solve(algo_name, scramble)
-		print "Run complete, result:",result['success']
+		print "Run complete, result:", result['success']
 
 		self.persist.save_result(result)
 		self.persist.save_latest_solve(result)
@@ -253,7 +253,6 @@ class Runner():
 				scram = scr['scramble']
 				scrambles.append(scram)
 		print "scram len:", len(scrambles)
-		print "scramble 0:", scrambles[0]
 		success_cnt = 0.0
 		fail_cnt = 0.0
 		for scram in scrambles:
