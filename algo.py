@@ -254,7 +254,10 @@ class Imported_Algo():
 					#print "evaluating: ", s
 				if cnt > SEARCH_LIMIT:
 					print time.time() - t0
-					print "Hard step", self.rules
+					print "FAIL: ", self.rules
+					print "Fail rules:"
+					for rule in self.rules:
+						print rule['color'], ":", rule
 					return 'fail'
 				c.rotate(s)
 				if self.test_cube(): 

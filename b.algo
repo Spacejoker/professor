@@ -230,12 +230,13 @@
 	{ "type" : "req", "operation" : "remove", "rule_id" : "40007"},
 	{ "type" : "req", "operation" : "remove", "rule_id" : "40011"},
 	{ "type" : "solve" },
+	{ "type" : "set_moves", "sequence" : "u,d,L,Lp,B,Bp,R,Rp,up,dp, up B B u, d B B dp"},
 
 	{ "type" : "req", "operation" : "remove", "rule_id" : "40008"},
 	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_3x1", "color" : "L", "target_color" : "B", "rule_id" : "40008"}},
 	{ "type" : "solve" },
 
-	{ "type" : "set_moves", "sequence" : "F, Fp, L, Lp, u, d, up, dp"},
+	{ "type" : "set_moves", "sequence" : "B, Bp, L, Lp, u, d, up, dp, up L L u, d L L dp"},
 	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_3x3", "color" : "L", "target_color" : "Any", "rule_id" : "40010"}},
 	{ "type" : "req", "operation" : "remove", "rule_id" : "40008"},
 	{ "type" : "req", "operation" : "remove", "rule_id" : "40006"},
