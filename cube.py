@@ -223,6 +223,9 @@ class Cube():
 
 	def rotate(self, commands):
 		#self.inner_colors_modified(commands)
+		if isinstance(commands, str):
+			commands = [commands]
+
 		for c in commands:
 			chain = self.gen_chain(c)
 			if chain != []:
