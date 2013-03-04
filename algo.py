@@ -234,10 +234,12 @@ class Imported_Algo():
 				s[i] = m + 'p'
 
 	def make_queue(self):
+		print self.rules
 		mods = self.allowed_sequences
 		c = self.cube
 		flip_algo = self.flip_algo #'R U Rp Up Fp U F'
 		if self.test_cube():
+			print "first try"
 			return
 		t0 = time.time()
 		while True:
@@ -270,6 +272,7 @@ class Imported_Algo():
 				c.rotate(s)
 	
 				if self.test_cube(): 
+					print "found moves:", s
 					done = True
 			
 				#if still in inner-mode, see which moves that will affect the interesting color
@@ -514,18 +517,15 @@ class Imported_Algo():
 
 		if p:
 			print "Color: ", color, ", num_blocks: ", num_blocks
-
 		for r in self.rules:
 			if r['step_type'] == 'inner':
 				req_face = Face_Lookup[r['target_color']]
-				
+					
 				if r['color'] != color:
 					continue
-					
 				block_type = Rule_Lookup_Reversed[r['block']]
 				needs_face = Face_Lookup[r['target_color']]
-
-				if needs_face != None:
+				if str(r['target_color']) != "Any":
 					if( num_blocks[block_type][needs_face] > 0):
 						num_blocks[block_type][needs_face] -= 1
 					else:

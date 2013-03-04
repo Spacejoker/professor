@@ -113,17 +113,21 @@ class Simulation():
 				'/' : self.load_result_state,
 				'a' : self.step_one,
 				}
+
 	def step_one(self):
 		if self.move_queue == None or len(self.move_queue) == 0:
 			return
 		n = self.move_queue.popleft()
 		self.c.rotate(n)
 		self.g.draw_cube(self.c)
+		print "move:", n
+		print "new queue:", self.move_queue
 
 	def scramble_from_fst_result(self):
 		res = self.persist.get_latest_solve()
 		#self.persist.get_result_by_id(
 		scram = res['scramble']
+		print "scramble:", scram
 		for m in scram:
 			self.c.rotate([m])
 		p = map(str,res['scramble'])
@@ -132,6 +136,7 @@ class Simulation():
 			s += i + ","
 		self.move_queue = deque()
 		moves = map(str, res['moves'])
+		print "moves", moves
 		for m in moves:
 			self.move_queue.append(m)
 
