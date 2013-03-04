@@ -125,6 +125,7 @@ class Simulation():
 			if delay > 0:
 				self.g.draw_cube(self.c)
 				time.sleep(delay)
+			time.sleep(0.001)
 
 		self.g.draw_cube(self.c)
 
@@ -140,7 +141,9 @@ class Simulation():
 	def scramble_from_fst_result(self):
 		res = self.persist.get_latest_solve()
 		#self.persist.get_result_by_id(
-		print "Final rules:", res['rules']
+		print "Final rules:"
+		for rule in res['rules']:
+			print rule['color'], ":", rule
 		scram = res['scramble']
 		print "Scramble:", scram
 		for m in scram:

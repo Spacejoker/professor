@@ -256,9 +256,7 @@ class Imported_Algo():
 					print time.time() - t0
 					print "Hard step", self.rules
 					return 'fail'
-
 				c.rotate(s)
-	
 				if self.test_cube(): 
 					if time.time() - t0 > 1:
 						print "Hard step", self.rules[:-1] 
@@ -275,32 +273,12 @@ class Imported_Algo():
 						if post_turn_sticker_pos[i] != pre_turn_sticker_pos[i]:
 							change_occurred = True
 
-				if not change_occurred:
-					continue
 
-				#if still in inner-mode, see which moves that will affect the interesting color, too slow though!
 				tp = time.time()
-				#next_mods = []
-				#next_mods.extend(mods)
-				#if self.mode == 'inner':
-					##print "INNER MODE"
-					#next_mods = []
-					#for m in mods:
-						#colors = c.inner_colors_modified(m)
-						##print "Colors",colors
-						##print "search_moves", self.search_moves
-						
-						#if Face_Lookup[self.search_moves] in colors:
-							#next_mods.append(m)
-					#search_time += time.time() - tp
-				#else:
-					#print 'mode is', self.mode
 
 				#undo what we did to the mutable cube, then revert tho sequence to the correct one
 				self.rev_seq(s)
-
 				c.rotate(s)
-
 				self.rev_seq(s)
 
 				if done == True :
@@ -310,6 +288,9 @@ class Imported_Algo():
 
 				#continue the bfs
 				
+				if not change_occurred:
+					continue
+
 				for m in mods:
 					tmp = []
 					tmp.extend(s)
@@ -489,7 +470,6 @@ class Imported_Algo():
 			cor = self.cube.get_corner_stickers(corner)
 
 
-
 		return True
 		#for each face, examine what patterns they have in each color
 		#TODO: handle pattern recognizion for each color
@@ -527,6 +507,7 @@ class Imported_Algo():
 		if p:
 			print "Color: ", color, ", num_blocks: ", num_blocks
 		for r in self.rules:
+
 			if r['step_type'] == 'inner':
 				req_face = Face_Lookup[r['target_color']]
 					

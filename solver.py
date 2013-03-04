@@ -40,11 +40,11 @@ class Solver():
 				if move == 'fail':
 					done = True
 
-				if move != None and move != ' ' and move != '':
+				if move != None and move != ' ' and move != '' and move != 'fail':
 					move_cnt += 1
 					c.rotate([move])
 					solution.append(move)
-
+					
 			if len(algo.algo_steps) == 0:
 				done = True
 				success = True
@@ -54,6 +54,10 @@ class Solver():
 
 				if step['type'] == 'comment':
 					print "Comment:", step['value']
+					if step['value'] == "done":
+							
+						done = True
+						success = True
 			
 			if done:
 				break
