@@ -31,7 +31,7 @@ Rule_Lookup = {
 		2 : 'inner_2x2',
 		3 : 'inner_3x1',
 		4 : 'inner_3x3',
-		5: 'inner_3x2',
+		5 : 'inner_3x2',
 		6 : 'inner_1x1_corner'
 	}
 Rule_Lookup_Reversed = {}
@@ -124,21 +124,6 @@ class Imported_Algo():
 					self.rules.append(step['rule'])
 				elif step['operation'] == 'remove':
 					self.rules = [x for x in self.rules if x['rule_id'] != step['rule_id']]
-	#{ "type" : "req", "operation" : "add", "rule" : {"step" : "inner", "block": "inner_1x1", "color" : "D", "target" : "D", rule_id : "1"}},
-		#handle a change of requirements
-		#commands = split[1].split('|')
-		#for cmd in commands:
-			#c = cmd[:-1].split('(')
-			#rule = self.parse_rule(c[1])
-			#if c[0] == "+":
-				#if rule != None and rule[0] != "Stored_Edge":
-					#self.rules.append(rule)
-			#elif c[0] == '-':
-				#try:
-					#self.rules.remove(rule)
-				#except:
-					#raise NameError("Rule is incorrect, cannot remove:" + str(rule))
-#
 
 	def next_move(self):
 		#if we have a prepared move in stock just feed that one
@@ -234,26 +219,28 @@ class Imported_Algo():
 				s[i] = m + 'p'
 
 	def make_queue(self):
-		print self.rules
+		#print self.rules
 		mods = self.allowed_sequences
 		c = self.cube
 		flip_algo = self.flip_algo #'R U Rp Up Fp U F'
 		if self.test_cube():
-			print "first try"
 			return
 		t0 = time.time()
+		search_time = 0
 		while True:
 			que = deque()
 			done = False
 			for m in mods:
 				que.append(m)
 			cnt = 0
-
+			pre_turn_sticker_pos = []
 			while len(que) > 0:
 				cnt = cnt + 1
 				self.search_cnt += 1
 				s = que.popleft()
-
+				if self.mode == 'inner':
+					pre_turn_sticker_pos[:] = []
+					pre_turn_sticker_pos = c.get_inner_sticker_positions(Face_Lookup[self.search_moves])
 				if cnt % 1000 == 0:
 					#print "performed", cnt, "seach steps"
 					pass
@@ -267,25 +254,47 @@ class Imported_Algo():
 					#print "evaluating: ", s
 				if cnt > SEARCH_LIMIT:
 					print time.time() - t0
+					print "Hard step", self.rules
 					return 'fail'
 
 				c.rotate(s)
 	
 				if self.test_cube(): 
-					print "found moves:", s
+					if time.time() - t0 > 1:
+						print "Hard step", self.rules[:-1] 
 					done = True
 			
-				#if still in inner-mode, see which moves that will affect the interesting color
-#				next_mods = []
-#				next_mods.extend(mods)
-#				if self.mode == 'inner':
-#					next_mods = []
-#					for m in mods:
-#						colors = c.inner_colors_modified(m)
-#						if self.search_moves in colors:
-#							next_mods.append(m)
-#				else:
-#					print 'mode is', self.mode
+				change_occurred = True
+
+				if self.mode == 'inner': #optimization for building the 3x3, never move anything that doesnt move the interesting color
+					post_turn_sticker_pos = c.get_inner_sticker_positions(Face_Lookup[self.search_moves])
+					post_turn_sticker_pos.sort()
+					pre_turn_sticker_pos.sort()
+					change_occurred = False
+					for i in range(0, len(post_turn_sticker_pos)):
+						if post_turn_sticker_pos[i] != pre_turn_sticker_pos[i]:
+							change_occurred = True
+
+				if not change_occurred:
+					continue
+
+				#if still in inner-mode, see which moves that will affect the interesting color, too slow though!
+				tp = time.time()
+				#next_mods = []
+				#next_mods.extend(mods)
+				#if self.mode == 'inner':
+					##print "INNER MODE"
+					#next_mods = []
+					#for m in mods:
+						#colors = c.inner_colors_modified(m)
+						##print "Colors",colors
+						##print "search_moves", self.search_moves
+						
+						#if Face_Lookup[self.search_moves] in colors:
+							#next_mods.append(m)
+					#search_time += time.time() - tp
+				#else:
+					#print 'mode is', self.mode
 
 				#undo what we did to the mutable cube, then revert tho sequence to the correct one
 				self.rev_seq(s)

@@ -120,3 +120,4 @@ create format for the rules - give them IDs?
 read the new format when creating up a new Imported_algo with solver
 make it easy to replay the latest runner-solve in gui
 solve a few steps with the new algo structure
+make a read/delete list of fails, and be able to choose one as the gui-scramble

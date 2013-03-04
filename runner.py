@@ -35,6 +35,9 @@ class Runner():
 				print "catrun category scramble_type" 
 				print "catstats category"
 				print "import filename"
+				print "failshow"
+				print "removeallresult"
+				print "failselect id"
 				print ""
 
 			if s[0] == 'run':
@@ -166,6 +169,31 @@ class Runner():
 					print line
 				f.close()
 				self.persist.add_algo(algo)
+
+			if s[0] == 'failshow':
+				fails = self.persist.result.find({'success' : False})
+				for nr, fail in enumerate(fails):
+					if nr >= 10:
+						break
+					print "============================ ITEM", nr,"==============================="
+					print "algoname:",fail['name']
+	
+			if s[0] == 'failselect':
+				chosen_nr = int(s[1])
+				fails = self.persist.result.find({'success' : False})
+				success = False
+				for nr, fail in enumerate(fails):
+					if nr == chosen_nr:
+						self.persist.save_latest_solve(fail)
+						success = True
+				if success:
+					print "Done"
+				else:
+					print "Unknown id"
+
+			if s[0] == 'removeallresult':
+				self.persist.result.remove()
+
 	def stats(self, name):
 		res = self.get_algo_result(name)
 		success_cnt = res['success_cnt']
@@ -237,6 +265,7 @@ class Runner():
 		print "Run complete, result:", result['success']
 
 		self.persist.save_result(result)
+		
 		self.persist.save_latest_solve(result)
 		return result['success']
 

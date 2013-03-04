@@ -30,17 +30,23 @@ class Persist():
 	def get_result(self, name):
 		return self.db.result.find({'name':name})
 
+	def get_result_by_id(self, _id):
+		return self.db.result.find({'rnd':_id})
+
 	def get_latest_solve(self):
 		latest = self.db.latest.find()[0]
 		return latest
 
 	def save_latest_solve(self, res):
 		self.db.latest.remove()
-		self.db.latest.save({'scramble' : res['scramble'], 'moves' : res['moves']})
+		self.db.latest.save(res)
 
 	def save_result(self, res):
 		remove = self.db.result.remove({'scramble' : res['scramble'], 'name':res['name']}) # remove identical solve
+		success = res['success']
 		self.db.result.save(res)
+		if not success:
+			print "Random value was ", res['rnd']
 
 	def remove_results(self, name=None):
 		if name == None:

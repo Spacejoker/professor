@@ -261,8 +261,20 @@ class Cube():
 				for ch in chain:
 					ch.reverse()
 			return chain
+	
+	def get_inner_sticker_positions(self, color):
+		ret = []
+		for face in range(0,6):
+			for sticker in [6,7,8,11,13,16,17,18]:
+				if self.state[face][sticker] == color:
+					ret.append((face, sticker))
+		return ret
+
+
 	def inner_colors_modified(self, commands):
 		s = []
+		c = commands
+		print commands
 		for c in commands:
 			chain = self.gen_chain(c)
 			for sub_chain in chain:

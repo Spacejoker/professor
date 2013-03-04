@@ -1,0 +1,137 @@
+{ "name" : "b",
+	"commands" : [
+	{ "type" : "set_moves", "sequence" : "rp,dp,fp,B2,d2,F,u2,r2,Dp,Fp, b U bp,b,rp U r,Bp,f2,F2,L,d,b2,R2,fp U f,L2,up,D2,B,lp,f,bp,l,u,L,Rp,R,D,Lp,U2,U,r"},
+	{ "type" : "set_search_moves", "value" : "D"},
+	{ "type" : "set_mode", "value" : "inner"},
+
+	{ "type" : "set_flip_algo", "sequence" : "R U Rp Up Fp U F"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_1x1", "color" : "D", "target_color" : "D", "rule_id" : "10001"}},
+	{ "type" : "solve" },
+
+	{ "type" : "set_moves", "sequence" : "B,L,L2,B2,r U rp,Fp,rp U r,dp,bp,R2,D,l2,U2,F,R, b U bp,Lp,rp,lp,u2,up,Bp,fp U f,f,fp,D2,d2,d,bp U b,L,r,Rp,F,u,f2,l,b2,U,r2,F2,Dp,b"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_2x1", "color" : "D", "target_color" : "Any", "rule_id" : "10002"}},
+	{ "type" : "solve" },
+
+	{ "type" : "set_moves", "sequence" : "R2,fp U f,b,U,d,f,dp,F,l,R,rp,Dp,b2,Bp,F,r U rp,L2,Lp,u,lp,d2,F2,fp,Fp,U2,bp,Rp, b U bp,B,f2,bp U b,D2,r2,r,up,B2,L,rp U r,D"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_2x1", "color" : "D", "target_color" : "U", "rule_id" : "10003"}},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "10002"},
+	{ "type" : "solve" },
+
+	{ "type" : "set_moves", "sequence" : "B,B2,Dp,L,bp,f,l,b2,Rp, b U bp,f2,fp U f,Lp,L2,dp,lp,rp U r,F,R2,R,B,D2,b,up,F2,r2,fp,l2,r,u2,r U rp,u,U2,bp U b,d,Bp,rp,F,Fp,D,U"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_2x2", "color" : "D", "target_color" : "D", "rule_id" : "10004"}},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "10001"},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "10003"},
+	{ "type" : "solve" },
+
+	{ "type" : "set_moves", "sequence" : "Fp,U2,u2,dp,D2,fp,d,l2,F,F2,R,d2,Bp,Rp,fp U f,l,Dp,f2,L,Lp,up,r,R2,B2,L2,U,u,rp U r,bp,bp U b,B,rp,b,B,lp,r U rp,r2,b2, b U bp,f"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_2x1", "color" : "D", "target_color" : "Any", "rule_id" : "10005"}},
+	{ "type" : "solve" },
+
+	{ "type" : "set_moves", "sequence" : "Fp,U2,u2,dp,D2,fp,d,l2,F,F2,R,d2,Bp,Rp,fp U f,l,Dp,f2,L,Lp,up,r,R2,B2,L2,U,u,rp U r,bp,bp U b,B,rp,b,B,lp,r U rp,r2,b2, b U bp,f"},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "10005"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_2x1", "color" : "D", "target_color" : "F", "rule_id" : "10005"}},
+	{ "type" : "solve" },
+
+	{ "type" : "set_moves", "sequence" : "d,Dp,F2,B,F,rp U r,L,D2,rp,up,Bp, b U bp,r,l,d2,L2,Lp,L,b,u,Rp,fp,dp,u2,r U rp,b2,Fp,B,F,bp U b,l2,R,U2,R,r2,B2,bp,R2,fp U f,f2,f,D,lp"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_3x2", "color" : "D", "target_color" : "D", "rule_id" : "10006"}},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "10004"},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "10005"},
+	{ "type" : "solve" },
+
+	{ "type" : "set_moves", "sequence" : "U, U2, Up, u, up, u2, d, dp, d2, F, F2, Fp, r, rp"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_1x1_corner", "color" : "D", "target_color" : "F", "rule_id" : "10011"}},
+	{ "type" : "solve" },
+
+	{ "type" : "set_moves", "sequence" : "L2,l,rp,Lp,fp,r U rp,D2,b2,B2, b U bp,l2,f,R2,b,r,u2,bp U b,rp U r,Rp,Bp,fp U f,r2,B,Dp,F2,L,U2,lp,D,R,F,dp,bp,f2,up,d2,d,u,U"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_2x1", "color" : "D", "target_color" : "Any", "rule_id" : "10007"}},
+	{ "type" : "solve" },
+
+	{ "type" : "set_moves", "sequence" : "L, R, F, B, r U rp,b U bp, f U fp, l U lp, rp, U r, bp U b, fp U f, lp U l,r, l, f, b"},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "10007"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_2x1", "color" : "D", "target_color" : "U", "rule_id" : "10007"}},
+	{ "type" : "solve" },
+
+	{ "type" : "set_moves", "sequence" : "U, U2, u2,Bp,Fp,B2,L2,d,R,rp,f2,dp,Dp,r,Lp,L,bp U b,u,rp U r,b,fp U f,F2,bp,r U rp,f,lp,l,F,b2,R2,l2,B,D,up,B,Rp,d2,r2,U2,fp"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_3x1", "color" : "D", "target_color" : "Any", "rule_id" : "10008"}},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "10007"},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "10011"},
+	{ "type" : "solve" },
+
+	{ "type" : "set_moves", "sequence" : "Dp,Fp,d2,L,l,up,fp U f,u2,bp U b,L2,dp,rp U r,R,bp,b,r2,Bp,B,F,Lp,F2,D2,d,r,u,D,f,U, b U bp,r U rp,lp,f2,fp,Rp,l2,rp,R2,B2"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_3x1", "color" : "D", "target_color" : "F", "rule_id" : "10009"}},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "10008"},
+	{ "type" : "solve" },
+
+	{ "type" : "set_moves", "sequence" : "Dp,l,fp,Fp,b2,D2,B2,rp U r,f2,u2,r2,R,U,Bp,Lp,b,lp,B,D,F2,l2,r U rp,bp U b,R2,bp,Rp, b U bp,U2,L,rp,u,r,f,up,dp,F,d,d2"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_3x3", "color" : "D", "target_color" : "Any", "rule_id" : "10010"}},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "10009"},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "10006"},
+	{ "type" : "solve" },
+
+	{ "type" : "comment", "value" : "done with bottom" },
+
+
+	{ "type" : "set_moves", "sequence" : "L, R, F, B, U, Up, U2, Lp, Rp, Fp, Bp, F2, R2,B2,L2, r U rp,b U bp, f U fp, l U lp, rp, U r, bp U b, fp U f, lp U l,r, l, f, b"},
+	{ "type" : "set_search_moves", "value" : "U"},
+	{ "type" : "set_mode", "value" : "inner"},
+
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_1x1", "color" : "U", "target_color" : "U", "rule_id" : "20001"}},
+	{ "type" : "solve" },
+
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_2x1", "color" : "U", "target_color" : "Any", "rule_id" : "20002"}},
+	{ "type" : "solve" },
+
+	{ "type" : "set_moves", "sequence" : "r U rp,rp U r, b U bp,bp U b,fp U f,F,R,L,B,Fp,Rp,Lp,Bp,u,d"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_2x1", "color" : "U", "target_color" : "F", "rule_id" : "20003"}},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "20002"},
+	{ "type" : "solve" },
+
+	{ "type" : "set_moves", "sequence" : "r U rp,r Up rp, lp U l, lp Up l,F,Fp, U, Up"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_2x2", "color" : "U", "target_color" : "U", "rule_id" : "20004"}},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "20001"},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "20003"},
+	{ "type" : "solve" },
+
+	{ "type" : "set_moves", "sequence" : "F,Fp,L,Lp,B,Bp,R,Rp,u,up,d,dp,u u,d d"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_2x1", "color" : "U", "target_color" : "Any", "rule_id" : "20005"}},
+	{ "type" : "solve" },
+
+	{ "type" : "req", "operation" : "remove", "rule_id" : "20005"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_2x1", "color" : "U", "target_color" : "F", "rule_id" : "20005"}},
+	{ "type" : "solve" },
+
+	{ "type" : "set_moves", "sequence" : "r U rp,r Up rp,lp U l,lp Up l,Fp,F,U,Up"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_3x2", "color" : "U", "target_color" : "U", "rule_id" : "20006"}},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "20004"},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "20005"},
+	{ "type" : "solve" },
+
+	{ "type" : "set_moves", "sequence" : "F,Fp,L,Lp,B,Bp,R,Rp,u,up,d,dp,U, Up, rp F F r"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_1x1_corner", "color" : "U", "target_color" : "L", "rule_id" : "20011"}},
+	{ "type" : "solve" },
+
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_2x1", "color" : "U", "target_color" : "Any", "rule_id" : "20007"}},
+	{ "type" : "solve" },
+
+	{ "type" : "req", "operation" : "remove", "rule_id" : "20007"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_2x1", "color" : "U", "target_color" : "F", "rule_id" : "20007"}},
+	{ "type" : "solve" },
+
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_3x1", "color" : "U", "target_color" : "Any", "rule_id" : "20008"}},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "20007"},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "20011"},
+	{ "type" : "solve" },
+
+	{ "type" : "req", "operation" : "remove", "rule_id" : "20008"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_3x1", "color" : "U", "target_color" : "F", "rule_id" : "20008"}},
+	{ "type" : "solve" },
+
+	{ "type" : "set_moves", "sequence" : "r U U rp,lp U U l,F,U,Up"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_3x3", "color" : "U", "target_color" : "Any", "rule_id" : "20010"}},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "20008"},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "20006"},
+	{ "type" : "solve" },
+	{ "type" : "comment", "value" : "done" }
+	],
+  "category" : "f3x3"
+}

@@ -126,8 +126,9 @@ class Simulation():
 	def scramble_from_fst_result(self):
 		res = self.persist.get_latest_solve()
 		#self.persist.get_result_by_id(
+		print "Final rules:", res['rules']
 		scram = res['scramble']
-		print "scramble:", scram
+		print "Scramble:", scram
 		for m in scram:
 			self.c.rotate([m])
 		p = map(str,res['scramble'])
@@ -136,7 +137,7 @@ class Simulation():
 			s += i + ","
 		self.move_queue = deque()
 		moves = map(str, res['moves'])
-		print "moves", moves
+		print "Moves", moves
 		for m in moves:
 			self.move_queue.append(m)
 

@@ -7,6 +7,8 @@ import datetime
 from helper import Formatter
 from persist import Persist
 import time
+from datetime import datetime
+import random
 
 class Solver():
 	def __init__(self):
@@ -64,8 +66,10 @@ class Solver():
 			'rules' : algo.rules,
 			'moves' : solution,
 			'name' : algo_name,
+			'date' : datetime.now(),
 			'time' : time.time() - t0,
-			'search_cnt' : algo.search_cnt}
-		
+			'search_cnt' : algo.search_cnt,
+			'rnd' : random.randrange(0,1000000000000)}
+	
 		return result
 
