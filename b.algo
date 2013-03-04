@@ -241,6 +241,52 @@
 	{ "type" : "req", "operation" : "remove", "rule_id" : "40008"},
 	{ "type" : "req", "operation" : "remove", "rule_id" : "40006"},
 	{ "type" : "solve" },
+
+	{ "type" : "comment", "value" : "Left done" },
+
+	{ "type" : "set_moves", "sequence" : "u,d,F,Fp,L,Lp,B,Bp,R,Rp,up,dp"},
+	{ "type" : "set_search_moves", "value" : "B"},
+	{ "type" : "set_mode", "value" : "inner"},
+
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_1x1", "color" : "B", "target_color" : "B", "rule_id" : "50001"}},
+	{ "type" : "solve" },
+
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_2x1", "color" : "B", "target_color" : "Any", "rule_id" : "50002"}},
+	{ "type" : "solve" },
+
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_2x2", "color" : "B", "target_color" : "B", "rule_id" : "50004"}},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "50001"},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "50002"},
+	{ "type" : "solve" },
+
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_2x1", "color" : "B", "target_color" : "Any", "rule_id" : "50005"}},
+	{ "type" : "solve" },
+
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_3x2", "color" : "B", "target_color" : "B", "rule_id" : "50006"}},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "50004"},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "50005"},
+	{ "type" : "solve" },
+
+	{ "type" : "set_moves", "sequence" : "B, Bp, R, Rp, u, d, up, dp,u R up, u R R up"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_2x1", "color" : "B", "target_color" : "Any", "rule_id" : "50007"}},
+	{ "type" : "solve" },
+
+	{ "type" : "req", "operation" : "remove", "rule_id" : "50007"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_2x1", "color" : "B", "target_color" : "Any", "rule_id" : "50007"}},
+	{ "type" : "solve" },
+
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_3x1", "color" : "B", "target_color" : "Any", "rule_id" : "50008"}},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "50007"},
+	{ "type" : "solve" },
+
+	{ "type" : "req", "operation" : "remove", "rule_id" : "50008"},
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_3x1", "color" : "B", "target_color" : "R", "rule_id" : "50008"}},
+	{ "type" : "solve" },
+
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_3x3", "color" : "B", "target_color" : "Any", "rule_id" : "50010"}},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "50008"},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "50006"},
+	{ "type" : "solve" },
 	{ "type" : "comment", "value" : "done" }
 	],
   "category" : "f3x3"
