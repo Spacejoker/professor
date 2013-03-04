@@ -278,13 +278,14 @@ class Imported_Algo():
 					return 'fail'
 
 				c.rotate(s)
-
+	
+				print "current s:", s
 				if self.test_cube(): 
 					done = True
 			
 				#if still in inner-mode, see which moves that will affect the interesting color
-				next_mods = []
-				next_mods.extend(mods)
+#				next_mods = []
+#				next_mods.extend(mods)
 #				if self.mode == 'inner':
 #					next_mods = []
 #					for m in mods:
@@ -308,20 +309,14 @@ class Imported_Algo():
 
 				#continue the bfs
 				
-				for m in next_mods:
+				for m in mods:
 					tmp = []
 					tmp.extend(s)
 					tmp.extend(m)
 					que.append( tmp )
 
-			#the search found nothing, now fall back on the search-moves:
-			if self.mode == 'inner':
-				search_cands = self.get_faces_with_inner_color(self.search_moves)
-				move = search_cands[random.randrange(0, len(search_cands))]
 
-				self.queued_moves.append(move)
-			elif self.mode == 'edge':
-				self.queued_moves.append('L L')
+			print "FAIL!!!!!!!!!!"
 			return 'fail'
 	
 	#handles inner faces, not for edges or corners
@@ -541,7 +536,15 @@ class Imported_Algo():
 					
 				block_type = Rule_Lookup_Reversed[r['block']]
 				needs_face = Face_Lookup[r['target_color']]
+				print "blocktype:",block_type,"needs_face:",needs_face
+				print "apparently we got:", num_blocks[Block.inner_1x1][Face_Lookup['D']]
+				
+				print "bottom state:"
+				for c in self.inner_1x1:
+					print self.cube.state[0][c[0]]
+
 				if needs_face != None:
+					print "needs face:", needs_face
 					if( num_blocks[block_type][needs_face] > 0):
 						num_blocks[block_type][needs_face] -= 1
 					else:
@@ -560,6 +563,8 @@ class Imported_Algo():
 
 		return True
 
+	#check if we have a case right now on the cube
+	#cands is series of sticker-numbers that all needs to be correct color to have a correct value
 	def check_case(self, cands, case, num_blocks, face, used, stickers):
 		for cand in cands:
 			success = True

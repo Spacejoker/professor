@@ -253,6 +253,7 @@ class Runner():
 				scram = scr['scramble']
 				scrambles.append(scram)
 		print "scram len:", len(scrambles)
+		print "scramble 0:", scrambles[0]
 		success_cnt = 0.0
 		fail_cnt = 0.0
 		for scram in scrambles:

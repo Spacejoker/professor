@@ -111,16 +111,31 @@ class Simulation():
 				'-' : self.list_results,
 				's' : self.remove_results,
 				'/' : self.load_result_state,
+				'a' : self.step_one,
 				}
+	def step_one(self):
+		if self.move_queue == None or len(self.move_queue) == 0:
+			return
+		n = self.move_queue.popleft()
+		self.c.rotate(n)
+		self.g.draw_cube(self.c)
 
 	def scramble_from_fst_result(self):
-		print "Janne"
 		res = self.persist.get_latest_solve()
 		#self.persist.get_result_by_id(
-		scram = res['scramble'].split(" ")
+		scram = res['scramble']
+		print scram
 		for m in scram:
 			self.c.rotate([m])
-		print res['moves']
+		p = map(str,res['scramble'])
+		s = ""
+		for i in p:
+			s += i + ","
+		print s
+		self.move_queue = deque()
+		moves = map(str, res['moves'])
+		for m in moves:
+			self.move_queue.append(m)
 
 	def scramble_from_fst_problem(self):
 		prob = self.s.persist.get_first_problem()
