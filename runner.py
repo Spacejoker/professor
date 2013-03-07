@@ -196,6 +196,51 @@ class Runner():
 			if s[0] == 'removeallresult':
 				self.persist.result.remove()
 
+			if s[0] == 'export':
+				algoname = s[1]
+				res = self.persist.result.find({'name' : algoname})
+				min_cnt = 1000000
+				max_cnt = 0
+				tot = 0
+				result_cnt = 0.0
+				out = ""
+				fail = 0
+				move_cnt_array = []
+				for r in res:
+					result_cnt += 1
+					if not r['success']:
+						fail += 1
+						continue
+					move_cnt = r['move_cnt']
+					min_cnt = min(min_cnt, move_cnt)
+					max_cnt = max(max_cnt, move_cnt)
+					tot += move_cnt
+					move_cnt_array.append(move_cnt)
+
+				bar_chart = [0] * (max_cnt/5 + 1)
+				for move in move_cnt_array:
+					bar_chart[move/5] += 1
+				
+				fst_label = 0
+				while(bar_chart[0] == 0):
+					fst_label += 5
+					bar_chart = bar_chart[1:]
+
+				print bar_chart
+				value = ""
+				for b in bar_chart:
+					value += str(fst_label) + '-' + str(fst_label + 4) + "," + str(b) + '\n'
+					fst_label += 5
+				value = value[:-1]
+				fout = open('stats.csv','w')
+				fout.write(value)
+				fout.close()
+				print 'total problem instances:', result_cnt
+				print 'fail count:', fail
+				print 'min:', min_cnt
+				print 'max:', max_cnt
+				print 'mean:', tot/result_cnt
+				print 'successrate:', 1- fail/result_cnt
 	def stats(self, name):
 		res = self.get_algo_result(name)
 		success_cnt = res['success_cnt']
