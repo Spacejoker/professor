@@ -234,10 +234,7 @@ class Cube():
 	def gen_chain(self, c):
 			raw = str(c)
 			if raw in self.chain_cache:
-				print raw, "in dict"
 				return self.chain_cache[raw]
-			else:
-				print raw, 'not in cache'
 			c = str(c)
 			if c == ' ' or len(c) == 0:
 				return []
@@ -259,7 +256,6 @@ class Cube():
 				c = c[:-1]
 			chain.extend( Chain_Generator.get_chain(c) )
 			if double:
-				print "double"
 				chain.extend( Chain_Generator.get_chain(c) )
 			if chain == None:
 				return []

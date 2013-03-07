@@ -521,6 +521,14 @@ class Imported_Algo():
 				needs_face = Face_Lookup[r['target_color']]
 				if str(r['target_color']) != "Any":
 					if( num_blocks[block_type][needs_face] > 0):
+						if block_type in [Block.inner_3x2]: #for 3x2 we cannot have the same color on one of the other 3 spots
+							cnt = 0
+							for sticker in [6,7,8,11,13,16,17,18]:
+								if self.cube.state[needs_face][sticker] == Face_Lookup[color]:
+									cnt += 1
+							if cnt != 5:
+								return False
+
 						num_blocks[block_type][needs_face] -= 1
 					else:
 						return False

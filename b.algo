@@ -106,11 +106,16 @@
 	{ "type" : "req", "operation" : "remove", "rule_id" : "20005"},
 	{ "type" : "solve" },
 
-	{ "type" : "set_moves", "sequence" : "F,Fp,L,Lp,B,Bp,R,Rp,u,up,d,dp,U, Up, rp F F r"},
+	{ "type" : "set_moves", "sequence" : "F,Fp,L,Lp,B,Bp,R,Rp,u,up,d,dp,U, Up, rp F F r,r,l,rp,lp"},
 	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_1x1_corner", "color" : "U", "target_color" : "L", "rule_id" : "20011"}},
 	{ "type" : "solve" },
 
+	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_1x1_corner", "color" : "U", "target_color" : "F", "rule_id" : "20012"}},
+	{ "type" : "solve" },
+
 	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_2x1", "color" : "U", "target_color" : "Any", "rule_id" : "20007"}},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "20011"},
+	{ "type" : "req", "operation" : "remove", "rule_id" : "20012"},
 	{ "type" : "solve" },
 
 	{ "type" : "req", "operation" : "remove", "rule_id" : "20007"},
@@ -119,7 +124,6 @@
 
 	{ "type" : "req", "operation" : "add", "rule" : {"step_type" : "inner", "block": "inner_3x1", "color" : "U", "target_color" : "Any", "rule_id" : "20008"}},
 	{ "type" : "req", "operation" : "remove", "rule_id" : "20007"},
-	{ "type" : "req", "operation" : "remove", "rule_id" : "20011"},
 	{ "type" : "solve" },
 
 	{ "type" : "req", "operation" : "remove", "rule_id" : "20008"},
