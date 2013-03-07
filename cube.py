@@ -222,11 +222,9 @@ class Cube():
 				sticker.append(i)
 			self.state.append(sticker)
 		self.all_commands = []	
+		self.chain_cache = {}
 
 	def rotate(self, commands):
-		#self.inner_colors_modified(commands)
-		if isinstance(commands, str):
-			commands = [commands]
 
 		for c in commands:
 			chain = self.gen_chain(c)
@@ -234,6 +232,12 @@ class Cube():
 				self.apply_chain(chain)
 
 	def gen_chain(self, c):
+			raw = str(c)
+			if raw in self.chain_cache:
+				print raw, "in dict"
+				return self.chain_cache[raw]
+			else:
+				print raw, 'not in cache'
 			c = str(c)
 			if c == ' ' or len(c) == 0:
 				return []
@@ -255,17 +259,15 @@ class Cube():
 				c = c[:-1]
 			chain.extend( Chain_Generator.get_chain(c) )
 			if double:
+				print "double"
 				chain.extend( Chain_Generator.get_chain(c) )
 			if chain == None:
 				return []
 			if(backwards):
-				tmp = []
 				for ch in chain:
-					t = []
-					t.extend(ch)
-					t.reverse()
-					tmp.append(t)
-				return tmp
+					ch.reverse()
+
+			self.chain_cache[raw] = chain
 			return chain
 	
 	def get_inner_sticker_positions(self, color):
@@ -299,6 +301,7 @@ class Cube():
 				self.state[c[i][0]][c[i][1]] = self.state[c[i+1][0]][c[i+1][1]]
 
 			self.state[c[len(c)-1][0]][c[len(c)-1][1]] = tmp
+			c.reverse()
 
 	def get(self, sticker):
 		return self.state[sticker[0]][sticker[1]]

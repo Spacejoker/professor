@@ -133,7 +133,7 @@ class Simulation():
 		if self.move_queue == None or len(self.move_queue) == 0:
 			return
 		n = self.move_queue.popleft()
-		self.c.rotate(n)
+		self.c.rotate([n])
 		self.g.draw_cube(self.c)
 		print "move:", n
 		print "new queue:", self.move_queue
@@ -183,6 +183,7 @@ class Simulation():
 		result = solver.solve('cen', scramble)
 		self.c.rotate(result['scramble'].split(" "))
 		for m in result['moves']:
+			print m
 			self.c.rotate([m])
 			self.g.draw_cube(self.c, self.algo, self.s)
 			event = pygame.event.wait()
