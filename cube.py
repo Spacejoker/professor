@@ -266,9 +266,11 @@ class Cube():
 			self.chain_cache[raw] = chain
 			return chain
 	
-	def get_inner_sticker_positions(self, color):
+	def get_inner_sticker_positions(self, color, insert):
 		ret = []
 		for face in range(0,6):
+			if not insert and face == color:
+				continue
 			for sticker in [6,7,8,11,13,16,17,18]:
 				if self.state[face][sticker] == color:
 					ret.append((face, sticker))

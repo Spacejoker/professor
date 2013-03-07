@@ -97,7 +97,9 @@ class Imported_Algo():
 			type = step['type']
 
 			if type == 'solve':
-				self.make_queue()
+				ret = self.make_queue()
+				if ret == 'fail':
+					return ret
 				break
 			
 			if type == 'comment':
@@ -118,6 +120,9 @@ class Imported_Algo():
 			
 			elif type == 'set_flip_algo':
 				self.flip_algo = step['sequence']
+			
+			elif type == 'insert':
+				self.insert = step['value'] == 'True'
 
 			elif type == 'req':
 				if step['operation'] == 'add':
@@ -223,6 +228,8 @@ class Imported_Algo():
 		mods = self.allowed_sequences
 		c = self.cube
 		flip_algo = self.flip_algo #'R U Rp Up Fp U F'
+		#print 'current rules', self.rules
+		#print 'test cube:', self.test_cube()
 		if self.test_cube():
 			return
 		t0 = time.time()
@@ -240,7 +247,7 @@ class Imported_Algo():
 				s = que.popleft()
 				if self.mode == 'inner':
 					pre_turn_sticker_pos[:] = []
-					pre_turn_sticker_pos = c.get_inner_sticker_positions(Face_Lookup[self.search_moves])
+					pre_turn_sticker_pos = c.get_inner_sticker_positions(Face_Lookup[self.search_moves], self.insert)
 				if cnt % 1000 == 0:
 					#print "performed", cnt, "seach steps"
 					pass
@@ -253,29 +260,53 @@ class Imported_Algo():
 					s.extend(rev)
 					#print "evaluating: ", s
 				if time.time() - t0 > 10:
+					print "                      ___                              "
+					print "                   .-'   `'.                           "
+					print "                  /         \                          "
+					print "                  |         ;                          "
+					print "                  |         |           ___.--,        "
+					print "         _.._     |0) ~ (0) |    _.---'`__.-( (_.      "
+					print "  __.--'`_.. '.__.\    '--. \_.-' ,.--'`     `\"\"`      "
+					print " ( ,.--'`   ',__ /./;   ;, '.__.'`    __               "
+					print " _`) )  .---.__.' / |   |\   \__..--\"\"  \"\"\"--.,_       "
+					print "`---' .'.''-._.-'`_./  /\ '.  \ _.-~~~````~~~-._`-.__.'"
+					print "      | |  .' _.-' |  |  \  \  '.               `~---` "
+					print "       \ \/ .'     \  \   '. '-._)                     "
+					print "        \/ /        \  \    `=.__`~-.                  "
+					print "        / /\         `) )    / / `"".`\                "
+					print "  , _.-'.'\ \        / /    ( (     / /                "
+					print "   `--~`   ) )    .-'.'      '.'.  | (                 "
+					print "          (/`    ( (`          ) )  '-;                "
+					print "           `      '-;         (-'                      "
+					
 					print 'FAIL:', time.time() - t0
 					print 'stepcnt', cnt
-					print "FAIL: ", self.rules
+					print "FAIL, moves:", mods
 					print "Fail rules:"
 					for rule in self.rules:
 						print rule['color'], ":", rule
+					self.queued_moves.append('fail')
 					return 'fail'
 				c.rotate(s)
 				if self.test_cube(): 
 					if time.time() - t0 > 1:
-						print "Hard step", self.rules
+						pass	
+						#print "Hard step", self.rules
 					done = True
 			
 				change_occurred = True
 
 				if self.mode == 'inner': #optimization for building the 3x3, never move anything that doesnt move the interesting color
-					post_turn_sticker_pos = c.get_inner_sticker_positions(Face_Lookup[self.search_moves])
+					post_turn_sticker_pos = c.get_inner_sticker_positions(Face_Lookup[self.search_moves], self.insert)
 					post_turn_sticker_pos.sort()
 					pre_turn_sticker_pos.sort()
 					change_occurred = False
-					for i in range(0, len(post_turn_sticker_pos)):
-						if post_turn_sticker_pos[i] != pre_turn_sticker_pos[i]:
-							change_occurred = True
+					if len(post_turn_sticker_pos) != len(pre_turn_sticker_pos):
+						change_occurred
+					else:
+						for i in range(0, len(post_turn_sticker_pos)):
+							if post_turn_sticker_pos[i] != pre_turn_sticker_pos[i]:
+								change_occurred = True
 
 
 				tp = time.time()
@@ -302,7 +333,7 @@ class Imported_Algo():
 					que.append( tmp )
 
 
-			print "FAIL!!!!!!!!!!"
+			print "No more moves found, choosing from", mods
 			return 'fail'
 	
 	#handles inner faces, not for edges or corners

@@ -43,7 +43,9 @@ class Runner():
 			if s[0] == 'run':
 				name = s[1]
 				mode = s[2]
-				scramble_type = s[3]
+				scramble_type = ''
+				if len (s) >= 4:
+					scramble_type = s[3]
 				self.run_algo_command(name,mode,scramble_type,scramble_type)
 
 			if s[0] == 'add':
@@ -256,17 +258,17 @@ class Runner():
 				print "removing algo",new_name,"since successrate is too low"
 			print "success rate is", success_rate
 
-	def run_algo(self,algo_name, scramble):
+	def run_algo(self,algo_name, scramble,save_last=False):
 		self.persist = Persist()
 		
 		print "Starting run"
 		solver = Solver()
 		result = solver.solve(algo_name, scramble)
-		print "Run complete, result:", result['success']
+		print "Run complete, result:", result['success'], "total time:", result['time']
 
 		self.persist.save_result(result)
-		
-		self.persist.save_latest_solve(result)
+		if save_last:	
+			self.persist.save_latest_solve(result)
 		return result['success']
 
 	def run_algo_command(self, name, mode, num_times, scramble_type, break_early=False):
@@ -281,11 +283,14 @@ class Runner():
 			for scr in tmp:
 				scram = scr['scramble']
 				scrambles.append(scram)
+		if mode == 'last':
+			res = self.persist.get_latest_solve()
+			scrambles.append(res['scramble'])
 		print "scram len:", len(scrambles)
 		success_cnt = 0.0
 		fail_cnt = 0.0
 		for scram in scrambles:
-			if self.run_algo(name, scram):
+			if self.run_algo(name, scram, save_last=mode == 'last'):
 				success_cnt += 1
 			else:
 				fail_cnt += 1

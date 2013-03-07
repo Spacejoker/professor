@@ -31,7 +31,6 @@ class Solver():
 		done = False
 		success = False
 		t0 = time.time()
-
 		while True:
 
 			fst = True
@@ -63,7 +62,7 @@ class Solver():
 			if done:
 				break
 			#next step in algo		
-			algo.parse_algo()
+			res = algo.parse_algo()
 
 		result = {'scramble' : scramble,
 			'move_cnt' : move_cnt,

@@ -192,7 +192,7 @@
 
 	{ "type" : "comment", "value" : "Front done" },
 
-	{ "type" : "set_moves", "sequence" : "u,d,F,Fp,L,Lp,B,Bp,R,Rp,up,dp"},
+	{ "type" : "set_moves", "sequence" : "u,d,L,Lp,L2,B,Bp,R,Rp,up,dp"},
 	{ "type" : "set_search_moves", "value" : "L"},
 	{ "type" : "set_mode", "value" : "inner"},
 
