@@ -24,8 +24,9 @@ class Solver():
 
 		move_cnt = 0	
 		solution = []
-		for move in scramble:
-			c.rotate(move)
+		print scramble
+		for move in scramble.split(' '):
+			c.rotate([move])
 
 		done = False
 		success = False

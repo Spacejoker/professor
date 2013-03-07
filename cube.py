@@ -72,6 +72,7 @@ class Helper():
 		return id/5
 
 
+cache = {}
 class Chain_Generator():
 	@staticmethod
 	def rot_face(face):
@@ -84,9 +85,9 @@ class Chain_Generator():
 		for i in range(1, 3):
 			ret.append([(face, Helper.to_int(1, i)), (face, Helper.to_int(i, 3)), (face, Helper.to_int(3, 4-i)), (face, Helper.to_int(4-i, 1))])
 		return ret
-
 	@staticmethod
 	def get_chain(command):
+		
 		ret = []
 
 		if command == 'R': 
@@ -113,6 +114,7 @@ class Chain_Generator():
 			ret = Chain_Generator.d_chain()
 		elif command == 'D':
 			ret = Chain_Generator.D_chain()
+
 		return ret
 
 	@staticmethod
@@ -232,7 +234,6 @@ class Cube():
 				self.apply_chain(chain)
 
 	def gen_chain(self, c):
-
 			c = str(c)
 			if c == ' ' or len(c) == 0:
 				return []
@@ -251,15 +252,20 @@ class Cube():
 				chain.extend(Chain_Generator.get_chain(c[:1].lower()))	
 				if double:
 					chain.extend( Chain_Generator.get_chain(c[:1]) )
-				c = c[-1:]
+				c = c[:-1]
 			chain.extend( Chain_Generator.get_chain(c) )
 			if double:
 				chain.extend( Chain_Generator.get_chain(c) )
 			if chain == None:
 				return []
 			if(backwards):
+				tmp = []
 				for ch in chain:
-					ch.reverse()
+					t = []
+					t.extend(ch)
+					t.reverse()
+					tmp.append(t)
+				return tmp
 			return chain
 	
 	def get_inner_sticker_positions(self, color):
@@ -274,7 +280,6 @@ class Cube():
 	def inner_colors_modified(self, commands):
 		s = []
 		c = commands
-		print commands
 		for c in commands:
 			chain = self.gen_chain(c)
 			for sub_chain in chain:
