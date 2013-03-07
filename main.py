@@ -146,7 +146,7 @@ class Simulation():
 			print rule['color'], ":", rule
 		scram = res['scramble']
 		print "Scramble:", scram
-		for m in scram:
+		for m in scram.split(' '):
 			self.c.rotate([m])
 		p = map(str,res['scramble'])
 		s = ""
