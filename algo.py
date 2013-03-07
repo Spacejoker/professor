@@ -252,8 +252,9 @@ class Imported_Algo():
 					s.extend(flip_algo.split(' '))
 					s.extend(rev)
 					#print "evaluating: ", s
-				if cnt > SEARCH_LIMIT:
-					print time.time() - t0
+				if time.time() - t0 > 10:
+					print 'FAIL:', time.time() - t0
+					print 'stepcnt', cnt
 					print "FAIL: ", self.rules
 					print "Fail rules:"
 					for rule in self.rules:
@@ -262,7 +263,7 @@ class Imported_Algo():
 				c.rotate(s)
 				if self.test_cube(): 
 					if time.time() - t0 > 1:
-						print "Hard step", self.rules[:-1] 
+						print "Hard step", self.rules
 					done = True
 			
 				change_occurred = True
